@@ -58,38 +58,36 @@ const {testCreationTableId}= useParams()
   const handleSectionChange = (event) => {
     setSelectedSection(event.target.value);
   };
-  const handleUpload = () => {
-    const formData = new FormData();
-    formData.append("document", file);
-    formData.append("subjectId", selectedSubject);
-    formData.append("sectionId", selectedSection);
-    formData.append("testCreationTableId", selectedTest);
+ 
   
-    fetch("http://localhost:3081/upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.text())
-      .then((result) => {
-        if (result === "Document with the same name already exists.") {
-          alert(result);
-        } else if (result === "Document with the same test and subject already exists.") {
-          alert(result);
-        } else if (result === "Document with the same test,subject and section already exists.") {
-          alert(result);
-        }
-         else {
-          console.log(result);
-          alert("Successfully uploaded Document");
-          window.location.reload();
-        }
+    const handleUpload = () => {
+      const formData = new FormData();
+      formData.append("document", file);
+      formData.append("subjectId", selectedSubject);
+      formData.append("sectionId", selectedSection);
+      formData.append("testCreationTableId", selectedTest);
+    
+      fetch("http://localhost:3081/upload", {
+        method: "POST",
+        body: formData,
       })
-      .catch((error) => {
-        console.error(error);
-        const errorMessage = error.message || 'Error uploading document. Please try again.';
-        alert(errorMessage);
-      });
-  };
+        .then((response) => response.text())
+        .then((result) => {
+          console.log(result);
+    
+          if (result.includes("Document with the same name already exists.")) {
+            alert("Error: Document with the same name already exists.");
+          } else if (result.includes("Document with the same test and subject already exists.")) {
+            alert("Error: Document with the same test and subject already exists.");
+          } else if (result.includes("Document with the same test and subject and section already exists.")) {
+            alert("Error: Document with the same test, subject, and section already exists.");
+          } else {
+            alert("Successfully uploaded Document");
+            window.location.reload();
+          }
+        })
+    };
+    
   
 
   return (
