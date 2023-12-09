@@ -67,8 +67,8 @@ const InstructionPage = () => {
   };
 
   return (
-    <div className="instruction_container">
-      <h2 style={{textTransform:'uppercase',color:'#1A374D'}}>Instruction Page </h2>
+    <div className="instruction_container otsMainPages">
+      <h2 className="otsTitels">Instruction Page </h2>
       {formOpen ? (
         <form>
           <button
@@ -80,7 +80,7 @@ const InstructionPage = () => {
             Close 
           </button>
 
-          <div className="instruction_input_contant">
+          <div className="instruction_input_contant examSubjects_-contant">
             <div className="inst">
               <label>Select Exam:</label>
               <select
@@ -133,6 +133,7 @@ const InstructionPage = () => {
         </button>
       )}
       <div className="instruction_content">
+        
         <InstructionsDisplay />
         {/* <ExcelTable /> */}
       </div>

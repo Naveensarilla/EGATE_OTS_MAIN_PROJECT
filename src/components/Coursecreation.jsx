@@ -405,6 +405,7 @@ const Coursecreation = () => {
                         key={typeofTest.typeOfTestId}
                       >
                         <input
+                        className="inputLable"
                           type="checkbox"
                           id={`typeofTest-${typeofTest.typeOfTestId }`}
                           name={`typeofTest-${typeofTest.typeOfTestId }`}
@@ -453,6 +454,7 @@ const Coursecreation = () => {
                           key={subject.subjectId}
                         >
                           <input
+                          className="inputLable"
                             type="checkbox"
                             id={`subject-${subject.subjectId}`}
                             name={`subject-${subject.subjectId}`}
@@ -484,6 +486,7 @@ const Coursecreation = () => {
                         key={type.quesionTypeId}
                       >
                         <input
+                        className="inputLable"
                           type="checkbox"
                           id={`question-${type.quesionTypeId}`}
                           name={`question-${type.quesionTypeId}`}

@@ -1,0 +1,57 @@
+label {
+    font-size: 17px;
+    font-weight: 500;
+    color: rgb(0, 0, 0);
+}
+
+ select {
+    width: 350px;
+    padding: 6px;
+    border: none;
+    box-shadow: 1px 4px 11px 0px #1A374D;
+}
+
+ input {
+    width: 350px;
+    padding: 6px;
+    border: none;
+    box-shadow: 1px 4px 11px 0px #1A374D;
+}
+
+.inputLable{
+    width: 22px;
+    padding: 6px;
+    border: none;
+    box-shadow: 1px 4px 11px 0px #1A374D;
+    height: 21px;
+}
+.otsTitels{
+    color: white;
+    background: #1a374d;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+.otsGEt_-contantHead{
+    background: #1a374d;
+    color: #fff;
+    padding: 10px;
+}
+.head {
+    width: 100vw;
+    background: #1a374d;
+    position: absolute;
+    height: 60px;
+    box-shadow: 3px 0px 10px 0px;
+}
+
+.otsMainPages {
+    margin: 6rem 2rem;
+  }
+
+  .textColor {
+    text-transform: uppercase;
+    background: #1a374d;
+    padding: 10px;
+    border-radius: 6px;
+    color: #ffffff;
+}

@@ -51,9 +51,12 @@ export const UpdateInstruction = () => {
   };
 
   return (
-    <div>
+    <div className="Instruction_-points_-container otsMainPages">
+      <h2 className="otsTitels">Update Instruction point</h2>
+      <br />
       {points.map((item, index) => (
-        <div key={index}>
+        <div key={index} className="Instruction_-points_-content" style={{display:'flex',gap:'1rem'}}>
+          <label htmlFor="">{item.id}</label> 
           <input
             type="text"
             value={item.points}
@@ -61,7 +64,8 @@ export const UpdateInstruction = () => {
           />
         </div>
       ))}
-      <button onClick={handleUpdate}>Update</button>
+      <br />
+      <button className="instructionBTN" onClick={handleUpdate}>Update</button>
     </div>
   );
 };

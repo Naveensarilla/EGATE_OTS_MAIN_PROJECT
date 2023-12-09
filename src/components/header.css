@@ -138,26 +138,26 @@
 }
 
 .create_exam_content {
-  position: relative;
+  /* position: relative; */
   /* width: 90%; */
-  margin: 3rem;
+  /* margin: 3rem; */
 }
 
 .create_exam_header {
-  display: flex;
-  justify-content: space-between;
-  height: 40px;
+  /* display: flex;
+  justify-content: space-between; */
+  /* height: 40px; */
   /* background: #f30000; */
 }
 
-.create_exam_header button {
+/* .create_exam_header button {
   background: #3673ce;
   border: 0;
   padding: 0 0.5rem;
   border-radius: 10px;
   color: #fff;
   font-weight: 700;
-}
+} */
 
 /* .Create_exam_page{
   /* background: #000; */
@@ -178,7 +178,7 @@
   /* background: #fffcde; */
   /* color: #fff; */
   /* width: 100%; */
-  border: 1px solid #000;
+  /* border: 1px solid #000; */
   border-collapse: collapse;
   border-spacing: 10px;
   text-align: center;
@@ -206,13 +206,13 @@
 }
 
 .Create_Exam_from {
-  position: absolute;
+  /* position: absolute; */
   background: #f7f5f5;
   box-shadow: 0px 0px 10px rgba(39, 158, 255, 0.822);
-  width: 70%;
+  width: 100%;
   top: 40%;
   left: 17%;
-  /* height: 50vh; */
+  /* height: 300px; */
   border-radius: 18px;
   /* left: 16%; */
 }
@@ -222,8 +222,8 @@
   margin: 1rem 0;
 }
 
-.Create_Exam_from > form {
-  /* width: 300px; */
+/* .Create_Exam_from > form {
+
   margin: 0 auto;
   color: #000000;
   padding: 3rem;
@@ -231,7 +231,7 @@
   flex-direction: column;
   gap: 0.8rem;
   font-size: 1.2rem;
-}
+} */
 
 .Create_Exam_from > form .formdiv_contaniner {
   display: grid;
@@ -240,23 +240,23 @@
   justify-content: center;
 }
 
-.Create_Exam_from > form .formdiv_contaniner input[type="text"],
+/* .Create_Exam_from > form .formdiv_contaniner input[type="text"],
 .formdiv_contaniner input[type="date"] {
-  /* width: 100%; */
+
   height: 30px;
   border-radius: 8px;
   padding: 0.5rem;
   border: none;
-}
+} */
 
 .Create_Exam_from > form .formdiv_contaniner input:focus {
   outline: none;
 }
 
-.Create_Exam_from > form .formdiv_contaniner ul {
+/* .Create_Exam_from > form .formdiv_contaniner ul {
   display: flex;
   flex-direction: column;
-}
+} */
 
 .Create_Exam_from > form .formdiv_contaniner ul li label {
   display: flex;
@@ -277,9 +277,9 @@
 } */
 
 .Create_Exam_from_close {
-  position: absolute;
-  right: 1.8rem;
-  top: 1rem;
+  position: relative;
+  /* right: 1.8rem;
+  top: 1rem; */
   /* background: #fff; */
   /* width: 30px; */
   /* height: 30px; */
@@ -356,14 +356,14 @@
   justify-content: center;
 }
 
-.update_Exam_from > form .formdiv_contaniner input[type="text"],
+/* .update_Exam_from > form .formdiv_contaniner input[type="text"],
 .formdiv_contaniner input[type="date"] {
-  /* width: 100%; */
+
   height: 30px;
   border-radius: 8px;
   padding: 0.5rem;
   border: none;
-}
+} */
 
 .update_Exam_from > form .formdiv_contaniner input:focus {
   outline: none;
@@ -482,7 +482,7 @@
 .course_frominput_container input,
 .course_frominput_container select,
 .course_frominput_containe_discunt input {
-  height: 40px;
+  /* height: 40px; */
   border-radius: 8px;
   padding: 0.5rem;
   border: none;
@@ -571,6 +571,7 @@ fieldset > legend {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
+  gap: 10px;
 }
 .courseupdate_frominput_container_checkbox div {
   display: flex;
@@ -582,8 +583,8 @@ fieldset > legend {
 .courseupdate_frominput_container input,
 .courseupdate_frominput_container select,
 .courseupdate_frominput_container input {
-  height: 40px;
-  border-radius: 8px;
+  /* height: 40px; */
+  /* border-radius: 8px; */
   padding: 0.5rem;
   border: none;
   /* width: 200px; */

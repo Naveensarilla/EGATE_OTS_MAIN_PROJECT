@@ -13,14 +13,15 @@ import Testcreation from "./components/Testcreation.jsx";
 import TestUpdate from "./components/TestUpdate.jsx";
 import DocumentUpload from "./components/DocumentUpload.jsx";
 import GettinggInstructions from "./components/GettinggInstructions .jsx";
-
+import './components/css/otcCss.css'
 
 import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
 function App() {
   return (
     <Router>
       <Header />
-      <div className="common_grid_app">
+     <div className="appp">
+     <div className="common_grid_app">
         <Leftnav />
         <Routes>
           <Route path="/" element={<Dashbaord />} />
@@ -55,6 +56,7 @@ function App() {
           />
         </Routes>
       </div>
+     </div>
 
       {/* demo */}
 

@@ -70,9 +70,11 @@ const InstructionsDisplay = () => {
   // };
 
   return (
-    <div className="Instruction_containerTable">
+    <div className="Instruction_containerTable otsMainPages">
+
+      <h2 className="otsTitels" style={{padding:'2px'}}> Uploaded Instruction documents</h2>
       <table>
-        <thead>
+        <thead className="otsGEt_-contantHead">
           <tr>
             <th>instruction Id</th>
             <th>examId</th>
@@ -86,7 +88,10 @@ const InstructionsDisplay = () => {
         </thead>
         <tbody>
           {instruction.map((ite, inde) => (
-            <tr key={inde} className={ite.examId % 2 === 0 ? "color1" : 'color2'}>
+            <tr
+              key={inde}
+              className={ite.instructionId % 2 === 0 ? "color1" : "color2"}
+            >
               <td>{ite.instructionId}</td>
               <td>{ite.examId}</td>
               <td>{ite.instructionHeading}</td>
@@ -98,14 +103,14 @@ const InstructionsDisplay = () => {
                   <Link
                     to={`/Instruction/editIns/${ite.instructionId}`}
                     // title="Open Instruction Points"
-                    className="my-anchor-element1" 
+                    className="my-anchor-element1"
                     data-tooltip-variant="info"
                     data-tooltip-delay-show={1000}
                   >
                     open
                   </Link>
-                  <Tooltip anchorSelect=".my-anchor-element1"   place="top">
-                  Open Instruction Points
+                  <Tooltip anchorSelect=".my-anchor-element1" place="top">
+                    Open Instruction Points
                   </Tooltip>
                 </div>
               </td>
@@ -113,24 +118,21 @@ const InstructionsDisplay = () => {
                 <button
                   className="InstDelete InstDelete2 my-anchor-element"
                   data-tooltip-variant="warning"
-                    data-tooltip-delay-show={1000}
+                  data-tooltip-delay-show={1000}
                   onClick={() => handleDelete(ite.instructionId)}
                 >
-                
                   <i class="fa-solid fa-trash"></i>
                 </button>
-                <Tooltip anchorSelect=".my-anchor-element"   place="top">
-                 Delete
-                  </Tooltip>
+                <Tooltip anchorSelect=".my-anchor-element" place="top">
+                  Delete
+                </Tooltip>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="Instruction_Dis">
-       
-      </div>
+      <div className="Instruction_Dis"></div>
     </div>
   );
 };

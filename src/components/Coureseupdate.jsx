@@ -26,7 +26,7 @@ const Coureseupdate = () => {
         const response = await axios.get(
           `http://localhost:3081/courseupdate/${courseCreationId}`
         );
-        
+
         const examsResponse = await axios.get(
           "http://localhost:3081/courese-exams"
         );
@@ -152,13 +152,11 @@ const Coureseupdate = () => {
 
     setSelectedQuestionTypes(updatedSelectedTypes);
   };
-//type of test 
+  //type of test
   useEffect(() => {
     const fetchtypeOfTests = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3081/type_of_tests"
-        );
+        const response = await axios.get("http://localhost:3081/type_of_tests");
         setTypeOfTests(response.data);
       } catch (error) {
         console.error("Error fetching  type of test:", error);
@@ -174,7 +172,9 @@ const Coureseupdate = () => {
         const response = await axios.get(
           `http://localhost:3081/course-type-of-test/${courseCreationId}`
         );
-        const selectedTypeOfTests = response.data.map((typeOfTest) => typeOfTest.typeOfTestId);
+        const selectedTypeOfTests = response.data.map(
+          (typeOfTest) => typeOfTest.typeOfTestId
+        );
         setSelectedTypeOfTests(selectedTypeOfTests);
       } catch (error) {
         console.error("Error fetching selected question types:", error);
@@ -197,9 +197,6 @@ const Coureseupdate = () => {
 
     setSelectedTypeOfTests(updatedSelectedTypeOfTests);
   };
-
-
-
 
   const handleSubjectCheckboxChange = (subjectId) => {
     const updatedSubjects = [...selectedSubjects];
@@ -268,189 +265,159 @@ const Coureseupdate = () => {
   };
 
   return (
-    <div className="couseupdatepage">
+    <div className="examUpdate_-container">
+     
       <form onSubmit={handleSubmit}>
-      <div className="courseupdate_frominput_container">
-        <label> Course Name:</label>
-        <input
-          type="text"
-          value={courseName}
-          onChange={(e) => setCourseName(e.target.value)}
-        />
-      </div>
-      <div className="courseupdate_frominput_container">
-        <label>Select Type of Test:</label>
-        <div className="courseupdate_frominput_container_checkbox" >
-                  
-      {typeOfTests.map((typeOfTest) => (
-          <div key={typeOfTest.typeOfTestId}>
-            <input
-              type="checkbox"
-              id={`typeOfTestes-${typeOfTest.typeOfTestId}`}
-              value={typeOfTest.typeOfTestId}
-              checked={selectedTypeOfTests.includes(typeOfTest.typeOfTestId)}
-              onChange={() =>
-                handletypeOfTestsCheckboxChange(typeOfTest.typeOfTestId)
-              }
-            />
-            <label htmlFor={`question-type-${typeOfTest.typeOfTestId}`}>
-              {typeOfTest.typeOfTestName}
-            </label>
-          </div>
-        ))}
+      <h2 className="otsTitels">Course Update</h2>
+        <div className="courseupdate_frominput_container">
+          <label> Course Name:</label>
+          <input
+            type="text"
+            value={courseName}
+            onChange={(e) => setCourseName(e.target.value)}
+          />
         </div>
-      </div>
-      <div className="courseupdate_frominput_container">
-      <label>
-        Select Exam:
-       
-      </label>
-      <select
-          name="examId"
-          value={selectedExam}
-          onChange={(e) => setSelectedExam(e.target.value)}
-        >
-          <option value="">Select Exam</option>
-          {exams.map((exam) => (
-            <option key={exam.examId} value={exam.examId}>
-              {exam.examName}
-            </option>
-          ))}
-        </select>
-      </div>
-     
-      <div className="courseupdate_frominput_container">
-      <label>
-        Select Subjects:
-      
-      </label>
-
-
-      <div className="courseupdate_frominput_container_checkbox" >
-
-    
-      {subjects.map((subject) => (
-          <div  key={subject.subjectId}>
-            <input
-              type="checkbox"
-              id={`subject-${subject.subjectId}`}
-              value={subject.subjectId}
-              checked={selectedSubjects.includes(subject.subjectId)}
-              onChange={() => handleSubjectCheckboxChange(subject.subjectId)}
-            />
-            <label htmlFor={`subject-${subject.subjectId}`}>
-              {subject.subjectName}
-            </label>
+        <div className="courseupdate_frominput_container examSubjects_-contant">
+          <label>Select Type of Test:</label>
+          <div className="courseupdate_frominput_container_checkbox ">
+            {typeOfTests.map((typeOfTest) => (
+              <div key={typeOfTest.typeOfTestId}>
+                <input
+                  className="inputLable"
+                  type="checkbox"
+                  id={`typeOfTestes-${typeOfTest.typeOfTestId}`}
+                  value={typeOfTest.typeOfTestId}
+                  checked={selectedTypeOfTests.includes(
+                    typeOfTest.typeOfTestId
+                  )}
+                  onChange={() =>
+                    handletypeOfTestsCheckboxChange(typeOfTest.typeOfTestId)
+                  }
+                />
+                <label htmlFor={`question-type-${typeOfTest.typeOfTestId}`}>
+                  {typeOfTest.typeOfTestName}
+                </label>
+              </div>
+            ))}
           </div>
-        ))}
-          </div>
-     </div>
-
-      
-     <div className="courseupdate_frominput_container">
-     <label>
-        Select Type of Questions:
-      
-      </label>
-
-      <div className="courseupdate_frominput_container_checkbox" >
-                  
-      {questionTypes.map((type) => (
-          <div key={type.quesionTypeId}>
-            <input
-              type="checkbox"
-              id={`question-type-${type.quesionTypeId}`}
-              value={type.quesionTypeId}
-              checked={selectedQuestionTypes.includes(type.quesionTypeId)}
-              onChange={() =>
-                handleQuestionTypeCheckboxChange(type.quesionTypeId)
-              }
-            />
-            <label htmlFor={`question-type-${type.quesionTypeId}`}>
-              {type.typeofQuestion}
-            </label>
-          </div>
-        ))}
         </div>
-      </div>
+        <div className="courseupdate_frominput_container">
+          <label>Select Exam:</label>
+          <select
+            name="examId"
+            value={selectedExam}
+            onChange={(e) => setSelectedExam(e.target.value)}
+          >
+            <option value="">Select Exam</option>
+            {exams.map((exam) => (
+              <option key={exam.examId} value={exam.examId}>
+                {exam.examName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="courseupdate_frominput_container examSubjects_-contant">
+          <label>Select Subjects:</label>
+
+          <div className="courseupdate_frominput_container_checkbox ">
+            {subjects.map((subject) => (
+              <div key={subject.subjectId}>
+                <input
+                  className="inputLable"
+                  type="checkbox"
+                  id={`subject-${subject.subjectId}`}
+                  value={subject.subjectId}
+                  checked={selectedSubjects.includes(subject.subjectId)}
+                  onChange={() =>
+                    handleSubjectCheckboxChange(subject.subjectId)
+                  }
+                />
+                <label htmlFor={`subject-${subject.subjectId}`}>
+                  {subject.subjectName}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="courseupdate_frominput_container examSubjects_-contant">
+          <label>Select Type of Questions:</label>
+
+          <div className="courseupdate_frominput_container_checkbox">
+            {questionTypes.map((type) => (
+              <div key={type.quesionTypeId}>
+                <input
+                  className="inputLable"
+                  type="checkbox"
+                  id={`question-type-${type.quesionTypeId}`}
+                  value={type.quesionTypeId}
+                  checked={selectedQuestionTypes.includes(type.quesionTypeId)}
+                  onChange={() =>
+                    handleQuestionTypeCheckboxChange(type.quesionTypeId)
+                  }
+                />
+                <label htmlFor={`question-type-${type.quesionTypeId}`}>
+                  {type.typeofQuestion}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="courseupdate_frominput_container ">
+          <label>Course Start Date:</label>
+          <input
+            type="date"
+            value={courseStartDate}
+            onChange={(e) => setCourseStartDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]} // Set max attribute to today
+          />
+        </div>
+
+        <div className="courseupdate_frominput_container examSubjects_-contant">
+          <label>Course End Date:</label>
+          <input
+            type="date"
+            value={courseEndDate}
+            onChange={(e) => setCourseEndDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]} // Set max attribute to today
+          />
+        </div>
+        <div className="courseupdate_frominput_container">
+          <label>Cost:</label>
+          <input
+            type="number"
+            value={cost}
+            onChange={(e) => {
+              setCost(e.target.value);
+              handleCalculateTotal();
+            }}
+          />
+        </div>
+
+        <div className="courseupdate_frominput_container examSubjects_-contant">
+          <label>Discount (%):</label>
+          <input
+            type="number"
+            value={discount}
+            onChange={(e) => {
+              setDiscount(e.target.value);
+              handleCalculateTotal();
+            }}
+          />
+        </div>
+
+        <div className="courseupdate_frominput_container">
+          <label>Total Price:</label>
+          <input type="text" value={totalPrice} readOnly />
+        </div>
+
    
-      <div className="courseupdate_frominput_container">
-      <label>
-        Course Start Date:
-       
-      </label>
-      <input
-          type="date"
-          value={courseStartDate}
-          onChange={(e) => setCourseStartDate(e.target.value)}
-
-          min={new Date().toISOString().split("T")[0]} // Set max attribute to today
-
-        />
-</div>
-    
-<div className="courseupdate_frominput_container">
-  
-<label>
-        Course End Date:
-      
-      </label>
-      <input
-          type="date"
-          value={courseEndDate}
-          onChange={(e) => setCourseEndDate(e.target.value)}
-
-          min={new Date().toISOString().split("T")[0]} // Set max attribute to today
-
-
-        />
-  
-  </div>
-  <div className="courseupdate_frominput_container">
-  <label>
-        Cost:
-      
-      </label>
-      <input
-          type="number"
-          value={cost}
-          onChange={(e) => {
-            setCost(e.target.value);
-            handleCalculateTotal();
-          }}
-        />
-  </div>
-    
-  <div className="courseupdate_frominput_container">
-  <label>
-        Discount (%):
-      
-      </label>
-      <input
-          type="number"
-          value={discount}
-          onChange={(e) => {
-            setDiscount(e.target.value);
-            handleCalculateTotal();
-          }}
-        />
-  </div>
-
+      <button className="UPDATE_-COURSE" type="submit">UPDATE COURSE</button>
      
-  <div className="courseupdate_frominput_container">
-  <label>
-        Total Price:
-      </label>
-      <input type="text" value={totalPrice} readOnly />
-
-  </div>
-     
-    
-  
-      <button type="submit">UPDATE COURSE</button>
-    </form>
+      </form>
     </div>
-    
   );
 };
 

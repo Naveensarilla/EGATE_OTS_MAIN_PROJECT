@@ -25,14 +25,14 @@ const {subjectId, testCreationTableId} = useParams();
 
   // Render your component using the fetched data
   return (
-    <div>
+    <div className='Document_-images_-container otsMainPages'>
       {/* Access data as needed, for example: */}
       <h1>{data.document.documen_name} {data.document.subjectId}{data.document.testCreationTableId}</h1>
       {/* Map over questions and render them */}
-      <div className='q1s' style={{display:'flex',gap:'4rem',flexDirection:'column',width:'85vw',margin:'2rem'}}>
+      <div className='q1s' style={{display:'flex',gap:'4rem',flexDirection:'column',width:'81vw',margin:'2rem'}}>
       {data.questions.map((question, index) => (
      
-        <div className='outColor' style={{background:'#e5e5e5',padding:'2rem 2rem'}}>
+        <div className='outColor examSubjects_-contant' style={{background:'',padding:'2rem 2rem'}}>
          <div key={question.question_id} >
          <div className='question' key={index}>
           <h3>{index+1}</h3>

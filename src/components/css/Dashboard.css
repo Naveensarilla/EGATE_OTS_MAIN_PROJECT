@@ -3,32 +3,41 @@
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    gap: 1rem;
+    gap: 6rem;
+    flex-direction: column;
     
 }
 
 .Dashboard_contant{
-    border: 1px solid;
+    /* border: 1px solid; */
     padding: 2rem;
     border-radius: 5px;
     text-align: center;
+    width: 250px;
+    height: 200px;
+    background: #56738b;
+    color: rgb(255, 255, 255);
 }
 
 .Dashboard_contant i{
     padding-bottom: 1rem;
 }
 
-.Dashboard_contant:nth-child(1) i, .examCount {
-    color: rgb(166, 255, 0); 
+.Dashboard_contant:nth-child(1) i {
+    color: #ffffff; 
+    font-size: 40px;
 }
 
 .Dashboard_contant:nth-child(2) i{
-    color: rgb(25, 0, 255); 
+    color: #ffffff; 
+    font-size: 40px;
 }
 
 .Dashboard_contant:nth-child(3) i{
-    color: red; 
+    color: #ffffff; 
+    font-size: 40px;
 }
 .Dashboard_contant:nth-child(4) i{
-    color: rgb(0, 255, 85); 
+    color: #ffffff; 
+    font-size: 40px;
 }

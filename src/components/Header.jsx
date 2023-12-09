@@ -3,13 +3,13 @@ import logo2 from './logo2.jpeg'
 import './header.css'
 const Header = () => {
   return (
-  <header>
-    <div className='header'>
-    <div>
-    <img src={logo2} alt="Egrad logo" className='img' />
+  // <header>
+    <div className='head'>
+
+    {/* <div className='header'> */}
+ 
     </div>
-    </div>
-  </header>
+  // </header>
   )
 }
 

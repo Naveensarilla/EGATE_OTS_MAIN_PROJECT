@@ -17,10 +17,10 @@ export const UploadedDoc = () => {
 
     fetchData();
   }, []);
-
+ 
   return (
     <div className="documentInfo_container">
-      <h2 style={{ textTransform: "uppercase" }}>uploaded documents</h2>
+     <div className="otsTitels" style={{padding:'0'}}> <h2 >uploaded documents</h2></div>
       <div className="documentInfo_contant">
         {data.map((item) => (
           <ul key={item.document_Id} style={{ display: "flex" }} className={item.document_Id % 2 === 0 ? "evenRow" : "oddRow"}>
@@ -34,7 +34,8 @@ export const UploadedDoc = () => {
                 <p style={{ width: "140px" }}>subject Id : {item.subjectId}</p>
               </div>
             </li>
-            <Link to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}`}>Open Document</Link>
+          
+           <div className="Open_Instruction_Points"> <Link to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}`}>Open Document</Link></div>
           </ul>
         ))}
       </div>

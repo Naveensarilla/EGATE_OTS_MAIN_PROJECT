@@ -5,7 +5,7 @@
   background:   #d1dde7;
 }
 .Instruction_containerTable {
-  background: #c9d4dd;
+  /* background: #c9d4dd; */
   padding: 10px;
 }
 .instruction_container {
@@ -44,7 +44,7 @@
     gap: 10px;
     justify-content: center;
     align-items: center;
-    background: #c9d4dd;
+    /* background: #c9d4dd; */
   }
   .inst {
     display: flex;
@@ -75,14 +75,14 @@
     /* border: 1px solid #54808a; */
     margin-bottom: 1rem;
   }
- table {
+  table {
     border-collapse: collapse;
-
-  }
+    width: 79vw;
+}
   .Instruction_containerTable table {
     border-collapse: collapse;
     text-align: center;
-    width: 85vw;
+    width: 81vw;
   }
   .Instruction_containerTable table tr th{
     text-transform: uppercase;
@@ -97,11 +97,11 @@
   }
   
   .Instruction_points {
-      margin: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-  }
+    margin: 5rem 2rem 1rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
   .Instruction_points ul {
     display: flex;
     gap: 2rem;
@@ -123,7 +123,7 @@
   
   .InstructiondelPoint {
     background-color: #ce3636;
-    padding: 4px;
+    padding: 6px 12px;
     color: rgb(255, 255, 255);
     border-radius: 5px;
     cursor: pointer;
@@ -139,5 +139,8 @@
   }
 
 
+/* updating Update_-Instruction */
 
-  
+.Instruction_-points_-container{
+
+}

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import dashboard from "../components/Imgs/daashboard.png";
 import exam from "../components/Imgs/exam.png";
 import "../components/css/Leftnav.css";
-
+import logo2 from './logo2.jpeg'
 const Leftnav = () => {
   const [showMenu, setshowMenu] = useState(0);
   return (
@@ -26,7 +26,9 @@ const Leftnav = () => {
         <div
           className={showMenu ? "left-nav-bar left-nav-bar_" : "left-nav-bar"}
         >
+         
           <ul className="left-nav-bar-ul">
+            <li> <img src={logo2} alt="Egrad logo" className='img' /></li>
             <li>
               <Link to="/" className="LeftnavLinks">
                 <div className="">
@@ -39,8 +41,7 @@ const Leftnav = () => {
             <li>
               <Link to="/exams" className="LeftnavLinks">
                 <div className="">
-               
-                <i class="fa-solid fa-user-pen"></i>
+                  <i class="fa-solid fa-user-pen"></i>
                 </div>
                 <p>Exam Creation</p>
               </Link>

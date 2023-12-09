@@ -1,12 +1,16 @@
-.DocumentImage_Uploader{
-    margin: 2rem;
-}
+.Document_-images_-container {
+  overflow: overlay;
+  height: 100vh;
 
+}
+.DocumentImage_Uploader {
+  margin: 6rem 2rem;
+}
 .DocumentImage_Uploader h2{
     text-transform: uppercase;
 }
 .DocumentImage_Uploader form{
-    background: #7594ad;
+    /* background: #7594ad; */
     max-width: 85vw;
     border-radius: 10px;
 
@@ -52,7 +56,7 @@
 
 /* documentInfo===---------------------=====================---------- */
   .documentInfo_container {
-    background: #c9d4dd;
+    /* background: #c9d4dd; */
     margin-top: 2rem;
     padding: 5px;
     border-radius: 11px;
