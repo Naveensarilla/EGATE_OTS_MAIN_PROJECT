@@ -123,19 +123,22 @@ function Examcreation() {
 
   return (
     <div className="create_exam_container otsMainPages">
+      <h3 className="Coures_-otsTitels">Exam creation page</h3>
       <div className="create_exam_content">
         <div className="create_exam_header">
-         <div className="otsTitels"> <h2>Exams</h2></div>
+       
           {formOpen ? (
             <div className="examContainer">
               {/* <h2>Create Exam</h2> */}
               <form onSubmit={handleSubmit}>
+              
                 <div className="examForm_Contant-container">
-                  <div
-                    className="Create_Exam_from_close"
-                    onClick={() => setFormOpen(false)}
-                  >
-                    <i class="fa-regular fa-circle-xmark " id="examCLose"></i>
+          
+                  <div onClick={() => setFormOpen(false)}>
+                    <button className="ots_btnClose">
+                      Close
+                      <i class="fa-regular fa-circle-xmark "></i>
+                    </button>
                   </div>
                   <div className="Exams_contant examSubjects_-contant">
                     <div className="formdiv_contaniner">
@@ -174,7 +177,8 @@ function Examcreation() {
                         {subjects.map((subject) => (
                           <li key={subject.subjectId}>
                             <label> {subject.subjectName} </label>
-                            <input className="inputLable"
+                            <input
+                              className="inputLable"
                               type="checkbox"
                               checked={selectedSubjects.includes(
                                 subject.subjectId
@@ -189,16 +193,22 @@ function Examcreation() {
                     </div>
                   </div>
                 </div>
-                <div className="examBtn">
-                  <button type="submit" disabled={submitting}>
+                <div>
+                  
+                  <button
+                    className="ots_-createBtn"
+                    type="submit"
+                    disabled={submitting}
+                  >
                     Create Exam
                   </button>
                 </div>
               </form>
             </div>
           ) : (
+            
             // ....................................FROM END...............................
-            <button onClick={() => setFormOpen(true)}>
+            <button className="otc_-addExam" onClick={() => setFormOpen(true)}>
               <i class="fa-solid fa-plus"></i> Add Exam
             </button>
           )}
@@ -206,43 +216,53 @@ function Examcreation() {
         </div>
         {/* ....................................FORM START............................... */}
 
-        <div className="Create_exam_page">
-          <h2>Exams with Subjects</h2>
+        <div>
+          {/* <h2>Exams with Subjects</h2> */}
           {/* ....................................TABLE START...............................  */}
-          <table>
-            <thead  className="otsGEt_-contantHead">
-              <tr>
-                <th>Serial no</th>
-                <th>Exam Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Subjects</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {examsWithSubjects.map((exam, index) => (
-                <tr key={exam.examId} className={exam.examId % 2 === 0 ? "color1" : 'color2'}>
-                  <td>{index + 1}</td>
-                  <td>{exam.examName}</td>
-               
-                  <td>{exam.startDate}</td>
-                  <td>{exam.endDate}</td>
-                  <td>{exam.subjects}</td>
-                  <td>
-                    <button>
-                      <Link to={`/update/${exam.examId}`}>
-                        <i class="fa-solid fa-pencil"></i>
-                      </Link>
-                    </button>
-                    <button onClick={() => handleDelete(exam.examId)}>
-                      <i class="fa-regular fa-trash-can"></i>
-                    </button>
-                  </td>
+          <div className="examCreation_-createdData">
+            <table className="otc_-table">
+              <thead className="otsGEt_-contantHead otc_-table_-header">
+                <tr>
+                  <th>Serial no</th>
+                  <th>Exam Name</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Subjects</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="otc_-table_-tBody">
+                {examsWithSubjects.map((exam, index) => (
+                  <tr
+                    key={exam.examId}
+                    className={exam.examId % 2 === 0 ? "color1" : "color2"}
+                  >
+                    <td>{index + 1}</td>
+                    <td>{exam.examName}</td>
+
+                    <td>{exam.startDate}</td>
+                    <td>{exam.endDate}</td>
+                    <td>{exam.subjects}</td>
+                    <td>
+                      <div className="EditDelete_-btns">
+                        <button className="Ots_-edit ">
+                          <Link to={`/update/${exam.examId}`}>
+                            <i class="fa-solid fa-pencil"></i>
+                          </Link>
+                        </button>
+                        <button
+                          className="Ots_-delete"
+                          onClick={() => handleDelete(exam.examId)}
+                        >
+                          <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* <div>
             {examsWithSubjects.map((exam, index) => (

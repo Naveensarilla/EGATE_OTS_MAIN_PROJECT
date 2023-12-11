@@ -53,34 +53,9 @@ const GettinggInstructions = () => {
   return (
     <div className="Instruction_points">
       <h2 className="otsTitels"> Instruction Points</h2>
-      {/* {points.map((item, index) => (
-        <div>
-     
-          <ul key={index}>
-            <li>{item.points}</li>
-            <li>
-              <Link
-                to={`/InstructionPage/editIns/${item.instructionId}/${item.id}`}
-                title="Edit this point"
-              >
-                <i className="fa-solid fa-pencil"></i>
-              </Link>
-            </li>
-            <li>
-              <button
-                className="InstructiondelPoint"
-                title="delete this point"
-                onClick={() => handleDeletePoint(item.instructionId, item.id)}
-              >
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </li>
-          </ul>
-        </div>
-      ))} */}
-     {/* <p>{item.instructionHeading}</p> */}
-      <table>
-        <thead className="otsGEt_-contantHead">
+      
+      <table className="otc_-table">
+        <thead className="otsGEt_-contantHead otc_-table_-header">
           <tr>
             <th>No</th>
             <th>points</th>
@@ -89,7 +64,7 @@ const GettinggInstructions = () => {
             <th>delete</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody  className="otc_-table_-tBody">
           {points.map((item, index) => (
             <tr key={index}  className={item.id % 2 === 0 ? "color1" : 'color2'}>
               <td>{item.id}</td>

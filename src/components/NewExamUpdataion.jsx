@@ -183,7 +183,7 @@ const NewExamUpdataion = () => {
         </div>
 
       <div className="create_exam_header">
-      <button type="submit"  style={{float:'right',textTransform:'uppercase'}}>Submit</button>
+      <button className="ots_-createBtn" type="submit"  style={{float:'right',textTransform:'uppercase'}}>Submit</button>
       </div>
       </form>
     </div>

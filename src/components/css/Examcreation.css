@@ -68,8 +68,8 @@
 }
 
 /* btns */
-.create_exam_header button {
-    background: rgb(20, 62, 126);
+/* .create_exam_header button {
+    background:rgb(26 55 77);
     border: 0;
     padding: 0 0.5rem;
     border-radius: 10px;
@@ -77,7 +77,7 @@
     font-weight: 700;
     padding: 10px;
     text-transform: uppercase;
-}
+} */
 
 .UPDATE_-COURSE{
     background: rgb(20, 62, 126);
@@ -90,10 +90,10 @@
 }
 
 
-.examBtn {
+/* .examBtn {
     margin-top: 1rem;
     margin-left: 88rem;
-}
+} */
 
 #examCLose {
     position: absolute;

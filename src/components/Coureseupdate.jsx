@@ -414,7 +414,7 @@ const Coureseupdate = () => {
         </div>
 
    
-      <button className="UPDATE_-COURSE" type="submit">UPDATE COURSE</button>
+      <button className="ots_-createBtn" type="submit">UPDATE COURSE</button>
      
       </form>
     </div>

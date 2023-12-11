@@ -1,7 +1,11 @@
+.testCreation_-container{
+    width: 100vw;
+}
+
 .TestCreation_-container{
     display: flex;
     flex-direction: column;
-    padding: 2rem;
+    padding: 2rem 0px;
   
     
 }

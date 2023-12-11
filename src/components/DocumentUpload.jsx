@@ -141,10 +141,14 @@ const {testCreationTableId}= useParams()
           <div className="uploadedDocumentFilds">
             <label htmlFor="">Upload file</label>
             <input type="file" accept=".docx" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
+            
           </div>
         </div>
 
+        <div className="uploadedDocumentFilds" style={{float:'right'}}>
+           
+            <button className="ots_-createBtn" onClick={handleUpload}>Upload</button>
+          </div>
         <div>
 
         </div>
