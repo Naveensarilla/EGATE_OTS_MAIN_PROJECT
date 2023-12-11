@@ -1833,6 +1833,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
     
         let j = 0;
         let Question_id;
+        let question_id=[];
         for (let i = 0; i < images.length; i++) {
           if (j == 0) {
             const questionRecord = {
@@ -1844,6 +1845,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
             };
             console.log(j);
             Question_id = await insertRecord("questions", questionRecord);
+            question_id.push(Question_id)
             j++;
           } else if (j > 0 && j < 5) {
             const optionRecord = {
@@ -1861,6 +1863,33 @@ app.post("/upload", upload.single("document"), async (req, res) => {
             console.log(j);
             await insertRecord("solution", solutionRecord);
             j = 0;
+          }
+        }
+        let que_id;
+        for (let i = 0; i < textSections.length; i++) {
+          if (textSections[i].startsWith('[qtype]')) {
+            que_id=question_id[j];
+            j++;
+            // Save in the qtype table
+            const qtypeRecord = {
+              qtype_text: textSections[i].replace('[qtype]', ''),
+              question_id: que_id
+            };
+            await insertRecord('qtype', qtypeRecord);
+          } else if (textSections[i].startsWith('[ans]')) {
+            // Save in the answer table
+            const answerRecord = {
+              answer_text: textSections[i].replace('[ans]', ''),
+              question_id: que_id
+            };
+            await insertRecord('answer', answerRecord);
+          } else if (textSections[i].startsWith('[Marks]')) {
+            // Save in the marks table
+            const marksRecord = {
+              marks_text: textSections[i].replace('[Marks]', ''),
+              question_id: que_id
+            };
+            await insertRecord('marks', marksRecord);
           }
         }
         res.send(
@@ -2053,7 +2082,7 @@ app.delete('/DocumentDelete/:document_Id', async (req, res) => {
   const document_Id = req.params.document_Id;
  
   try {
-    await db.query('DELETE questions, ots_document, options , solution  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
+    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id   WHERE ots_document.document_Id = ? ', [document_Id]);
     res.json({ message: `course with ID ${document_Id} deleted from the database` });
   } catch (error) {
     console.error(error);
