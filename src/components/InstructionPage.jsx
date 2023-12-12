@@ -75,7 +75,7 @@ const InstructionPage = () => {
         <form>
      <div>
      <button
-            className="instructionBTN"
+            className="ots_btnClose"
             type="button"
             onClick={closeForm}
             disabled={!formOpen}
@@ -117,9 +117,9 @@ const InstructionPage = () => {
                 id="fileInput"
                 onChange={(e) => handleFileUpload(e.target.files)}
               />
-              <span>
+              {/* <span>
                 {file ? `Selected File: ${file.name}` : "No file selected"}
-              </span>
+              </span> */}
             </div>
 
             <div className="">
@@ -134,6 +134,7 @@ const InstructionPage = () => {
       ) : (
        <div>
          <button className=" instructionBTN" type="button" onClick={openForm}>
+         <i class="fa-solid fa-plus"></i>
       Add Instruction
         </button>
        </div>

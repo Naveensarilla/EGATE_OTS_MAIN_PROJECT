@@ -71,10 +71,10 @@ const InstructionsDisplay = () => {
 
   return (
     <div className="Instruction_containerTable">
-      <h2 className="Coures_-otsTitels" style={{ padding: "5px" }}>
-        {" "}
+      <h3 className="list_-otsTitels" >
+       
         Uploaded Instruction documents
-      </h2>
+      </h3>
       <table className="otc_-table">
         <thead className="otsGEt_-contantHead otc_-table_-header">
           <tr>
@@ -109,7 +109,7 @@ const InstructionsDisplay = () => {
                     data-tooltip-variant="info"
                     data-tooltip-delay-show={1000}
                   >
-                    <i class="fa-solid fa-pencil"></i>
+                   Open
                   </Link>
                   <Tooltip anchorSelect=".my-anchor-element1" place="top">
                     Open Instruction Points

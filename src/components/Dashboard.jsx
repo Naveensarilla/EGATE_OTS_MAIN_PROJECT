@@ -45,7 +45,7 @@ const Dashboard = () => {
        
       <div style={{display:'flex',gap:'1rem'}}>
       <div className="Dashboard_contant">
-        <i className="fa-solid fa-user-pen"></i>
+        <i  className="fa-solid fa-user-pen"></i>
         {/* <img width={150} src={TotalExam} alt="" /> */}
         <h2>Total Exams </h2>
         <h2 className="examCount"> {examCount}</h2>

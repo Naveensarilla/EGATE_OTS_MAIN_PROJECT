@@ -18,47 +18,61 @@ export const UploadedDoc = () => {
     fetchData();
   }, []);
 
+
+
+const [documentData,setDocumentData] = useState([]);
+  const handleDelete = async (document_Id) => {
+    // Display a confirmation dialog before deleting
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this document ?"
+    );
+ 
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:3081/DocumentDelete/${document_Id}`,
+          {
+            method: "DELETE",
+          }
+        );
+ 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+ 
+        const result = await response.json();
+        console.log(result.message);
+        const updatedDocumentData = documentData.filter(
+          (item) => item.document_Id !== document_Id
+        );
+        console.log("Before:", documentData);
+        console.log("After:", updatedDocumentData);
+        setDocumentData(updatedDocumentData);
+      } catch (error) {
+        console.error("Error deleting document:", error);
+      }
+    } else {
+      // The user canceled the deletion
+      console.log("Deletion canceled.");
+    }
+  };
   return (
     <div className="documentInfo_container">
       <div className="otsTitels" style={{ padding: "0" }}>
     
       </div>
       <div className="documentInfo_contant">
-        {/* {data.map((item) => (
-          <ul
-            key={item.document_Id}
-            style={{ display: "flex" }}
-            className={item.document_Id % 2 === 0 ? "evenRow" : "oddRow"}
-          >
-            <li className="documentInfo">
-              <div style={{ display: "flex", gap: "1rem", padding: "10px" }}>
-                <p style={{ width: "110px" }}> Doc ID: {item.document_Id}</p>
-                <p style={{ width: "500px" }}> Name: {item.documen_name}</p>
-                <p style={{ width: "170px" }}>
-                  Test Creation Table ID: {item.testCreationTableId}
-                </p>
-                <p style={{ width: "140px" }}>subject Id : {item.subjectId}</p>
-              </div>
-            </li>
-
-            <div className="Open_Instruction_Points">
-              {" "}
-              <Link
-                to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}`}
-              >
-                Open Document
-              </Link>
-            </div>
-          </ul>
-        ))} */}
+      
 
         <div>
+        <h3 className="list_-otsTitels">uploaded documents list</h3>
+
           <table className="otc_-table">
             <thead className="otsGEt_-contantHead otc_-table_-header">
               <tr>
                 <td>Id</td>
                 <td>document name</td>
-                <td>Open document</td>
+                <td style={{textAlign:'center'}}>Open document /  delete</td>
               </tr>
             </thead>
             <tbody className="otc_-table_-tBody">
@@ -72,11 +86,13 @@ export const UploadedDoc = () => {
                   <td>{item.documen_name}</td>
                   <td  >
                     <div className="EditDelete_-btns">
-                    <Link className="Ots_-edit "
+                    <Link className="Ots_-edit " 
                       to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}`}
                     >
                       Open Document
                     </Link>
+
+                    <button  className="Ots_-delete"   onClick={() => handleDelete(item.document_Id)}><i className="fa-regular fa-trash-can"></i></button>
                     </div>
                   </td>
                 </tr>

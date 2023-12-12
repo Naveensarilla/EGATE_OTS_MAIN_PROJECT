@@ -74,7 +74,7 @@
   font-size: 34px;
   font-weight: bold;
   /* height: 30px; */
-  width: 180px;
+  width: 217px;
 }
 
 /* -------------------------------------- app.js ---------------------- */
@@ -112,9 +112,17 @@
   width: 220px;
 
   &:hover {
-    background-color: #000000;
+    background-color: #00aff0;
     color: #ebe8e8;
-  }
+}
+}
+.left-nav-bar ul li a i{
+  color: #00aff0;
+
+}
+.left-nav-bar ul li a:hover i{
+  color: #37556c;
+
 }
 /* .left-nav-bar ul li:hover .left-nav-bar ul a {
   color: #ffffff;

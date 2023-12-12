@@ -33,7 +33,7 @@ const Leftnav = () => {
               <Link to="/" className="LeftnavLinks">
                 <div className="">
                   {/* <img width={40} src={dashboard} alt="" /> */}
-                  <i class="fa-solid fa-database"></i>
+                  <i class="fa-solid fa-database logo_-clr"></i>
                 </div>
                 <p> Dashboard</p>
               </Link>
@@ -41,7 +41,7 @@ const Leftnav = () => {
             <li>
               <Link to="/exams" className="LeftnavLinks">
                 <div className="">
-                  <i class="fa-solid fa-user-pen"></i>
+                  <i class="fa-solid fa-user-pen logo_-clr"></i>
                 </div>
                 <p>Exam Creation</p>
               </Link>
@@ -50,7 +50,7 @@ const Leftnav = () => {
               <Link to="/Coursecreation" className="LeftnavLinks">
                 <div className="">
                   {/* <img width={40} src={dashboard} alt="" /> */}
-                  <i class="fa-solid fa-pen-nib"></i>
+                  <i class="fa-solid fa-pen-nib logo_-clr"></i>
                 </div>
                 <p> Course Creation</p>
               </Link>
@@ -59,7 +59,7 @@ const Leftnav = () => {
               <Link to="/InstructionPage" className="LeftnavLinks">
                 <div className="">
                   {/* <img width={40} src={dashboard} alt="" /> */}
-                  <i class="fa-solid fa-person-chalkboard"></i>
+                  <i class="fa-solid fa-person-chalkboard logo_-clr"></i>
                 </div>
                 <p> Instruction</p>
               </Link>
@@ -68,7 +68,7 @@ const Leftnav = () => {
               <Link to="/Testcreation" className="LeftnavLinks">
                 <div className="">
                   {/* <img width={40} src={dashboard} alt="" /> */}
-                  <i class="fa-solid fa-file-lines"></i>
+                  <i class="fa-solid fa-file-lines logo_-clr"></i>
                 </div>
                 <p> Test Creation</p>
               </Link>
@@ -77,7 +77,7 @@ const Leftnav = () => {
               <Link to="/DocumentUpload" className="LeftnavLinks">
                 <div className="">
                   {/* <img width={40} src={dashboard} alt="" /> */}
-                  <i class="fa-solid fa-folder-open"></i>
+                  <i class="fa-solid fa-folder-open logo_-clr"></i>
                 </div>
                 <p> Document Upload</p>
               </Link>

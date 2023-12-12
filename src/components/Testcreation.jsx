@@ -267,6 +267,10 @@ const Testcreation = () => {
     }
   };
 
+  const handleShowTotalSectionsChange = () => {
+    setShowTotalSections(!showTotalSections);
+  };
+  const [showTotalSections, setShowTotalSections] = useState(false);
   return (
     <div className="otsMainPages testCreation_-container">
       <div className="TestCreation_-container">
@@ -281,6 +285,7 @@ const Testcreation = () => {
               type="button"
               onClick={handleOpenForm}
             >
+              <i class="fa-solid fa-plus"></i>
               Add Test
             </button>
           </div>
@@ -289,7 +294,11 @@ const Testcreation = () => {
           <form onSubmit={handleSubmit}>
             <div className="testCreation_-contant ">
               <div>
-                <button className="ots_btnClose" type="button" onClick={handleCloseForm}>
+                <button
+                  className="ots_btnClose"
+                  type="button"
+                  onClick={handleCloseForm}
+                >
                   Close Form
                 </button>
               </div>
@@ -447,7 +456,7 @@ const Testcreation = () => {
                     min="1"
                   />
                 </div>
-                <div className="testCreation_-list">
+                {/* <div className="testCreation_-list">
                   <label>SECTION</label>
                   <label>Question Limit:</label>
                   <input
@@ -456,10 +465,21 @@ const Testcreation = () => {
                     checked={QuestionLimitChecked}
                     onChange={handleQuestionLimitChange}
                   />
+                </div> */}
+
+                <div className="testCreation_-list">
+                  <label>SECTION</label>
+                  <label>Any sections in the test click here</label>
+                  <input
+                    className="inputLable"
+                    type="checkbox"
+                    checked={showTotalSections}
+                    onChange={handleShowTotalSectionsChange}
+                  />
                 </div>
               </div>
 
-              <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
+              {/* <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
                 <table>
                   <thead>
                     <tr>
@@ -535,8 +555,127 @@ const Testcreation = () => {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </div> */}
+
               <div>
+                {showTotalSections && (
+                  <div>
+                    <label>
+                      <input
+                        className="inputLable"
+                        type="checkbox"
+                        checked={QuestionLimitChecked}
+                        onChange={handleQuestionLimitChange}
+                      />
+                      Question Limit:
+                    </label>
+
+                    <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
+                      <table style={{textAlign:'justify'}}>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Subjects:</th>
+                            <th>Section</th>
+                            <th>No of Question</th>
+                            {QuestionLimitChecked && <th>Question Limit</th>}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from(
+                            { length: numberOfSections },
+                            (_, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>
+                                  <div>
+                                    <select
+                                      value={
+                                        sectionsData[index]?.selectedSubjects ||
+                                        ""
+                                      }
+                                      onChange={(e) =>
+                                        handleSectionChange(
+                                          e,
+                                          index,
+                                          "selectedSubjects"
+                                        )
+                                      }
+                                    >
+                                      <option value="" disabled>
+                                        Select a Subject
+                                      </option>
+                                      {subjects.map((Subject) => (
+                                        <option
+                                          key={Subject.subjectId}
+                                          value={Subject.subjectId}
+                                        >
+                                          {Subject.subjectName}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </td>
+                                <td>
+                                  <input
+                                    type="text"
+                                    value={
+                                      sectionsData[index]?.sectionName || ""
+                                    }
+                                    onChange={(e) =>
+                                      handleSectionChange(
+                                        e,
+                                        index,
+                                        "sectionName"
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    type="number"
+                                    value={
+                                      sectionsData[index]?.noOfQuestions || ""
+                                    }
+                                    onChange={(e) =>
+                                      handleSectionChange(
+                                        e,
+                                        index,
+                                        "noOfQuestions"
+                                      )
+                                    }
+                                  />
+                                </td>
+                                {QuestionLimitChecked && (
+                                  <td>
+                                    <input
+                                      type="number"
+                                      value={
+                                        sectionsData[index]?.QuestionLimit || ""
+                                      }
+                                      onChange={(e) =>
+                                        handleSectionChange(
+                                          e,
+                                          index,
+                                          "QuestionLimit"
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                )}
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    <button  className="instructionBTN" type="button" onClick={addSection}>
+                      +
+                    </button>
+                  </div>
+                )}
+              </div>
+              {/* <div>
                 <button
                   className="instructionBTN"
                   type="button"
@@ -544,7 +683,7 @@ const Testcreation = () => {
                 >
                   +
                 </button>
-              </div>
+              </div> */}
 
               <div>
                 <button className="instructionBTN" type="submit">
@@ -556,9 +695,9 @@ const Testcreation = () => {
         )}
       </div>
 
-      <h3 className="Coures_-otsTitels">Created test Details</h3>
+      <h3 className="list_-otsTitels">Created test Details</h3>
       <div className="testCreation_-GettingDAta_-container">
-        <table  className="otc_-table">
+        <table className="otc_-table" style={{ textAlign: "center" }}>
           <thead className="otsGEt_-contantHead otc_-table_-header">
             <tr>
               <th>Serial no</th>
@@ -590,14 +729,15 @@ const Testcreation = () => {
                 <td>{test.status}</td>
                 <td>
                   <div className="EditDelete_-btns">
-                    <Link className="Ots_-edit " to={`/testupdate/${test.testCreationTableId}`}>
+                    <Link
+                      className="Ots_-edit "
+                      to={`/testupdate/${test.testCreationTableId}`}
+                    >
                       {" "}
-                     
-                        <i className="fa-solid fa-pencil"></i>
-               
+                      <i className="fa-solid fa-pencil"></i>
                     </Link>
                     <button
-                     className="Ots_-delete"
+                      className="Ots_-delete"
                       onClick={() => handleDelete(test.testCreationTableId)}
                     >
                       <i className="fa-regular fa-trash-can"></i>

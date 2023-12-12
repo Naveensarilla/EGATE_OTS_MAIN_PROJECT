@@ -119,6 +119,7 @@ label {
     font-size: 15px;
     text-transform: uppercase;
     padding: 5px;
+    /* text-align: center; */
 }
 
 .inputLable{
@@ -168,3 +169,16 @@ label {
     padding: 10px;
     margin-bottom: 5px;
 }
+
+.list_-otsTitels {
+    font-size: 17px;
+    color: #37556c;
+    /* background: #37556c; */
+    padding: 5px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+/* 
+.LeftnavLinks .logo_-clr{
+    color: #00aff0;
+} */

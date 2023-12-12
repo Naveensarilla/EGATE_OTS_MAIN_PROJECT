@@ -383,7 +383,7 @@ const Coursecreation = () => {
   return (
     <div className="otsMainPages">
       <div className="">
-        <h3 className="Coures_-otsTitels">Courses</h3>
+        <h3 className="Coures_-otsTitels">Courses page</h3>
 
         {isFormOpen ? (
           <>
@@ -393,8 +393,8 @@ const Coursecreation = () => {
                 style={{ display: "flex", gap: "1rem" }}
               >
                 <button className="ots_btnClose " type="button" onClick={closeForm}>
-                  close
-                  <i className="far fa-circle-xmark"></i>
+                  Close
+                 
                 </button>
               </div>
 
@@ -601,13 +601,16 @@ const Coursecreation = () => {
           </>
         ) : (
           <div className="create_exam_header">
+           
             <button className="otc_-addExam" type="button" onClick={openForm}>
-              Add course
+            <i class="fa-solid fa-plus"></i> 
+               Add course
             </button>
           </div>
         )}
       </div>
-      <div className="">
+      <div className=""  style={{marginTop:'4rem'}}>
+      <h3 className="list_-otsTitels">created COURSES list</h3>
         <table className="couresCreation_-table">
           <thead className="otsGEt_-contantHead couresotc_-table">
             <tr>
