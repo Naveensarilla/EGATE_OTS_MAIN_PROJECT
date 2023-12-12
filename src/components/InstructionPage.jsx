@@ -12,8 +12,28 @@ const InstructionPage = () => {
   const [selectedExam, setSelectedExam] = useState("");
   const [file, setFile] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [instructions, setInstructions] = useState([]);
-  const [instructionPoints, setInstructionPoints] = useState([]);
+  // const [instructions, setInstructions] = useState([]);
+  // const [instructionPoints, setInstructionPoints] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const validateForm = () => {
+    const errors = {};
+  
+    if (!selectedExam) {
+      errors.examId = 'required';
+    }
+    if (!instructionHeading) {
+      errors.instructionHeading = 'required';
+    }
+    if (!file) {
+      errors.file = 'required';
+    }
+  
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+
 
   useEffect(() => {
     const fetchExams = async () => {
@@ -34,13 +54,15 @@ const InstructionPage = () => {
   };
 
   const handleUpload = async () => {
+    if (validateForm()) {
+      setSubmitting(true);
     try {
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("examId", selectedExam);
         formData.append("instructionHeading", instructionHeading);
-
+       
         await axios.post("http://localhost:3081/InstructionsUpdate", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -56,6 +78,9 @@ const InstructionPage = () => {
       console.error("Error uploading file:", error.response);
       alert("Failed to upload file. Please try again.");
     }
+    setFormOpen(false);
+setSubmitting(false);
+  }
   };
 
   const openForm = () => {
@@ -99,6 +124,7 @@ const InstructionPage = () => {
                   </option>
                 ))}
               </select>
+              {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
             </div>
 
             <div className="inst">
@@ -107,7 +133,7 @@ const InstructionPage = () => {
                 type="text"
                 value={instructionHeading}
                 onChange={(e) => setInstructionHeading(e.target.value)}
-              />
+              />{formErrors.instructionHeading && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.instructionHeading}</span>}
             </div>
 
             <div className="inst">
@@ -116,7 +142,7 @@ const InstructionPage = () => {
                 type="file"
                 id="fileInput"
                 onChange={(e) => handleFileUpload(e.target.files)}
-              />
+              />{formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>}
               {/* <span>
                 {file ? `Selected File: ${file.name}` : "No file selected"}
               </span> */}

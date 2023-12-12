@@ -15,7 +15,32 @@ function Examcreation() {
   const [formOpen, setFormOpen] = useState(false);
   const [examsWithSubjects, setExamsWithSubjects] = useState([]);
   const { subjectId } = useParams();
+  const [formErrors, setFormErrors] = useState({});
+  const validateForm = () => {
+    const errors = {};
 
+    if (!examName.trim()) {
+      errors.examName = ' required';
+    }
+
+    if (!startDate) {
+      errors.startDate = ' required';
+    }
+
+    if (!endDate) {
+      errors.endDate = ' required';
+    } else if (new Date(endDate) < new Date(startDate)) {
+      errors.endDate = 'End Date must be after Start Date';
+    }
+
+    if (selectedSubjects.length === 0) {
+      errors.subjects = 'At least one subject must be selected';
+    }
+
+    setFormErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
   const resetForm = () => {
     setExamName("");
     setStartDate("");
@@ -54,17 +79,18 @@ function Examcreation() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitting(true);
-    if (!examName || !startDate || !endDate || selectedSubjects.length === 0) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+    // if (!examName || !startDate || !endDate || selectedSubjects.length === 0) {
+    //   alert("Please fill in all required fields.");
+    //   return;
+    // }
     const examData = {
       examName,
       startDate,
       endDate,
       selectedSubjects,
     };
-
+    if (validateForm()) {
+      setSubmitting(true);
     axios
       .post("http://localhost:3081/exams", examData)
       .then((response) => {
@@ -79,12 +105,15 @@ function Examcreation() {
         console.error("Error creating exam:", error);
         setSubmitting(false);
       });
+      setExamName('');
+      setStartDate('');
+      setEndDate('');
+      setSelectedSubjects([]);
+      setFormErrors({});
+      setFormOpen(false);
+      setSubmitting(false);
+    }
   };
-
-  // const closeSuccessPopup = () => {
-  //     setShowSuccessPopup(false);
-  // };
-
   useEffect(() => {
     axios
       .get("http://localhost:3081/exams-with-subjects")
@@ -143,30 +172,35 @@ function Examcreation() {
                   <div className="Exams_contant examSubjects_-contant">
                     <div className="formdiv_contaniner">
                       <label>Exam Name:</label>
+                     
                       <input
                         type="text"
                         value={examName}
                         onChange={(e) => setExamName(e.target.value)}
-                      />
+                      /> {formErrors.examName && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examName}</span>}
                     </div>
                     <div className="formdiv_contaniner">
                       <label>Start Date:</label>
+                      
                       <input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
                       />
+                      {formErrors.startDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.startDate}</span>}
                     </div>
 
                     <div className="formdiv_contaniner">
                       <label>End Date:</label>
+                      
                       <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
                       />
+                      {formErrors.endDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.endDate}</span>}
                     </div>
                   </div>
 
@@ -174,6 +208,7 @@ function Examcreation() {
                     <div className="formdiv_contaniner_ch ">
                       <ul className="examSubject_conten">
                         <label>Subjects:</label>
+                      
                         {subjects.map((subject) => (
                           <li key={subject.subjectId}>
                             <label> {subject.subjectName} </label>
@@ -189,6 +224,7 @@ function Examcreation() {
                             />
                           </li>
                         ))}
+                          {formErrors.subjects && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.subjects}</span>}
                       </ul>
                     </div>
                   </div>
@@ -265,34 +301,7 @@ function Examcreation() {
             </table>
           </div>
 
-          {/* <div>
-            {examsWithSubjects.map((exam, index) => (
-              <div key={exam.examId}>
-                <ul className={exam.examId % 2 === 0 ? "color1" : 'color2'} style={{ display: "grid", gridTemplateColumns: 'repeat( auto-fill, minmax(250px, 1fr) )' }}>
-                  <li>{index + 1}</li>
-                  <li> exam name: {exam.examName}</li>
-                  <li> startDate: {exam.startDate}</li>
-                  <li> endDate: {exam.endDate}</li>
-                  <li> subjects: {exam.subjects}</li>
-                  <li>
-                    <button>
-                      <Link to={`/update/${exam.examId}`}>
-                        <i class="fa-solid fa-pencil"></i>
-                      </Link>
-                    </button>
-                    <button onClick={() => handleDelete(exam.examId)}>
-                      <i class="fa-regular fa-trash-can"></i>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            ))}
-          </div> */}
-
-          {/* <GetSubjectData2 /> */}
-          {/* <Imgsjhg /> */}
-
-          {/* <SubjectData  subjectId={4}/> */}
+         
           {/* ....................................TABLE END...............................  */}
         </div>
       </div>

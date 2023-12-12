@@ -11,6 +11,26 @@ const InstructionUpdate = () => {
   const [exams, setExams] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const validateForm = () => {
+    const errors = {};
+  
+    if (!selectedExam) {
+      errors.examId = 'required';
+    }
+    if (!instructionHeading) {
+      errors.instructionHeading = 'required';
+    }
+    if (!file) {
+      errors.file = 'required';
+    }
+  
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   useEffect(() => {
     const fetchExams = async () => {
       try {
@@ -59,6 +79,8 @@ const InstructionUpdate = () => {
   // };
 
   const handleUpdate = async () => {
+  if (validateForm()) {
+    setSubmitting(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -80,7 +102,12 @@ const InstructionUpdate = () => {
       console.error("Error updating instruction:", error.response);
       alert("Failed to update instruction. Please try again.");
     }
-  };
+    // Assuming you intended to close the form after submitting
+    setFormOpen(false);
+    setSubmitting(false);
+  }
+};
+
 
   return (
     <div >
@@ -98,14 +125,14 @@ const InstructionUpdate = () => {
               {exam.examName}
             </option>
           ))}
-        </select>
+        </select> {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
         <label>Instructions Heading:</label>
         <input
           type="text"
           value={instructionHeading}
           onChange={(e) => setInstructionHeading(e.target.value)}
         />
-
+ {formErrors.instructionHeading && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.instructionHeading}</span>}
         <div>
           <label>Instructions:</label>
           <textarea
@@ -118,7 +145,7 @@ const InstructionUpdate = () => {
         <div>
           <label>Instructions:</label>
           <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        </div>
+        </div> {formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>}
         <button type="button" onClick={handleUpdate}>
           Update
         </button>

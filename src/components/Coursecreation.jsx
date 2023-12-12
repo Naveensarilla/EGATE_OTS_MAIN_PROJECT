@@ -4,6 +4,11 @@ import { Link } from "react-router-dom";
 import "./css/Coursecreation.css";
 
 const Coursecreation = () => {
+  const [Discount, setDiscount] = useState('');
+  const [cost, setCost] = useState('');
+  // const [courseName, setCourseName] = useState([]);
+  const [courseName, setCourseName] = useState('');
+
   const [typeOfTest, setTypeOfTest] = useState([]);
   const [selectedtypeOfTest, setSelectedtypeOfTest] = useState([]);
   const [exams, setExams] = useState([]);
@@ -16,7 +21,54 @@ const Coursecreation = () => {
   const [subjectsData, setSubjectsData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [courseData, setCourseData] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const validateForm = () => {
+    const errors = {};
 
+    if (!formData.courseName.trim()) {
+      errors.courseName = 'required';
+    }
+    
+    if (!formData.startDate) {
+      errors.startDate = 'required';
+    }
+
+    if (!formData.endDate) {
+      errors.endDate = 'required';
+    } else if (new Date(formData.endDate) < new Date(formData.startDate)) {
+      errors.endDate = 'End Date must be after Start Date';
+    }
+
+    if (!cost) {
+      errors.cost = ' required';
+    }
+    if (!Discount) {
+      errors.Discount = ' required';
+    }
+
+    // if (selectedSubjects.length === 0) {
+    //   errors.subjects = 'At least one subject must be selected';
+    // }
+    if (selectedtypeOfTest.length === 0) {
+      errors.typeOfTest = 'At least one Type of Test must be selected';
+    }
+
+    if (selectedtypeofQuestion.length === 0) {
+      errors.typeofQuestion = 'At least one Type of Question must be selected';
+    }
+    if (!selectedexams) {
+      errors.examId = 'Select Exam is required';
+    }
+  
+    if (selectedSubjects.length === 0) {
+      errors.subjects = 'At least one subject must be selected';
+    }
+    
+    setFormErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
   const resetFormFields = () => {
     setFormData({
       courseName: "",
@@ -33,6 +85,7 @@ const Coursecreation = () => {
     setSelectedtypeofQuestion([]);
     setSelectedtypeOfTest([]);
     setIsFormOpen(false);
+    setFormErrors({});
   };
 
   const [formData, setFormData] = useState({
@@ -262,14 +315,16 @@ const Coursecreation = () => {
       "totalPrice",
     ];
 
-    const isEmptyField = requiredFields.some((field) => !formData[field]);
+    // const isEmptyField = requiredFields.some((field) => !formData[field]);
 
-    if (isEmptyField) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+    // if (isEmptyField) {
+    //   alert("Please fill in all required fields.");
+    //   return;
+    // }
     // window.location.reload();
-    resetFormFields();
+
+    // resetFormFields();
+
     const data = {
       ...formData,
       typeOfTest: selectedtypeOfTest,
@@ -277,7 +332,8 @@ const Coursecreation = () => {
       subjects: selectedSubjects,
       typeofQuestion: selectedtypeofQuestion,
     };
-
+ if (validateForm()) {
+      setSubmitting(true);
     try {
       const response = await fetch("http://localhost:3081/course-creation", {
         method: "POST",
@@ -321,6 +377,17 @@ const Coursecreation = () => {
       console.error("Error submitting course data:", error);
       // Handle error or show an error message to the user
     }
+setCourseName('');
+setStartDate('');
+setEndDate('');
+setCost('');
+setDiscount('');
+setFormErrors({});
+setIsFormOpen(false);
+setSubmitting(false);
+
+
+  }
   };
 
   // function formatDate(dateString) {
@@ -409,6 +476,7 @@ const Coursecreation = () => {
                       value={formData.courseName}
                       onChange={handleChange}
                     />
+                    {formErrors.courseName && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.courseName}</span>}
                   </div>
 
                   <div className="testCreation_-list">
@@ -437,8 +505,9 @@ const Coursecreation = () => {
                               handletypeoftest(e, typeofTest.typeOfTestId)
                             }
                           />
+                           
                         </div>
-                      ))}
+                      ))}{formErrors.typeOfTest && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.typeOfTest}</span>}
                     </div>
                   </div>
                 </div>
@@ -450,14 +519,14 @@ const Coursecreation = () => {
                       id="exams"
                       value={selectedexams}
                       onChange={handleexams}
-                    >
+                    > 
                       <option value="">Select exams</option>
                       {exams.map((exams) => (
                         <option key={exams.examId} value={exams.examId}>
                           {exams.examName}
                         </option>
                       ))}
-                    </select>
+                    </select> {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
                   </div>
 
                   <div className="testCreation_-list">
@@ -484,9 +553,9 @@ const Coursecreation = () => {
                             onChange={(e) =>
                               handleSubjectChange(e, subject.subjectId)
                             }
-                          />
+                          /> 
                         </div>
-                      ))}
+                      ))}{formErrors.subjectsData && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.subjectsData}</span>}
                     </div>
                   </div>
                 </div>
@@ -517,7 +586,7 @@ const Coursecreation = () => {
                             }
                           />
                         </div>
-                      ))}
+                      ))} {formErrors.typeofQuestion && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.typeofQuestion}</span>}
                     </div>
                   </div>
                 </div>
@@ -532,7 +601,7 @@ const Coursecreation = () => {
                       value={startDate}
                       onChange={handleStartDateChange}
                       min={new Date().toISOString().split("T")[0]}
-                    />
+                    /> {formErrors.startDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.startDate}</span>}
                   </div>
 
                   <div className="testCreation_-list">
@@ -545,6 +614,7 @@ const Coursecreation = () => {
                       onChange={handleEndDateChange}
                       min={new Date().toISOString().split("T")[0]}
                     />
+                    {formErrors.endDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.endDate}</span>}
                   </div>
                 </div>
 
@@ -557,7 +627,7 @@ const Coursecreation = () => {
                       name="cost"
                       value={formData.cost}
                       onChange={handleChange}
-                    />
+                    />  {formErrors.cost && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.cost}</span>}
                   </div>
                   <div className="testCreation_-list">
                     <label htmlFor="discount">Discount (%):</label>
@@ -567,7 +637,7 @@ const Coursecreation = () => {
                       name="discount"
                       value={formData.discount}
                       onChange={handleChange}
-                    />
+                    /> {formErrors.discount && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.discount}</span>}
                   </div>
                 </div>
 
