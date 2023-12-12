@@ -12,14 +12,12 @@ const port = 3081;
 app.use(express.json());
 app.use(cors());
 
-
 const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'admin_project',
 });
-
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
