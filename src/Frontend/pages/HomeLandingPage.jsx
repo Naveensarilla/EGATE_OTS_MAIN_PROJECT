@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import iitjee from "../../Images/iit-jee-course.jpg";
-import neet from "../../Images/neet.jpg";
+// import iitjee from "../../Images/iit-jee-course.jpg";
+// import neet from "../../Images/neet.jpg";
 import axios from "axios";
 
 import { Link, useParams } from "react-router-dom";
@@ -15,15 +15,11 @@ import { Carousel } from "react-responsive-carousel";
 // ------------------------------------------------------------------------- data ---------------------------------------------
 
 import {
-  FooterData,
-  nav,
-  quiz__Home_continer_left,
-  quiz__Home_continer_right,
-} from "./Data/HomeLandingPage";
+  FooterData, nav,quiz__Home_continer_left,quiz__Home_continer_right, } from "../pages/HomeLandingPage";
 
 // ------------------------------------------------------------------------- css ---------------------------------------------
 
-import "./HomeLandingPage.css";
+// import "./HomeLandingPage.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const HomeLandingPage = () => {
@@ -641,7 +637,6 @@ export const Quiz_Courses = () => {
           <div className="first_card">
             <h4>Mock Test-1</h4>
             <div class="card">
-              <img src={iitjee} alt="card" width={350} />
               <div class="container">
                 <h4>
                   <b>IIT-JEE(Mains&Advanced)</b>
@@ -664,7 +659,6 @@ export const Quiz_Courses = () => {
           <div className="first_card">
             <h4>Mock Test-2</h4>
             <div class="card">
-              <img src={neet} alt="card" width={350} height={230} />
               <div class="container">
                 <h4>
                   <b>NEET</b>
@@ -728,7 +722,6 @@ export const Quiz_Courses = () => {
                 </li>
               ))}
               <div className="card">
-                <img src={iitjee} alt="card" width={350} />
                 <div className="container">
                   <ul>
                     {examCardDetails.map((cardDetails) => (
@@ -740,7 +733,8 @@ export const Quiz_Courses = () => {
                         <p>
                           Validity: ({cardDetails.courseStartDate}) to (
                           {cardDetails.courseEndDate})
-                        </p><br />
+                        </p>
+                        <br />
                         <div className="start_now">
                           <Link to="/QuizHome">Start Now</Link>
                         </div>

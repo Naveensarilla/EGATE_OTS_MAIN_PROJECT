@@ -82,6 +82,16 @@ const Leftnav = () => {
                 <p> Document Upload</p>
               </Link>
             </li>
+
+            <li>
+              <Link to="/Quiz" className="LeftnavLinks">
+                <div className="">
+                  {/* <img width={40} src={dashboard} alt="" /> */}
+                  <i class="fa-solid fa-folder-open logo_-clr"></i>
+                </div>
+                <p>Quiz</p>
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

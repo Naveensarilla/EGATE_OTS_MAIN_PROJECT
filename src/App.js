@@ -16,6 +16,7 @@ import GettinggInstructions from "./components/GettinggInstructions .jsx";
 import './components/css/otcCss.css'
 
 import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
+import { Quiz_Courses } from "./Frontend/pages/HomeLandingPage.jsx";
 function App() {
   return (
     <Router>
@@ -53,6 +54,13 @@ function App() {
           <Route
             path="/getSubjectData/:subjectId/:testCreationTableId"
             element={<Document_ImageInfo />}
+          />
+
+
+          {/* quiz */}
+          <Route
+            path="/Quiz"
+            element={<Quiz_Courses />}
           />
         </Routes>
       </div>
