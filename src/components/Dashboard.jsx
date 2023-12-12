@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import "../components/css/Dashboard.css";
+// Custom hook for fetching data\
+import TotalExam from "./Imgs/TotalExam.png";
 
-// Custom hook for fetching data
 const useFetchCount = (url) => {
   const [count, setCount] = useState(0);
 
@@ -35,11 +37,36 @@ const Dashboard = () => {
   const questionCount = useFetchCount("http://localhost:3081/question/count");
 
   return (
-    <div>
-      <h2>Total Exams : {examCount}</h2>
-      <h2>Total Courses: {courseCount}</h2>
-      <h2>Total Tests: {testCount}</h2>
-      <h2>Total Questions: {questionCount}</h2>
+    
+    <div className="Dashboard_container">
+      {/* <h1>Dashboard</h1> */}
+  <h1 className="textColor">Dashboard</h1>
+      <div style={{display:'flex',flexDirection:'column'}}>
+       
+      <div style={{display:'flex',gap:'1rem'}}>
+      <div className="Dashboard_contant">
+        <i  className="fa-solid fa-user-pen"></i>
+        {/* <img width={150} src={TotalExam} alt="" /> */}
+        <h2>Total Exams </h2>
+        <h2 className="examCount"> {examCount}</h2>
+      </div>
+      <div className="Dashboard_contant">
+        <i className="fa-solid fa-pen-nib"></i>
+        <h2>Total Courses</h2>
+        <h2> {courseCount}</h2>
+      </div>
+      <div className="Dashboard_contant">
+        <i className="fa-solid fa-person-chalkboard"></i>
+        <h2>Total Tests</h2>
+        <h2 className="examCount"> {testCount}</h2>
+      </div>
+      <div className="Dashboard_contant">
+        <i className="fa-solid fa-file-lines"></i>
+        <h2>Total Questions </h2>
+        <h2 className="examCount">{questionCount}</h2>
+      </div>
+      </div>
+      </div>
     </div>
   );
 };

@@ -67,20 +67,24 @@ const InstructionPage = () => {
   };
 
   return (
-    <div className="instruction_container">
-      <h2 style={{textTransform:'uppercase',color:'#1A374D'}}>Instruction Page </h2>
+    <div className="instruction_container otsMainPages">
+      <div className="instruction_-div
+      ">
+      <h2 className="Coures_-otsTitels">Instruction Page </h2>
       {formOpen ? (
         <form>
-          <button
-            className="instructionBTN"
+     <div>
+     <button
+            className="ots_btnClose"
             type="button"
             onClick={closeForm}
             disabled={!formOpen}
           >
             Close 
           </button>
+     </div>
 
-          <div className="instruction_input_contant">
+          <div className="instruction_input_contant examSubjects_-contant">
             <div className="inst">
               <label>Select Exam:</label>
               <select
@@ -113,9 +117,9 @@ const InstructionPage = () => {
                 id="fileInput"
                 onChange={(e) => handleFileUpload(e.target.files)}
               />
-              <span>
+              {/* <span>
                 {file ? `Selected File: ${file.name}` : "No file selected"}
-              </span>
+              </span> */}
             </div>
 
             <div className="">
@@ -128,13 +132,19 @@ const InstructionPage = () => {
         </form>
         
       ) : (
-        <button className="instruction_openMenu instructionBTN" type="button" onClick={openForm}>
+       <div>
+         <button className=" instructionBTN" type="button" onClick={openForm}>
+         <i class="fa-solid fa-plus"></i>
       Add Instruction
         </button>
+       </div>
+
       )}
       <div className="instruction_content">
+        
         <InstructionsDisplay />
         {/* <ExcelTable /> */}
+      </div>
       </div>
     </div>
   );

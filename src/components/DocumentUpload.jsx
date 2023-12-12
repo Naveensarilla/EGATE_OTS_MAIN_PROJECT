@@ -84,9 +84,9 @@ const {testCreationTableId}= useParams()
 
   return (
     <div className="DocumentImage_Uploader">
-      <h2 >Document Image Uploader</h2>
+      <div className="otsTitels"><h2 >Document Upload Form </h2></div>
       <form>
-        <div className="uploadedDocument_container">
+        <div className="uploadedDocument_container examSubjects_-contant">
           <div className="uploadedDocumentFilds">
             <label htmlFor="testSelect">Select Test:</label>
             <select
@@ -141,10 +141,14 @@ const {testCreationTableId}= useParams()
           <div className="uploadedDocumentFilds">
             <label htmlFor="">Upload file</label>
             <input type="file" accept=".docx" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
+            
           </div>
         </div>
 
+        <div className="uploadedDocumentFilds" style={{float:'right'}}>
+           
+            <button className="ots_-createBtn" onClick={handleUpload}>Upload</button>
+          </div>
         <div>
 
         </div>

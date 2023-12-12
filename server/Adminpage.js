@@ -1698,91 +1698,213 @@ app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
 
 
 // doc upload code -----------------
-app.post("/upload", upload.single("document"), async (req, res) => {
+// app.post("/upload", upload.single("document"), async (req, res) => {
+//   const docxFilePath = `uploads/${req.file.filename}`;
+//   const outputDir = `uploads/${req.file.originalname}_images`;
+
+//   const docName = `${req.file.originalname}`;
+//   try {
+//     await fs.mkdir(outputDir, { recursive: true });
+//     const result = await mammoth.convertToHtml({ path: docxFilePath });
+//     const htmlContent = result.value;
+//     const $ = cheerio.load(htmlContent);
+//     const textResult = await mammoth.extractRawText({ path: docxFilePath });
+//     const textContent = textResult.value;
+//     const textSections = textContent.split("\n\n");
+
+//     // Insert documentName and get documentId
+    // const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+    //   documen_name: docName,
+    //   testCreationTableId: req.body.testCreationTableId,
+    //   subjectId: req.body.subjectId,
+    // });
+    // const document_Id = documentResult.insertId;
+
+//     // Get all images in the order they appear in the HTML
+//     const images = [];
+//     $("img").each(function (i, element) {
+//       const base64Data = $(this)
+//         .attr("src")
+//         .replace(/^data:image\/\w+;base64,/, "");
+//       const imageBuffer = Buffer.from(base64Data, "base64");
+//       images.push(imageBuffer);
+//     });
+
+//     let j = 0;
+//     let Question_id;
+//     for (let i = 0; i < images.length; i++) {
+//       if (j == 0) {
+//         const questionRecord = {
+//           question_img: images[i],
+//           testCreationTableId: req.body.testCreationTableId,
+//           sectionId: req.body.sectionId,
+//           document_Id: document_Id,
+//           subjectId: req.body.subjectId,
+//         };
+//         console.log(j);
+//         Question_id = await insertRecord("questions", questionRecord);
+//         j++;
+//       } else if (j > 0 && j < 5) {
+//         const optionRecord = {
+//           option_img: images[i],
+//           question_id: Question_id,
+//         };
+//         console.log(j);
+//         await insertRecord("options", optionRecord);
+//         j++;
+//       } else if (j == 5) {
+//         const solutionRecord = {
+//           solution_img: images[i],
+//           question_id: Question_id,
+//         };
+//         console.log(j);
+//         await insertRecord("solution", solutionRecord);
+//         j = 0;
+//       }
+//     }
+//     res.send(
+//       "Text content and images extracted and saved to the database with the selected topic ID successfully."
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .send("Error extracting content and saving it to the database.");
+//   }
+// });
+
+// async function insertRecord(table, record) {
+//   try {
+//     const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+//     console.log(`${table} id: ${result.insertId}`);
+//     return result.insertId;
+//   } catch (err) {
+//     console.error(`Error inserting data into ${table}: ${err}`);
+//     throw err;
+//   }
+// }
+
+
+app.post('/upload', upload.single('document'), async (req, res) => {
   const docxFilePath = `uploads/${req.file.filename}`;
   const outputDir = `uploads/${req.file.originalname}_images`;
-
   const docName = `${req.file.originalname}`;
   try {
     await fs.mkdir(outputDir, { recursive: true });
-    const result = await mammoth.convertToHtml({ path: docxFilePath });
-    const htmlContent = result.value;
-    const $ = cheerio.load(htmlContent);
-    const textResult = await mammoth.extractRawText({ path: docxFilePath });
-    const textContent = textResult.value;
-    const textSections = textContent.split("\n\n");
+      const result = await mammoth.convertToHtml({ path: docxFilePath });
+      const htmlContent = result.value;
+      const $ = cheerio.load(htmlContent);
+      const textResult = await mammoth.extractRawText({ path: docxFilePath });
+      const textContent = textResult.value;
+      const textSections = textContent.split('\n\n');
 
-    // Insert documentName and get documentId
-    const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
-      documen_name: docName,
-      testCreationTableId: req.body.testCreationTableId,
-      subjectId: req.body.subjectId,
-    });
-    const document_Id = documentResult.insertId;
+      const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+        documen_name: docName,
+        testCreationTableId: req.body.testCreationTableId,
+        subjectId: req.body.subjectId,
+      });
+      const document_Id = documentResult.insertId;
 
-    // Get all images in the order they appear in the HTML
-    const images = [];
-    $("img").each(function (i, element) {
-      const base64Data = $(this)
-        .attr("src")
-        .replace(/^data:image\/\w+;base64,/, "");
-      const imageBuffer = Buffer.from(base64Data, "base64");
-      images.push(imageBuffer);
-    });
-
-    let j = 0;
-    let Question_id;
-    for (let i = 0; i < images.length; i++) {
-      if (j == 0) {
-        const questionRecord = {
-          question_img: images[i],
-          testCreationTableId: req.body.testCreationTableId,
-          sectionId: req.body.sectionId,
-          document_Id: document_Id,
-          subjectId: req.body.subjectId,
-        };
-        console.log(j);
-        Question_id = await insertRecord("questions", questionRecord);
+      // Get all images in the order they appear in the HTML
+      const images = [];
+      $('img').each(function (i, element) {
+          const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
+          const imageBuffer = Buffer.from(base64Data, 'base64');
+          images.push(imageBuffer);
+      });
+ 
+      let j = 0;
+      let Question_id;
+      let question_id=[];
+      for (let i = 0; i < images.length; i++) {
+          if (j == 0) {
+              const questionRecord = {
+                  "question_img": images[i],
+                  "testCreationTableId": req.body.testCreationTableId,
+                  "subjectId": req.body.subjectId,  
+                  "sectionId": req.body.sectionId
+              };
+              console.log(j);
+              Question_id = await insertRecord('questions', questionRecord);
+              question_id.push(Question_id)
+              j++;
+          } else if (j > 0 && j < 5) {
+              const optionRecord = {
+                  "option_img": images[i],
+                  "question_id": Question_id
+              };
+              console.log(j);
+              await insertRecord('options', optionRecord);
+              j++;
+          } else if (j == 5) {
+              const solutionRecord = {
+                  "solution_img": images[i],
+                  "question_id": Question_id
+              };
+              console.log(j);
+              await insertRecord('solution', solutionRecord);
+              j = 0;
+          }
+      }
+      // let j=0;
+    let que_id;
+    for (let i = 0; i < textSections.length; i++) {
+      if (textSections[i].startsWith('[qtype]')) {
+        que_id=question_id[j];
         j++;
-      } else if (j > 0 && j < 5) {
-        const optionRecord = {
-          option_img: images[i],
-          question_id: Question_id,
+        // Save in the qtype table
+        const qtypeRecord = {
+          qtype_text: textSections[i].replace('[qtype]', ''),
+          question_id: que_id
         };
-        console.log(j);
-        await insertRecord("options", optionRecord);
-        j++;
-      } else if (j == 5) {
-        const solutionRecord = {
-          solution_img: images[i],
-          question_id: Question_id,
+        await insertRecord('qtype', qtypeRecord);
+      } else if (textSections[i].startsWith('[ans]')) {
+        // Save in the answer table
+        const answerRecord = {
+          answer_text: textSections[i].replace('[ans]', ''),
+          question_id: que_id
         };
-        console.log(j);
-        await insertRecord("solution", solutionRecord);
-        j = 0;
+        await insertRecord('answer', answerRecord);
+      } else if (textSections[i].startsWith('[Marks]')) {
+        // Save in the marks table
+        const marksRecord = {
+          marks_text: textSections[i].replace('[Marks]', ''),
+          question_id: que_id
+        };
+        await insertRecord('marks', marksRecord);
       }
     }
-    res.send(
-      "Text content and images extracted and saved to the database with the selected topic ID successfully."
-    );
+      res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .send("Error extracting content and saving it to the database.");
+      console.error(error);
+      res.status(500).send('Error extracting content and saving it to the database.');
   }
 });
-
+ 
 async function insertRecord(table, record) {
   try {
-    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
-    console.log(`${table} id: ${result.insertId}`);
-    return result.insertId;
+      const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+      console.log(`${table} id: ${result.insertId}`);
+      return result.insertId;
   } catch (err) {
-    console.error(`Error inserting data into ${table}: ${err}`);
-    throw err;
+      console.error(`Error inserting data into ${table}: ${err}`);
+      throw err;
   }
 }
+
+
+// delete
+app.delete('/DocumentDelete/:document_Id', async (req, res) => {
+  const document_Id = req.params.document_Id;
+ 
+  try {
+    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id   WHERE ots_document.document_Id = ? ', [document_Id]);
+    res.json({ message: `course with ID ${document_Id} deleted from the database` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 // end -------------------
 
 

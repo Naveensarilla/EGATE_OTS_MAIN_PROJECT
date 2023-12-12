@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./admin.css";
 import { Link } from "react-router-dom";
+import "./css/Coursecreation.css";
+
 const Coursecreation = () => {
   const [typeOfTest, setTypeOfTest] = useState([]);
   const [selectedtypeOfTest, setSelectedtypeOfTest] = useState([]);
@@ -51,20 +53,20 @@ const Coursecreation = () => {
         const response = await fetch(
           `http://localhost:3081/courese-exams/${selectedexams}`
         );
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         console.log("Selected Exam Data:", data); // Log the fetched data
-  
+
         // Update your state or perform additional actions with the fetched data
       } catch (error) {
         console.error("Error fetching selected exam:", error);
       }
     };
-  
+
     fetchSelectedExam();
   }, [selectedexams]);
 
@@ -77,9 +79,13 @@ const Coursecreation = () => {
         const result = await response.json();
         const coursesWithArrays = result.map((course) => ({
           ...course,
-          typeOfTestName:course.type_of_test ? course.type_of_test.split(", "):[],
+          typeOfTestName: course.type_of_test
+            ? course.type_of_test.split(", ")
+            : [],
           subjects: course.subjects ? course.subjects.split(", ") : [],
-          typeofQuestion: course.question_types ? course.question_types.split(", ") : [],
+          typeofQuestion: course.question_types
+            ? course.question_types.split(", ")
+            : [],
         }));
         setCourseData(coursesWithArrays);
       } catch (error) {
@@ -121,15 +127,15 @@ const Coursecreation = () => {
 
   // const handleSubjectChange = (event, subjectId) => {
   //   const { checked } = event.target;
-  
+
   //   const subject = subjectsData.find((subj) => subj.subjectId === subjectId);
-  
+
   //   if (subject) {
   //     setSelectedSubjects((prevSelectedSubjects) => {
   //       const updatedSelectedSubjects = checked
   //         ? [...prevSelectedSubjects, subjectId]
   //         : prevSelectedSubjects.filter((id) => id !== subjectId);
-  
+
   //       console.log('Selected Subjects:', updatedSelectedSubjects);
   //       return updatedSelectedSubjects;
   //     });
@@ -137,7 +143,7 @@ const Coursecreation = () => {
   // };
   const handleSubjectChange = (event, subjectId) => {
     const { checked } = event.target;
-  
+
     setSelectedSubjects((prevSelectedSubjects) => {
       if (checked) {
         // Add the subjectId to the array if it's not already present
@@ -148,7 +154,7 @@ const Coursecreation = () => {
       }
     });
   };
-  
+
   useEffect(() => {
     const fetchTypeOfTest = async () => {
       try {
@@ -165,26 +171,26 @@ const Coursecreation = () => {
 
   const handletypeoftest = (event, typeOfTestId) => {
     const { checked } = event.target;
-  
+
     setSelectedtypeOfTest((prevSelectedTest) => {
       const updatedSelectedTest = checked
         ? [...prevSelectedTest, typeOfTestId]
         : prevSelectedTest.filter((id) => id !== typeOfTestId);
-  
-      console.log('Selected Type of Test:', updatedSelectedTest);
+
+      console.log("Selected Type of Test:", updatedSelectedTest);
       return updatedSelectedTest;
     });
   };
 
   const handleQuestionChange = (event, questionTypeId) => {
     const { checked } = event.target;
-  
+
     setSelectedtypeofQuestion((prevSelectedQuestions) => {
       const updatedSelectedQuestions = checked
         ? [...prevSelectedQuestions, questionTypeId]
         : prevSelectedQuestions.filter((id) => id !== questionTypeId);
-  
-      console.log('Selected Type of Questions:', updatedSelectedQuestions);
+
+      console.log("Selected Type of Questions:", updatedSelectedQuestions);
       return updatedSelectedQuestions;
     });
   };
@@ -224,19 +230,19 @@ const Coursecreation = () => {
         !isNaN(cost) && !isNaN(discount) ? (cost * discount) / 100 : "";
       const totalPrice =
         !isNaN(cost) && !isNaN(discountAmount) ? cost - discountAmount : "";
-        setFormData({
-          ...formData,
-          typeOfTest: selectedtypeOfTest,
-          examId: selectedexams,
-          subjects: selectedSubjects,
-          typeofQuestion: selectedtypeofQuestion,
-          courseStartDate: startDate,
-          courseEndDate: endDate,
-          cost: cost,
-          discount: discount,
-          discountAmount: discountAmount,
-          totalPrice: totalPrice,
-        });
+      setFormData({
+        ...formData,
+        typeOfTest: selectedtypeOfTest,
+        examId: selectedexams,
+        subjects: selectedSubjects,
+        typeofQuestion: selectedtypeofQuestion,
+        courseStartDate: startDate,
+        courseEndDate: endDate,
+        cost: cost,
+        discount: discount,
+        discountAmount: discountAmount,
+        totalPrice: totalPrice,
+      });
     } else if (name === "courseStartDate" || name === "courseEndDate") {
       setFormData({ ...formData, [name]: value });
     } else {
@@ -269,9 +275,9 @@ const Coursecreation = () => {
       typeOfTest: selectedtypeOfTest,
       examId: selectedexams,
       subjects: selectedSubjects,
-      typeofQuestion: selectedtypeofQuestion, 
+      typeofQuestion: selectedtypeofQuestion,
     };
-    
+
     try {
       const response = await fetch("http://localhost:3081/course-creation", {
         method: "POST",
@@ -295,7 +301,7 @@ const Coursecreation = () => {
               courseCreationId,
               subjectIds: selectedSubjects,
               typeofQuestion: selectedtypeofQuestion,
-              typeOfTestIds:selectedtypeOfTest,
+              typeOfTestIds: selectedtypeOfTest,
             }),
           }
         );
@@ -375,60 +381,70 @@ const Coursecreation = () => {
     }
   };
   return (
-    <div className="course_container">
-      <div className="course_container_heder">
-        <h2>courses</h2>
+    <div className="otsMainPages">
+      <div className="">
+        <h3 className="Coures_-otsTitels">Courses page</h3>
 
         {isFormOpen ? (
           <>
             <form onSubmit={handleSubmit}>
-              <button id="courses_close_btn" type="button" onClick={closeForm}>
-                <i className="far fa-circle-xmark"></i>
-              </button>
-              <div className="course_frominput_container">
-                <div>
-                  <label htmlFor="courseName">Course Name:</label>
-                  <input
-                    type="text"
-                    id="courseName"
-                    name="courseName"
-                    value={formData.courseName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="course_fromtype_container">
-                  <label>type of test:</label>
-                  <div className="course_checkbox_continer_content">
-                    {typeOfTest.map((typeofTest) => (
-                      <div
-                        className="course_checkbox_continer course_frominput_container_media"
-                        key={typeofTest.typeOfTestId}
-                      >
-                        <input
-                          type="checkbox"
-                          id={`typeofTest-${typeofTest.typeOfTestId }`}
-                          name={`typeofTest-${typeofTest.typeOfTestId }`}
-                          value={typeofTest.typeOfTestId }
-                          checked={selectedtypeOfTest.includes(
-                            typeofTest.typeOfTestId 
-                          )}
-                          onChange={(e) =>
-                            handletypeoftest(e, typeofTest.typeOfTestId)
-                          }
-                        />
-                        <label htmlFor={`question-${typeofTest.typeOfTestId}`}>
-                          {typeofTest.typeOfTestName}
-                        </label>
-                      </div>
-                    ))}
+              <div
+                className="create_exam_header"
+                style={{ display: "flex", gap: "1rem" }}
+              >
+                <button className="ots_btnClose " type="button" onClick={closeForm}>
+                  Close
+                 
+                </button>
+              </div>
+
+              <div className="coures_-container">
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
+                    <label htmlFor="courseName">Course Name:</label>
+                    <input
+                      type="text"
+                      id="courseName"
+                      name="courseName"
+                      value={formData.courseName}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="testCreation_-list">
+                    <label>type of test:</label>
+                    <div className="coures_-typeOfTest">
+                      {typeOfTest.map((typeofTest) => (
+                        <div
+                          className="course_checkbox_continer course_frominput_container_media"
+                          key={typeofTest.typeOfTestId}
+                        >
+                          <label
+                            htmlFor={`question-${typeofTest.typeOfTestId}`}
+                          >
+                            {typeofTest.typeOfTestName}
+                          </label>
+                          <input
+                            className="inputLable"
+                            type="checkbox"
+                            id={`typeofTest-${typeofTest.typeOfTestId}`}
+                            name={`typeofTest-${typeofTest.typeOfTestId}`}
+                            value={typeofTest.typeOfTestId}
+                            checked={selectedtypeOfTest.includes(
+                              typeofTest.typeOfTestId
+                            )}
+                            onChange={(e) =>
+                              handletypeoftest(e, typeofTest.typeOfTestId)
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div> 
 
-              <fieldset>
-                <legend>Select Exam</legend>
-                <div className="course_frominput_container">
-                  <div>
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
                     <label htmlFor="exams">Select Exam:</label>
                     <select
                       id="exams"
@@ -443,16 +459,21 @@ const Coursecreation = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="course_frominput_container">
+
+                  <div className="testCreation_-list">
                     <label>Select Subjects:</label>
-                    <div>
+                    <div className="coures_-Subjects">
                       {subjectsData.map((subject) => (
                         <div
                           className="course_frominput_container "
                           id="course_frominput_container_media"
                           key={subject.subjectId}
                         >
+                          <label htmlFor={`subject-${subject.subjectId}`}>
+                            {subject.subjectName}
+                          </label>
                           <input
+                            className="inputLable"
                             type="checkbox"
                             id={`subject-${subject.subjectId}`}
                             name={`subject-${subject.subjectId}`}
@@ -464,59 +485,57 @@ const Coursecreation = () => {
                               handleSubjectChange(e, subject.subjectId)
                             }
                           />
-                          <label htmlFor={`subject-${subject.subjectId}`}>
-                            {subject.subjectName}
-                          </label>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
-              </fieldset>
-              <br />
-              <fieldset>
-                <div className="course_frominput_container">
-                  <label>type of Questions:</label>
-                  <div className="course_checkbox_continer_content">
-                    {typeofQuestion.map((type) => (
-                      <div
-                        className="course_checkbox_continer course_frominput_container_media"
-                        key={type.quesionTypeId}
-                      >
-                        <input
-                          type="checkbox"
-                          id={`question-${type.quesionTypeId}`}
-                          name={`question-${type.quesionTypeId}`}
-                          value={type.quesionTypeId}
-                          checked={selectedtypeofQuestion.includes(
-                            type.quesionTypeId
-                          )}
-                          onChange={(e) =>
-                            handleQuestionChange(e, type.quesionTypeId)
-                          }
-                        />
-                        <label htmlFor={`question-${type.quesionTypeId}`}>
-                          {type.typeofQuestion}
-                        </label>
-                      </div>
-                    ))}
+
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
+                    <label>type of Questions:</label>
+                    <div className="course_checkbox_continer_content">
+                      {typeofQuestion.map((type) => (
+                        <div
+                          className="course_checkbox_continer course_frominput_container_media"
+                          key={type.quesionTypeId}
+                        >
+                          <label htmlFor={`question-${type.quesionTypeId}`}>
+                            {type.typeofQuestion}
+                          </label>
+                          <input
+                            className="inputLable"
+                            type="checkbox"
+                            id={`question-${type.quesionTypeId}`}
+                            name={`question-${type.quesionTypeId}`}
+                            value={type.quesionTypeId}
+                            checked={selectedtypeofQuestion.includes(
+                              type.quesionTypeId
+                            )}
+                            onChange={(e) =>
+                              handleQuestionChange(e, type.quesionTypeId)
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </fieldset>
-              <br />
-              <fieldset>
-                <legend>Course Duration</legend>
-                <div className="course_frominput_container">
-                  <label htmlFor="courseStartDate">Course Start Date:</label>
-                  <input
-                    type="date"
-                    id="courseStartDate"
-                    name="courseStartDate"
-                    value={startDate}
-                    onChange={handleStartDateChange}
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                  <div className="course_frominput_container">
+
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
+                    <label htmlFor="courseStartDate">Course Start Date:</label>
+                    <input
+                      type="date"
+                      id="courseStartDate"
+                      name="courseStartDate"
+                      value={startDate}
+                      onChange={handleStartDateChange}
+                      min={new Date().toISOString().split("T")[0]}
+                    />
+                  </div>
+
+                  <div className="testCreation_-list">
                     <label htmlFor="courseEndDate">Course End Date:</label>
                     <input
                       type="date"
@@ -528,13 +547,9 @@ const Coursecreation = () => {
                     />
                   </div>
                 </div>
-              </fieldset>
-              <br />
-              <fieldset>
-                <legend>Cost and Discounts</legend>
 
-                <div className="course_frominput_container_parent">
-                  <div className="course_frominput_containe_discunt ">
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
                     <label htmlFor="cost">Cost:</label>
                     <input
                       type="number"
@@ -544,8 +559,7 @@ const Coursecreation = () => {
                       onChange={handleChange}
                     />
                   </div>
-
-                  <div className="course_frominput_containe_discunt">
+                  <div className="testCreation_-list">
                     <label htmlFor="discount">Discount (%):</label>
                     <input
                       type="number"
@@ -555,7 +569,10 @@ const Coursecreation = () => {
                       onChange={handleChange}
                     />
                   </div>
-                  <div className="course_frominput_containe_discunt">
+                </div>
+
+                <div className="coures-contant_-flexCOntantc examSubjects_-contant">
+                  <div className="testCreation_-list">
                     <label htmlFor="discountAmount">Discount Amount:</label>
                     <input
                       type="number"
@@ -565,7 +582,7 @@ const Coursecreation = () => {
                       readOnly
                     />
                   </div>
-                  <div className="course_frominput_containe_discunt">
+                  <div className="testCreation_-list">
                     <label htmlFor="totalPrice">Total Price:</label>
                     <input
                       type="number"
@@ -576,39 +593,49 @@ const Coursecreation = () => {
                     />
                   </div>
                 </div>
-              </fieldset>
-              <button type="submit">Create Course</button>
+                <div className="create_exam_header">
+                  <button className="ots_-createBtn" type="submit">Create Course</button>
+                </div>
+              </div>
             </form>
           </>
         ) : (
-          <div className="Add_Course_btn_container">
-            <button type="button" onClick={openForm}>
-              Add course
+          <div className="create_exam_header">
+           
+            <button className="otc_-addExam" type="button" onClick={openForm}>
+            <i class="fa-solid fa-plus"></i> 
+               Add course
             </button>
           </div>
         )}
       </div>
-      <div className="course_exam_page">
-        <table>
-          <thead>
+      <div className=""  style={{marginTop:'4rem'}}>
+      <h3 className="list_-otsTitels">created COURSES list</h3>
+        <table className="couresCreation_-table">
+          <thead className="otsGEt_-contantHead couresotc_-table">
             <tr>
-              <th scope="col">Serial no</th>
-              <th scope="col">Course Name</th>
-              <th scope="col">Type of Test</th>
-              <th scope="col"> Exam</th>
-              <th scope="col">Subjects</th>
-              <th scope="col">Type of Questions</th>
-              <th scope="col">Course Start Date</th>
-              <th scope="col">Course End Date</th>
-              <th scope="col">Cost</th>
-              <th scope="col">Discount</th>
-              <th scope="col">Total Price</th>
-              <th scope="col">Action</th>
+              <th>no</th>
+              <th>Course</th>
+              <th>Type of Test</th>
+              <th> Exam</th>
+              <th>Subjects</th>
+              <th>Type of Questions</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Cost</th>
+              <th>Discount</th>
+              <th>Total Price</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="couresotc_-table_-tBody">
             {courseData.map((course, index) => (
-              <tr key={course.courseCreationId}>
+              <tr
+                key={course.courseCreationId}
+                className={
+                  course.courseCreationId % 2 === 0 ? "color1" : "color2"
+                }
+              >
                 <td>{index + 1}</td>
                 <td>{course.courseName}</td>
                 <td>
@@ -635,14 +662,14 @@ const Coursecreation = () => {
                 <td>{course.Discount}</td>
                 <td>{course.totalPrice}</td>
                 <td>
-                  <div className="courseupdate_btn_container">
-                    <Link to={`/courseupdate/${course.courseCreationId}`}>
-                      <button className="courseupdate_btn">
+                  <div className="EditDelete_-btns">
+                    <Link className="Ots_-edit" to={`/courseupdate/${course.courseCreationId}`}>
+                     
                         <i className="fa-solid fa-pencil"></i>
-                      </button>
+                    
                     </Link>
                     <button
-                      className="coursedelte_btn"
+                 className="Ots_-delete"
                       onClick={() => handleDelete(course.courseCreationId)}
                     >
                       <i className="fa-regular fa-trash-can"></i>

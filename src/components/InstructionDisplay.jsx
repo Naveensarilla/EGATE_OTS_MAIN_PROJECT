@@ -71,8 +71,12 @@ const InstructionsDisplay = () => {
 
   return (
     <div className="Instruction_containerTable">
-      <table>
-        <thead>
+      <h3 className="list_-otsTitels" >
+       
+        Uploaded Instruction documents
+      </h3>
+      <table className="otc_-table">
+        <thead className="otsGEt_-contantHead otc_-table_-header">
           <tr>
             <th>instruction Id</th>
             <th>examId</th>
@@ -80,57 +84,57 @@ const InstructionsDisplay = () => {
 
             <th>Document Name</th>
 
-            <th>Instruction</th>
-            <th>delete</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="otc_-table_-tBody"   style={{ textAlign: "center" }}>
           {instruction.map((ite, inde) => (
-            <tr key={inde} className={ite.examId % 2 === 0 ? "color1" : 'color2'}>
+            <tr
+            
+              key={inde}
+              className={ite.instructionId % 2 === 0 ? "color1" : "color2"}
+            >
               <td>{ite.instructionId}</td>
               <td>{ite.examId}</td>
               <td>{ite.instructionHeading}</td>
               <td>{ite.documentName}</td>
 
               <td>
-                {" "}
-                <div className="tooltip-container Open_Instruction_Points">
+                
+                <div className="tooltip-container  EditDelete_-btns">
                   <Link
                     to={`/Instruction/editIns/${ite.instructionId}`}
                     // title="Open Instruction Points"
-                    className="my-anchor-element1" 
+                    className="my-anchor-element1 Ots_-edit"
                     data-tooltip-variant="info"
                     data-tooltip-delay-show={1000}
                   >
-                    open
+                   Open
                   </Link>
-                  <Tooltip anchorSelect=".my-anchor-element1"   place="top">
-                  Open Instruction Points
+                  <Tooltip anchorSelect=".my-anchor-element1" place="top">
+                    Open Instruction Points
                   </Tooltip>
-                </div>
-              </td>
-              <td>
-                <button
-                  className="InstDelete InstDelete2 my-anchor-element"
+
+                  <button
+                  className="Ots_-delete my-anchor-element"
                   data-tooltip-variant="warning"
-                    data-tooltip-delay-show={1000}
+                  data-tooltip-delay-show={1000}
                   onClick={() => handleDelete(ite.instructionId)}
                 >
-                
                   <i class="fa-solid fa-trash"></i>
                 </button>
-                <Tooltip anchorSelect=".my-anchor-element"   place="top">
-                 Delete
-                  </Tooltip>
+                <Tooltip anchorSelect=".my-anchor-element" place="top">
+                  Delete
+                </Tooltip>
+                </div>
               </td>
+
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="Instruction_Dis">
-       
-      </div>
+      <div className="Instruction_Dis"></div>
     </div>
   );
 };

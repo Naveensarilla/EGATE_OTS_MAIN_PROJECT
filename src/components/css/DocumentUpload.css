@@ -1,20 +1,27 @@
-.DocumentImage_Uploader{
-    margin: 2rem;
-}
+.Document_-images_-container {
+  overflow: overlay;
+  height: 100vh;
 
+}
+.DocumentImage_Uploader {
+  margin: 6rem 2rem;
+  width: 100vw;
+}
 .DocumentImage_Uploader h2{
     text-transform: uppercase;
 }
 .DocumentImage_Uploader form{
-    background: #7594ad;
+    /* background: #7594ad; */
     max-width: 85vw;
     border-radius: 10px;
 
 }
-.uploadedDocument_container{
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
+.uploadedDocument_container {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0px;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 .uploadedDocumentFilds{
     display: flex;
@@ -52,8 +59,8 @@
 
 /* documentInfo===---------------------=====================---------- */
   .documentInfo_container {
-    background: #c9d4dd;
-    margin-top: 2rem;
+    /* background: #c9d4dd; */
+    margin-top: 3rem;
     padding: 5px;
     border-radius: 11px;
 }
