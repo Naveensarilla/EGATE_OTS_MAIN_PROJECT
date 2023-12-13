@@ -1994,28 +1994,61 @@ async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
       FROM questions
       WHERE subjectId = ? AND document_Id = ?  
     `;
+//  console.log('Question IDs:', question_id);
+
     const [results] = await db.query(query, [subjectId, document_Id]);
     const optionsWithBase64 = results.map(option => ({
       question_id: option.question_id,
       question_img: option.question_img.toString('base64'),
     }));
     return optionsWithBase64;
+    
   } catch (err) {
     console.error(`Error fetching questions: ${err}`);
+    console.error(err.stack);
     throw err;
   }
 }
 
 // Reusable function to get options data based on questions and document_Id
+// async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//     SELECT question_id, option_img
+//     FROM options
+//     WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     // Convert BLOB data to base64 for sending in the response
+//     const optionsWithBase64 = results.map(option => ({
+//       question_id: option.question_id,
+//       option_img: option.option_img.toString('base64'),
+//     }));
+
+//     return optionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching options: ${err.message}`);
+//     throw err;
+//   }
+// }
 async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map(question => question.question_id);
+
+    // Check if questionIds array is not empty
+    if (questionIds.length === 0) {
+      return []; // or handle this case according to your requirements
+    }
+
     const query = `
-    SELECT question_id, option_img
-    FROM options
-    WHERE question_id IN (?) 
+      SELECT question_id, option_img
+      FROM options
+      WHERE question_id IN (${questionIds.map(() => '?').join(', ')})
+        AND document_Id = ? 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db.query(query, [...questionIds, document_Id]);
 
     // Convert BLOB data to base64 for sending in the response
     const optionsWithBase64 = results.map(option => ({
@@ -2026,21 +2059,50 @@ async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
     return optionsWithBase64;
   } catch (err) {
     console.error(`Error fetching options: ${err.message}`);
+    console.error(err.stack);
     throw err;
   }
 }
 
 
 // Reusable function to get solutions data based on questions and document_Id
+// async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//       SELECT question_id, solution_img
+//       FROM solution
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     // Convert BLOB data to base64 for sending in the response
+//     const solutionsWithBase64 = results.map(solution => ({
+//       question_id: solution.question_id,
+//       solution_img: solution.solution_img.toString('base64'),
+//     }));
+
+//     return solutionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching solutions: ${err}`);
+//     throw err;
+//   }
+// }
 async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map(question => question.question_id);
+
+    // Check if questionIds array is not empty
+    if (questionIds.length === 0) {
+      return []; // or handle this case according to your requirements
+    }
+
     const query = `
       SELECT question_id, solution_img
       FROM solution
-      WHERE question_id IN (?) 
+      WHERE question_id IN (${questionIds.map(() => '?').join(', ')})
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db.query(query, [...questionIds]);
 
     // Convert BLOB data to base64 for sending in the response
     const solutionsWithBase64 = results.map(solution => ({
@@ -2050,7 +2112,8 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
 
     return solutionsWithBase64;
   } catch (err) {
-    console.error(`Error fetching solutions: ${err}`);
+    console.error(`Error fetching solutions: ${err.message}`);
+    console.error(err.stack);
     throw err;
   }
 }
