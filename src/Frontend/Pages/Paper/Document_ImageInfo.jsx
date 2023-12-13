@@ -7,7 +7,7 @@ const {subjectId, testCreationTableId} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:4009/getSubjectData/${subjectId}/${testCreationTableId}`);
+        const response = await fetch(`http://localhost:3081/getSubjectData/${subjectId}/${testCreationTableId}`);
         const result = await response.json();
         setData(result);
       } catch (error) {
