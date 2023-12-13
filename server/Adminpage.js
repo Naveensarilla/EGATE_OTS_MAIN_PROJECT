@@ -2240,70 +2240,244 @@ app.get('/examData', async (req, res) => {
 
 
 
-    app.get("quiz_all/:testCreationTableId", async (req, res) => {
-      const testCreationTableId = req.params.testCreationTableId;
+    // app.get("quiz_all/:testCreationTableId", async (req, res) => {
+    //   const testCreationTableId = req.params.testCreationTableId;
     
-      const sql = `
-        SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
-        FROM test_creation_table tt, sections s, questions q, options o
-        WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
-      `;
+    //   const sql = `
+    //     SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
+    //     FROM test_creation_table tt, sections s, questions q, options o
+    //     WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
+    //   `;
    
-      try {
-        const results = await queryDatabase(sql, [testCreationTableId]);
+    //   try {
+    //     const results = await queryDatabase(sql, [testCreationTableId]);
     
-        const sections = {};
+    //     const sections = {};
     
-        results.forEach((row) => {
-          const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
+    //     results.forEach((row) => {
+    //       const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
 
-          if (!sections[sectionName]) {
-            sections[sectionName] = {
-              sectionId,
-              sectionName,
-              questions: [],
-            };
-          }
+    //       if (!sections[sectionName]) {
+    //         sections[sectionName] = {
+    //           sectionId,
+    //           sectionName,
+    //           questions: [],
+    //         };
+    //       }
     
-          const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
-          if (!question) {
-            sections[sectionName].questions.push({
-              qustion_id,
-              userAnswers: "",
-              isvisited: 0,
-              question_img: question_img.toString('base64'),
-              option_img: [],
-            });
-          }
+    //       const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
+    //       if (!question) {
+    //         sections[sectionName].questions.push({
+    //           qustion_id,
+    //           userAnswers: "",
+    //           isvisited: 0,
+    //           question_img: question_img.toString('base64'),
+    //           option_img: [],
+    //         });
+    //       }
     
-          const option = {
-            Option_Index,
-            option_img: option_img.toString('base64'),
+    //       const option = {
+    //         Option_Index,
+    //         option_img: option_img.toString('base64'),
          
-          };
+    //       };
     
-          sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
-        });
+    //       sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
+    //     });
     
-        res.json(sections);
-      } catch (err) {
-        console.error('Error querying the database: ' + err.message);
-        res.status(500).json({ error: 'Error fetching testCreationTableId' });
-      }
-    });
+    //     res.json(sections);
+    //   } catch (err) {
+    //     console.error('Error querying the database: ' + err.message);
+    //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
+    //   }
+    // });
     
-    function queryDatabase(sql, params) {
-      return new Promise((resolve, reject) => {
-        db.query(sql, params, (err, results) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(results);
-          }
-        });
-      });
-    }
+    // function queryDatabase(sql, params) {
+    //   return new Promise((resolve, reject) => {
+    //     db.query(sql, params, (err, results) => {
+    //       if (err) {
+    //         reject(err);
+    //       } else {
+    //         resolve(results);
+    //       }
+    //     });
+    //   });
+    // }
+
+
+
+
+
+    // app.get("/getPaperData/:testCreationTableId", async (req, res) => {
+    //   try {
+      
+    //     const testCreationTableId = req.params.testCreationTableId;
+    //     // Fetch question data based on subjectId and document_Id
+    //     const questions = await getQuestionsBytestCreationTableId( testCreationTableId);
+    //     // Fetch option data based on questions and document_Id
+    //     const options = await getOptionsByQuestionsAndTestCreationTableId(questions, testCreationTableId);
     
+    //     res.json({
+    //       questions,
+    //       options,
+    //     });
+        
+    //   } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send('Error fetching data from the database.');
+    //   }
+    // });
+    
+    // // Reusable function to get questions data based on subjectId and document_Id
+    // async function getQuestionsBytestCreationTableId(testCreationTableId) {
+    //   try {
+    //     const query = `
+    //       SELECT question_id, question_img
+    //       FROM questions
+    //       WHERE  testCreationTableId = ?  
+    //     `;
+    //     const [results] = await db.query(query, [testCreationTableId]);
+    //     const optionsWithBase64 = results.map(option => ({
+    //       question_id: option.question_id,
+    //       question_img: option.question_img.toString('base64'),
+    //     }));
+    //     return optionsWithBase64;
+    //   } catch (err) {
+    //     console.error(`Error fetching questions: ${err}`);
+    //     throw err;
+    //   }
+    // }
+    
+    // // Reusable function to get options data based on questions and document_Id
+    // async function getOptionsByQuestionsAndTestCreationTableId(questions, testCreationTableId) {
+    //   try {
+    //     const questionIds = questions.map(question => question.question_id);
+    //     const query = `
+    //     SELECT question_id, option_img
+    //     FROM options
+    //     WHERE question_id IN (?) 
+    //     `;
+    //     const [results] = await db.query(query, [questionIds, testCreationTableId]);
+    
+    //     // Convert BLOB data to base64 for sending in the response
+    //     const optionsWithBase64 = results.map(option => ({
+    //       question_id: option.question_id,
+    //       option_img: option.option_img.toString('base64'),
+    //     }));
+    
+    //     return optionsWithBase64;
+    //   } catch (err) {
+    //     console.error(`Error fetching options: ${err.message}`);
+    //     throw err;
+    //   }
+    // }
+    
+    // function combineImage(questions, options) {
+    //   const combinedImages = [];
+    
+    //   for (let i = 0; i < questions.length; i++) {
+    //     const questionImage = questions[i].question_img;
+    //     const optionImages = options
+    //       .filter((opt) => opt.question_id === questions[i].question_id)
+    //       .map((opt) => opt.option_img);
+    
+    //     combinedImages.push({
+    //       questionImage,
+    //       optionImages,
+    //     });
+    //   }
+    
+    //   return combinedImages;
+    // }
+    
+    // app.get("/getPaperData/:testCreationTableId/:subjectId", async (req, res) => {
+    //   try {
+    //     const subjectId = req.params.subjectId;
+    //     const testCreationTableId = req.params.testCreationTableId;
+      
+      
+    //     // Fetch question data based on subjectId and document_Id
+    //     const questions = await getQuestionsBySubjectAndDocumentId(subjectId, testCreationTableId);
+    
+    //     // Fetch option data based on questions and document_Id
+    //     const options = await getOptionsByQuestionsAndDocumentId(questions, testCreationTableId);
+    
+      
+    //     res.json({
+    //       questions,
+    //       options,
+    //     });
+        
+    //   } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send('Error fetching data from the database.');
+    //   }
+    // });
+    
+    // // Reusable function to get questions data based on subjectId and document_Id
+    // async function getQuestionsBySubjectAndDocumentId(subjectId, testCreationTableId) {
+    //   try {
+    //     const query = `
+    //       SELECT question_id, question_img
+    //       FROM questions
+    //       WHERE subjectId = ? AND testCreationTableId = ?  
+    //     `;
+    //     const [results] = await db.query(query, [subjectId, testCreationTableId]);
+    //     const optionsWithBase64 = results.map(option => ({
+    //       question_id: option.question_id,
+    //       question_img: option.question_img.toString('base64'),
+    //     }));
+    //     return optionsWithBase64;
+    //   } catch (err) {
+    //     console.error(`Error fetching questions: ${err}`);
+    //     throw err;
+    //   }
+    // }
+    
+    // // Reusable function to get options data based on questions and document_Id
+    // async function getOptionsByQuestionsAndDocumentId(questions, testCreationTableId) {
+    //   try {
+    //     const questionIds = questions.map(question => question.question_id);
+    //     const query = `
+    //     SELECT question_id, option_img
+    //     FROM options
+    //     WHERE question_id IN (?) 
+    //     `;
+    //     const [results] = await db.query(query, [questionIds, testCreationTableId]);
+    
+    //     // Convert BLOB data to base64 for sending in the response
+    //     const optionsWithBase64 = results.map(option => ({
+    //       question_id: option.question_id,
+    //       option_img: option.option_img.toString('base64'),
+    //     }));
+    
+    //     return optionsWithBase64;
+    //   } catch (err) {
+    //     console.error(`Error fetching options: ${err.message}`);
+    //     throw err;
+    //   }
+    // }
+    
+    
+    // function combineImage(questions, options) {
+    //   const combinedImages = [];
+    
+    //   for (let i = 0; i < questions.length; i++) {
+    //     const questionImage = questions[i].question_img;
+    //     const optionImages = options
+    //       .filter((opt) => opt.question_id === questions[i].question_id)
+    //       .map((opt) => opt.option_img);
+       
+    
+    //     combinedImages.push({
+    //       questionImage,
+    //       optionImages,
+          
+    //     });
+    //   }
+    
+    //   return combinedImages;
+    // }
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
