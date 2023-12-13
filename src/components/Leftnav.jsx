@@ -5,6 +5,8 @@ import dashboard from "../components/Imgs/daashboard.png";
 import exam from "../components/Imgs/exam.png";
 import "../components/css/Leftnav.css";
 import logo2 from './logo2.jpeg'
+import HomeLandingPage from "../Frontend/Pages/HomeLandingPage/HomeLandingPage";
+
 const Leftnav = () => {
   const [showMenu, setshowMenu] = useState(0);
   return (
@@ -81,6 +83,9 @@ const Leftnav = () => {
                 </div>
                 <p> Document Upload</p>
               </Link>
+            </li>
+            <li>
+              <Link className="LeftnavLinks" to='/HomeLandingPage'><i class="fa-brands fa-quora"></i><p>Quiz App</p></Link>
             </li>
           </ul>
         </div>

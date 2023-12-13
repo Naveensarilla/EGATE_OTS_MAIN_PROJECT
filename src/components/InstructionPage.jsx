@@ -14,24 +14,24 @@ const InstructionPage = () => {
   const [formOpen, setFormOpen] = useState(false);
   // const [instructions, setInstructions] = useState([]);
   // const [instructionPoints, setInstructionPoints] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
-  const validateForm = () => {
-    const errors = {};
+  // const [submitting, setSubmitting] = useState(false);
+  // const [formErrors, setFormErrors] = useState({});
+  // const validateForm = () => {
+  //   const errors = {};
   
-    if (!selectedExam) {
-      errors.examId = 'required';
-    }
-    if (!instructionHeading) {
-      errors.instructionHeading = 'required';
-    }
-    if (!file) {
-      errors.file = 'required';
-    }
+  //   if (!selectedExam) {
+  //     errors.examId = 'required';
+  //   }
+  //   if (!instructionHeading) {
+  //     errors.instructionHeading = 'required';
+  //   }
+  //   if (!file) {
+  //     errors.file = 'required';
+  //   }
   
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  //   setFormErrors(errors);
+  //   return Object.keys(errors).length === 0;
+  // };
 
 
 
@@ -54,8 +54,8 @@ const InstructionPage = () => {
   };
 
   const handleUpload = async () => {
-    if (validateForm()) {
-      setSubmitting(true);
+    // if (validateForm()) {
+      // setSubmitting(true);
     try {
       if (file) {
         const formData = new FormData();
@@ -78,9 +78,9 @@ const InstructionPage = () => {
       console.error("Error uploading file:", error.response);
       alert("Failed to upload file. Please try again.");
     }
-    setFormOpen(false);
-setSubmitting(false);
-  }
+//     setFormOpen(false);
+// setSubmitting(false);
+//   }
   };
 
   const openForm = () => {
@@ -124,7 +124,7 @@ setSubmitting(false);
                   </option>
                 ))}
               </select>
-              {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
+              {/* {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>} */}
             </div>
 
             <div className="inst">
@@ -133,7 +133,8 @@ setSubmitting(false);
                 type="text"
                 value={instructionHeading}
                 onChange={(e) => setInstructionHeading(e.target.value)}
-              />{formErrors.instructionHeading && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.instructionHeading}</span>}
+              />
+              {/* {formErrors.instructionHeading && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.instructionHeading}</span>} */}
             </div>
 
             <div className="inst">
@@ -142,7 +143,8 @@ setSubmitting(false);
                 type="file"
                 id="fileInput"
                 onChange={(e) => handleFileUpload(e.target.files)}
-              />{formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>}
+              />
+              {/* {formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>} */}
               {/* <span>
                 {file ? `Selected File: ${file.name}` : "No file selected"}
               </span> */}

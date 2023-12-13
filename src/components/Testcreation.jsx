@@ -240,7 +240,9 @@ const Testcreation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    // if (validateForm()) {
+      let isValid = true; 
+      
       setSubmitting(true);
     try {
       // Log the sectionsData before making the request
@@ -277,10 +279,14 @@ const Testcreation = () => {
       console.log(data);
     } catch (error) {
       console.error("Error submitting form:", error);
+      isValid = false;
     }
+    console.log("Validation Result:", isValid);
+
+    return isValid;
     setIsFormVisible(false);
 setSubmitting(false);
-  }
+//   }
   };
 
   useEffect(() => {

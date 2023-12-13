@@ -4,11 +4,6 @@ import { Link } from "react-router-dom";
 import "./css/Coursecreation.css";
 
 const Coursecreation = () => {
-  const [Discount, setDiscount] = useState('');
-  const [cost, setCost] = useState('');
-  // const [courseName, setCourseName] = useState([]);
-  const [courseName, setCourseName] = useState('');
-
   const [typeOfTest, setTypeOfTest] = useState([]);
   const [selectedtypeOfTest, setSelectedtypeOfTest] = useState([]);
   const [exams, setExams] = useState([]);
@@ -21,54 +16,16 @@ const Coursecreation = () => {
   const [subjectsData, setSubjectsData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [courseData, setCourseData] = useState([]);
-  const [formErrors, setFormErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
-  const validateForm = () => {
-    const errors = {};
-
-    if (!formData.courseName.trim()) {
-      errors.courseName = 'required';
-    }
-    
-    // if (!formData.startDate) {
-    //   errors.startDate = 'required';
-    // }
-
-    // if (!formData.endDate) {
-    //   errors.endDate = 'required';
-    // } else if (new Date(formData.endDate) < new Date(formData.startDate)) {
-    //   errors.endDate = 'End Date must be after Start Date';
-    // }
-
-    // if (!cost) {
-    //   errors.cost = ' required';
-    // }
-    if (!Discount) {
-      errors.Discount = ' required';
-    }
-
-    // if (selectedSubjects.length === 0) {
-    //   errors.subjects = 'At least one subject must be selected';
-    // }
-    if (selectedtypeOfTest.length === 0) {
-      errors.typeOfTest = 'At least one Type of Test must be selected';
-    }
-
-    if (selectedtypeofQuestion.length === 0) {
-      errors.typeofQuestion = 'At least one Type of Question must be selected';
-    }
-    if (!selectedexams) {
-      errors.examId = 'Select Exam is required';
-    }
-  
-    if (selectedSubjects.length === 0) {
-      errors.subjects = 'At least one subject must be selected';
-    }
-    
-    setFormErrors(errors);
-
-    return Object.keys(errors).length === 0;
-  };
+  // const [validationMessages, setValidationMessages] = useState({
+  //   courseName: "",
+  //   typeOfTest: "",
+  //   exam: "",
+  //   subjects: "",
+  //   typeofQuestion: "",
+  //   courseStartDate: "",
+  //   courseEndDate: "",
+  //   cost: "",
+  // });
   const resetFormFields = () => {
     setFormData({
       courseName: "",
@@ -85,7 +42,6 @@ const Coursecreation = () => {
     setSelectedtypeofQuestion([]);
     setSelectedtypeOfTest([]);
     setIsFormOpen(false);
-    setFormErrors({});
   };
 
   const [formData, setFormData] = useState({
@@ -178,22 +134,6 @@ const Coursecreation = () => {
     setSelectedexams(selectedExamId);
   };
 
-  // const handleSubjectChange = (event, subjectId) => {
-  //   const { checked } = event.target;
-
-  //   const subject = subjectsData.find((subj) => subj.subjectId === subjectId);
-
-  //   if (subject) {
-  //     setSelectedSubjects((prevSelectedSubjects) => {
-  //       const updatedSelectedSubjects = checked
-  //         ? [...prevSelectedSubjects, subjectId]
-  //         : prevSelectedSubjects.filter((id) => id !== subjectId);
-
-  //       console.log('Selected Subjects:', updatedSelectedSubjects);
-  //       return updatedSelectedSubjects;
-  //     });
-  //   }
-  // };
   const handleSubjectChange = (event, subjectId) => {
     const { checked } = event.target;
 
@@ -305,8 +245,54 @@ const Coursecreation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setSubmitting(true);
+
+    // Validation
+    // const newValidationMessages = {
+    //   courseName: "",
+    //   typeOfTest: "",
+    //   exam: "",
+    //   subjects: "",
+    //   courseStartDate:" ",
+    // courseEndDate:"",
+    // cost:"",
+    // };
+
+    // if (!formData.courseName) {
+    //   newValidationMessages.courseName = "* Required";
+    // }
+    // if (!formData.startDate) {
+    //   newValidationMessages.startDate = "* Required";
+    // }
+    // if (!formData.endDate) {
+    //   newValidationMessages.endDate = "* Required";
+    // }
+    // if (!formData.cost) {
+    //   newValidationMessages.cost = "* Required";
+    // }
+    // if (selectedtypeofQuestion.length === 0) {
+    //   newValidationMessages.typeofQuestion = "Please select at least one type of  Question.";
+    // }
+    // if (selectedtypeOfTest.length === 0) {
+    //   newValidationMessages.typeOfTest = "Please select at least one type of test.";
+    // }
+
+    // if (!selectedexams) {
+    //   newValidationMessages.exam = "* Required";
+    // }
+
+    // if (selectedSubjects.length === 0) {
+    //   newValidationMessages.subjects = "Please select at least one Subject.";
+    // }
+
+    // // Add more specific validation checks if needed
+
+    // setValidationMessages(newValidationMessages);
+
+    // // If there are validation errors, stop form submission
+    // if (Object.values(newValidationMessages).some(message => message !== "")) {
+    //   return;
+    // }
+
     // const requiredFields = [
     //   "courseName",
     //   "examId",
@@ -324,9 +310,14 @@ const Coursecreation = () => {
     //   return;
     // }
     // window.location.reload();
-
     resetFormFields();
-
+    // setValidationMessages({
+    //   courseName: "",
+    //   typeOfTest: "",
+    //   exam: "",
+    //   subjects: "",
+    //   typeofQuestion:"",
+    // });
     const data = {
       ...formData,
       typeOfTest: selectedtypeOfTest,
@@ -378,26 +369,7 @@ const Coursecreation = () => {
       console.error("Error submitting course data:", error);
       // Handle error or show an error message to the user
     }
-// setCourseName('');
-// setStartDate('');
-// setEndDate('');
-// setCost('');
-// setDiscount('');
-setFormErrors({});
-setIsFormOpen(false);
-setSubmitting(false);
-
-
-  }
   };
-
-  // function formatDate(dateString) {
-  //   const date = new Date(dateString);
-  //   const day = date.getDate().toString().padStart(2, "0");
-  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-based
-  //   const year = date.getFullYear();
-  //   return `${day}/${month}/${year}`;
-  // }
 
   const handleDelete = async (courseCreationId) => {
     // Display a confirmation dialog before deleting
@@ -477,7 +449,9 @@ setSubmitting(false);
                       value={formData.courseName}
                       onChange={handleChange}
                     />
-                    {formErrors.courseName && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.courseName}</span>}
+                     {/* <div className="error-message">
+                      {validationMessages.courseName}
+                    </div> */}
                   </div>
 
                   <div className="testCreation_-list">
@@ -506,10 +480,12 @@ setSubmitting(false);
                               handletypeoftest(e, typeofTest.typeOfTestId)
                             }
                           />
-                           
                         </div>
-                      ))}{formErrors.typeOfTest && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.typeOfTest}</span>}
+                      ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.typeOfTest}
+                    </div> */}
                   </div>
                 </div>
 
@@ -520,14 +496,17 @@ setSubmitting(false);
                       id="exams"
                       value={selectedexams}
                       onChange={handleexams}
-                    > 
+                    >
                       <option value="">Select exams</option>
                       {exams.map((exams) => (
                         <option key={exams.examId} value={exams.examId}>
                           {exams.examName}
                         </option>
                       ))}
-                    </select> {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
+                    </select>
+                    {/* <div className="error-message">
+                      {validationMessages.exam}
+                    </div> */}
                   </div>
 
                   <div className="testCreation_-list">
@@ -554,10 +533,13 @@ setSubmitting(false);
                             onChange={(e) =>
                               handleSubjectChange(e, subject.subjectId)
                             }
-                          /> 
+                          />
                         </div>
-                      ))}{formErrors.subjectsData && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.subjectsData}</span>}
+                      ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.subjects}
+                    </div> */}
                   </div>
                 </div>
 
@@ -587,8 +569,11 @@ setSubmitting(false);
                             }
                           />
                         </div>
-                      ))} {formErrors.typeofQuestion && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.typeofQuestion}</span>}
+                      ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.typeofQuestion}
+                    </div> */}
                   </div>
                 </div>
 
@@ -602,7 +587,10 @@ setSubmitting(false);
                       value={startDate}
                       onChange={handleStartDateChange}
                       min={new Date().toISOString().split("T")[0]}
-                    /> {formErrors.startDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.startDate}</span>}
+                    /> 
+                     {/* <div className="error-message">
+                    {validationMessages.startDate}
+                  </div> */}
                   </div>
 
                   <div className="testCreation_-list">
@@ -615,8 +603,10 @@ setSubmitting(false);
                       onChange={handleEndDateChange}
                       min={new Date().toISOString().split("T")[0]}
                     />
-                    {formErrors.endDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.endDate}</span>}
                   </div>
+                  {/* <div className="error-message">
+                    {validationMessages.endDate}
+                  </div> */}
                 </div>
 
                 <div className="coures-contant_-flexCOntantc examSubjects_-contant">
@@ -628,7 +618,10 @@ setSubmitting(false);
                       name="cost"
                       value={formData.cost}
                       onChange={handleChange}
-                    />  {formErrors.cost && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.cost}</span>}
+                    />
+                    {/* <div className="error-message">
+                    {validationMessages.cost}
+                  </div> */}
                   </div>
                   <div className="testCreation_-list">
                     <label htmlFor="discount">Discount (%):</label>
@@ -638,7 +631,7 @@ setSubmitting(false);
                       name="discount"
                       value={formData.discount}
                       onChange={handleChange}
-                    /> {formErrors.discount && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.discount}</span>}
+                    />
                   </div>
                 </div>
 
