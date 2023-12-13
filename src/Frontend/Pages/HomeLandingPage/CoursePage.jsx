@@ -184,7 +184,7 @@ const CoursePage = () => {
   console.log("Course Card State:", courseCard); // Log the courseCard state
 
   return (
-    <div>
+    <div className="otsMainPages">
       <h1>Current Courses</h1>
       <ul className="card_container_ul">
         {courseCard.map((courseDetails) => (

@@ -1488,7 +1488,7 @@ const FullTest = () => {
   };
 
   return (
-    <div>
+    <div className="otsMainPages">
       <ul>
         <div className="header-div2">
           <div className="header-links">

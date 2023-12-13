@@ -13,13 +13,13 @@ import Paper from '../Paper/Paper';
 
 const General_intructions_page = () => {
     return (
-        <><div>
+      <div className='otsMainPages'>
 
 <General_intructions_page_header />
             <General_intructions_page_container  seconds={600}/>
         </div>
        
-        </>
+       
     );
 };
 

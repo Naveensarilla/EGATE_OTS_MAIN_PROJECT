@@ -144,7 +144,7 @@ import { Navbar, Intro_content } from "../../Data/Introduction_page_DATA";
 // import "./styles/introducationpage.css";
 const Introduction_page = () => {
     return (
-        <div>
+        <div className="otsMainPages">
             <Header />
             <Intro_container />
         </div>

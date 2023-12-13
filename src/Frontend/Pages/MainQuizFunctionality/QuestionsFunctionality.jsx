@@ -398,7 +398,7 @@ const QuestionsFunctionality = ({ answeredQuestions }) => {
 
     return (
 
-        <div className="Main-Page">
+        <div className="Main-Page otsMainPages">
            {showResult ? (
         // Render the ResultPage component here
         <TestResultsPage

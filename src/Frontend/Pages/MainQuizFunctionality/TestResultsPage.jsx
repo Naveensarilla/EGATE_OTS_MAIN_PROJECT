@@ -32,8 +32,8 @@ const TestResultsPage = () => {
 
   
     return (
-      <div>
-        <h1>You have completed you exam</h1>
+      <div className='otsMainPages'>
+        <h1 className='Coures_-otsTitels'>You have completed you exam</h1>
         <h2>Test Results</h2>
         <p>Answered Questions: {answeredCount}</p>
         <p>Not Answered Questions: {notAnsweredCount}</p>

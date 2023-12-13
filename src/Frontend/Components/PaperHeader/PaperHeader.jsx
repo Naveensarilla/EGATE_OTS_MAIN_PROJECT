@@ -8,7 +8,7 @@ const PaperHeader = () => {
   return (
     <div className='jee-header'>
         <img className='logo' src={logo} alt="logo" />
-        <p>JEE MAIN 2024 TEST</p>
+        {/* <p>JEE MAIN 2024 TEST</p> */}
     </div>
   )
 }
