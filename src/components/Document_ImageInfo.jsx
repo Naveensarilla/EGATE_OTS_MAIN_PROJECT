@@ -6,19 +6,25 @@ function Document_ImageInfo() {
   const [data, setData] = useState(null);
 const {subjectId, testCreationTableId} = useParams();
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:3081/getSubjectData/${subjectId}/${testCreationTableId}`);
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
+  
     fetchData();
-  }, []); // The empty dependency array ensures that this effect runs once when the component mounts.
-
+  }, []); 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`http://localhost:3081/getSubjectData/${subjectId}/${testCreationTableId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+      // Handle the error, e.g., show an error message to the user
+    }
+  };
+  
   if (!data) {
     return <div>Loading...</div>;
   }

@@ -14,7 +14,7 @@ import TestUpdate from "./components/TestUpdate.jsx";
 import DocumentUpload from "./components/DocumentUpload.jsx";
 import GettinggInstructions from "./components/GettinggInstructions .jsx";
 import './components/css/otcCss.css'
-
+ 
 // import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
 // import HomeLandingPage from './Pages/HomeLandingPage/HomeLandingPage'
 import HomeLandingPage from './Frontend/Pages/HomeLandingPage/HomeLandingPage.jsx'
@@ -77,15 +77,15 @@ function App() {
             path="/Instruction/editIns/:instructionId/"
             element={<GettinggInstructions />}
           />
-
+ 
           {/* document list */}
           <Route
             path="/getSubjectData/:subjectId/:testCreationTableId"
             element={<Document_ImageInfo />}
           />
-
+ 
           {/* Frontend */}
-          <Route path='/HomeLandingPage' element={<HomeLandingPage/>}/> 
+          <Route path='/HomeLandingPage' element={<HomeLandingPage/>}/>
         {/* <Route path='/CoursePage/:examId' element={<CoursePage/>} /> */}
         <Route path='/feachingcourse/:examId' element={<CoursePage/>} />
           <Route path='/QuizHome' element={<QuizHome/>}/>
@@ -102,9 +102,9 @@ function App() {
         </Routes>
       </div>
      </div>
-
+ 
       {/* demo */}
-
+ 
       {/* below code working */}
       {/* <YourComponent /> */}
       {/* <QuestionDetails /> */}
@@ -113,5 +113,5 @@ function App() {
     </Router>
   );
 }
-
+ 
 export default App;
