@@ -30,19 +30,19 @@ const Coursecreation = () => {
       errors.courseName = 'required';
     }
     
-    if (!formData.startDate) {
-      errors.startDate = 'required';
-    }
+    // if (!formData.startDate) {
+    //   errors.startDate = 'required';
+    // }
 
-    if (!formData.endDate) {
-      errors.endDate = 'required';
-    } else if (new Date(formData.endDate) < new Date(formData.startDate)) {
-      errors.endDate = 'End Date must be after Start Date';
-    }
+    // if (!formData.endDate) {
+    //   errors.endDate = 'required';
+    // } else if (new Date(formData.endDate) < new Date(formData.startDate)) {
+    //   errors.endDate = 'End Date must be after Start Date';
+    // }
 
-    if (!cost) {
-      errors.cost = ' required';
-    }
+    // if (!cost) {
+    //   errors.cost = ' required';
+    // }
     if (!Discount) {
       errors.Discount = ' required';
     }
@@ -305,15 +305,17 @@ const Coursecreation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const requiredFields = [
-      "courseName",
-      "examId",
-      "courseStartDate",
-      "courseEndDate",
-      "cost",
-      "discount",
-      "totalPrice",
-    ];
+    if (validateForm()) {
+      setSubmitting(true);
+    // const requiredFields = [
+    //   "courseName",
+    //   "examId",
+    //   "courseStartDate",
+    //   "courseEndDate",
+    //   "cost",
+    //   "discount",
+    //   "totalPrice",
+    // ];
 
     // const isEmptyField = requiredFields.some((field) => !formData[field]);
 
@@ -323,7 +325,7 @@ const Coursecreation = () => {
     // }
     // window.location.reload();
 
-    // resetFormFields();
+    resetFormFields();
 
     const data = {
       ...formData,
@@ -332,8 +334,7 @@ const Coursecreation = () => {
       subjects: selectedSubjects,
       typeofQuestion: selectedtypeofQuestion,
     };
- if (validateForm()) {
-      setSubmitting(true);
+
     try {
       const response = await fetch("http://localhost:3081/course-creation", {
         method: "POST",
@@ -377,11 +378,11 @@ const Coursecreation = () => {
       console.error("Error submitting course data:", error);
       // Handle error or show an error message to the user
     }
-setCourseName('');
-setStartDate('');
-setEndDate('');
-setCost('');
-setDiscount('');
+// setCourseName('');
+// setStartDate('');
+// setEndDate('');
+// setCost('');
+// setDiscount('');
 setFormErrors({});
 setIsFormOpen(false);
 setSubmitting(false);

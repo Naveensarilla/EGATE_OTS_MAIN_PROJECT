@@ -20,21 +20,21 @@ function Examcreation() {
     const errors = {};
 
     if (!examName.trim()) {
-      errors.examName = ' required';
+      errors.examName = ' * Required';
     }
 
     if (!startDate) {
-      errors.startDate = ' required';
+      errors.startDate = '* Required';
     }
 
     if (!endDate) {
-      errors.endDate = ' required';
+      errors.endDate = ' * Required';
     } else if (new Date(endDate) < new Date(startDate)) {
       errors.endDate = 'End Date must be after Start Date';
     }
 
     if (selectedSubjects.length === 0) {
-      errors.subjects = 'At least one subject must be selected';
+      errors.subjects = '*At least one subject must be selected';
     }
 
     setFormErrors(errors);
@@ -184,7 +184,7 @@ function Examcreation() {
                         type="text"
                         value={examName}
                         onChange={(e) => setExamName(e.target.value)}
-                      /> {formErrors.examName && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examName}</span>}
+                      /> {formErrors.examName && <span className="error-message">{formErrors.examName}</span>}
                     </div>
                     <div className="formdiv_contaniner">
                       <label>Start Date:</label>
@@ -195,7 +195,7 @@ function Examcreation() {
                         onChange={(e) => setStartDate(e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
                       />
-                      {formErrors.startDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.startDate}</span>}
+                      {formErrors.startDate && <span className="error-message">{formErrors.startDate}</span>}
                     </div>
 
                     <div className="formdiv_contaniner">
@@ -207,7 +207,7 @@ function Examcreation() {
                         onChange={(e) => setEndDate(e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
                       />
-                      {formErrors.endDate && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.endDate}</span>}
+                      {formErrors.endDate && <span className="error-message">{formErrors.endDate}</span>}
                     </div>
                   </div>
 
@@ -231,7 +231,7 @@ function Examcreation() {
                             />
                           </li>
                         ))}
-                          {formErrors.subjects && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.subjects}</span>}
+                          {formErrors.subjects && <span className="error-message">{formErrors.subjects}</span>}
                       </ul>
                     </div>
                   </div>
