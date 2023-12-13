@@ -1821,7 +1821,8 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                   "question_img": images[i],
                   "testCreationTableId": req.body.testCreationTableId,
                   "subjectId": req.body.subjectId,  
-                  "sectionId": req.body.sectionId
+                  "sectionId": req.body.sectionId,
+                  " document_Id": document_Id
               };
               console.log(j);
               Question_id = await insertRecord('questions', questionRecord);
