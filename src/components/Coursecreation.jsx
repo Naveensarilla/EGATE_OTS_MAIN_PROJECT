@@ -421,7 +421,7 @@ const Coursecreation = () => {
     }
   };
   return (
-    <div className="otsMainPages">
+    <div className="otsMainPages create_exam_container">
       <div className="">
         <h3 className="Coures_-otsTitels">Courses page</h3>
 

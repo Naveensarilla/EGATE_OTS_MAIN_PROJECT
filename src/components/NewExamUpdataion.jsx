@@ -128,7 +128,7 @@ const NewExamUpdataion = () => {
   };
 
   return (
-    <div className="examUpdate_-container">
+    <div className="examUpdate_-container ">
       <form onSubmit={handleSubmit}>
         <h2 className="textColor">update exam</h2>
         <div className="examUpdate_-contant">

@@ -265,7 +265,7 @@ const Coureseupdate = () => {
   };
 
   return (
-    <div className="examUpdate_-container">
+    <div className="examUpdate_-container ">
      
       <form onSubmit={handleSubmit}>
       <h2 className="otsTitels">Course Update</h2>

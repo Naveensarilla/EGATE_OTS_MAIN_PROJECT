@@ -14,25 +14,6 @@ const DocumentUpload = () => {
   const [file, setFile] = useState(null);
 const {testCreationTableId}= useParams()
 
-// const [formErrors, setFormErrors] = useState({});
-// const [submitting, setSubmitting] = useState(false);
-// const validateForm = () => {
-//   const errors = {};
-//   setFormErrors(errors);
-//   if (!selectedTest) {
-//     errors.selectedTest = 'required';
-//   }
-//   if (!selectedSubject) {
-//     errors.selectedSubject = 'required';
-//   }
-//   // if (!selectedSection) {
-//   //   errors.selectedSection = 'required';
-//   // }
-//   if (!file) {
-//     errors.file = 'required';
-//   }
-//     return Object.keys(errors).length === 0;
-//   };
   useEffect(() => {
     // Fetch tests data
     fetch("http://localhost:3081/tests")
@@ -109,7 +90,7 @@ const {testCreationTableId}= useParams()
   };
 
   return (
-    <div className="DocumentImage_Uploader">
+    <div className="DocumentImage_Uploader" >
       <div className="otsTitels"><h2 >Document Upload Form </h2></div>
       <form>
         <div className="uploadedDocument_container examSubjects_-contant">

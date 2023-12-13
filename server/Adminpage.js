@@ -1784,7 +1784,6 @@ app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
 //   }
 // }
 
-
 app.post('/upload', upload.single('document'), async (req, res) => {
   const docxFilePath = `uploads/${req.file.filename}`;
   const outputDir = `uploads/${req.file.originalname}_images`;
@@ -2044,6 +2043,8 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
+
+
 
 function combineImage(questions, options, solutions) {
   const combinedImages = [];
