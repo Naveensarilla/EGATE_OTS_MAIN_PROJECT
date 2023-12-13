@@ -182,3 +182,12 @@ label {
 .LeftnavLinks .logo_-clr{
     color: #00aff0;
 } */
+
+
+/* Add this CSS to your stylesheet or component */
+.toastContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  

@@ -22,7 +22,7 @@ const {subjectId, testCreationTableId} = useParams();
   if (!data) {
     return <div>Loading...</div>;
   }
-  const OptionLabels = ['(a)', '(b)', '(c)', '(d)'];
+  const OptionLabels = ['(a).', '(b).', '(c).', '(d).'];
   // Render your component using the fetched data
   return (
     <div className='Document_-images_-container otsMainPages'>
@@ -33,8 +33,8 @@ const {subjectId, testCreationTableId} = useParams();
       {data.questions.map((question, index) => (
      
         <div className='outColor examSubjects_-contant' style={{background:'',padding:'2rem 2rem'}}>
-         <div key={question.question_id} >
-         <div className='question' key={index}>
+         <div key={question.question_id}  style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+         <div className='question' key={index} style={{background:'#fff'}}>
           <h3 style={{display:'flex',gap:'1rem'}}> <p>Question </p> {index+1}</h3>
           
          <img src={`data:image/png;base64,${question.question_img}`} alt="Question" />
@@ -44,17 +44,20 @@ const {subjectId, testCreationTableId} = useParams();
           {data.options
             .filter((opt) => opt.question_id === question.question_id)
             .map((option, index) => (
-              <div className='option' key={option.question_id} style={{display:'flex', gap:'1rem'}}>
+           <div>
+               <div className='option' key={option.question_id} style={{display:'flex', gap:'1rem'}}>
                 <span>{OptionLabels[index]}</span>
                 <img src={`data:image/png;base64,${option.option_img}`} alt={`Option ${OptionLabels[index]}`} />
               </div>
+           </div>
+
             ))}
           
           {/* Render solutions similarly */}
           {data.solutions
             .filter((sol) => sol.question_id === question.question_id)
             .map((solution) => (
-              <div className='solution'>
+              <div className='solution' >
                 <h3>solution  </h3>
                 <img key={solution.question_id} src={`data:image/png;base64,${solution.solution_img}`} alt="Solution" />
               </div>

@@ -381,7 +381,7 @@ const Coursecreation = () => {
     }
   };
   return (
-    <div className="otsMainPages">
+    <div className="otsMainPages" style={{width:'100vw'}}>
       <div className="">
         <h3 className="Coures_-otsTitels">Courses page</h3>
 
