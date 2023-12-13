@@ -98,6 +98,8 @@ function Examcreation() {
         // Reset form fields and state as needed
         setSubmitting(false);
         resetForm();
+        exams_with_subject();
+
         // window.location.reload();
         // setShowSuccessPopup(true);
       })
@@ -113,17 +115,22 @@ function Examcreation() {
       setFormOpen(false);
       setSubmitting(false);
     }
+
   };
   useEffect(() => {
-    axios
-      .get("http://localhost:3081/exams-with-subjects")
-      .then((response) => {
-        setExamsWithSubjects(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    exams_with_subject();
   }, []);
+  function exams_with_subject(){
+    // alert("hi")
+    axios
+    .get("http://localhost:3081/exams-with-subjects")
+    .then((response) => {
+      setExamsWithSubjects(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+  }
   //....................................END...............................//
 
   //.............................Delete button handler ...................//

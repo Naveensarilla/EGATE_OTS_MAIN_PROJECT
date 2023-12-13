@@ -25,9 +25,9 @@ const validateForm = () => {
   if (!selectedSubject) {
     errors.selectedSubject = 'required';
   }
-  if (!selectedSection) {
-    errors.selectedSection = 'required';
-  }
+  // if (!selectedSection) {
+  //   errors.selectedSection = 'required';
+  // }
   if (!file) {
     errors.file = 'required';
   }
@@ -79,7 +79,8 @@ const validateForm = () => {
     setSelectedSection(event.target.value);
   };
 
-  const handleUpload = () => {
+  const handleUpload = (e) => { 
+    e.preventDefault()
     if (validateForm()) {
       setSubmitting(true);
     const formData = new FormData();
@@ -96,7 +97,7 @@ const validateForm = () => {
       .then((result) => {
         console.log(result);
         alert("Successfully uploaded Document");
-        window.location.reload();
+        // window.location.reload();
 
       })
       .catch((error) => {
@@ -104,8 +105,6 @@ const validateForm = () => {
       });
   
 setSubmitting(false);
-
-
   }
   };
 
@@ -162,7 +161,8 @@ setSubmitting(false);
                   {section.sectionName}
                 </option>
               ))}
-            </select>{formErrors.selectedSection && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.selectedSection}</span>}
+            </select>
+            {/* {formErrors.selectedSection && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.selectedSection}</span>} */}
           </div>
 
           <div className="uploadedDocumentFilds">
@@ -174,7 +174,7 @@ setSubmitting(false);
 
         <div className="uploadedDocumentFilds" style={{float:'right'}}>
            
-            <button className="ots_-createBtn" onClick={handleUpload}>Upload</button>
+        <button className="ots_-createBtn" onClick={(e) => handleUpload(e)}>Upload</button>
           </div>
         <div>
 
