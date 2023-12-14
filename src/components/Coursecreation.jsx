@@ -29,6 +29,7 @@ const Coursecreation = () => {
   const resetFormFields = () => {
     setFormData({
       courseName: "",
+      courseYear:"",
       examId: "",
       typeofQuestion: "",
       courseStartDate: "",
@@ -46,6 +47,7 @@ const Coursecreation = () => {
 
   const [formData, setFormData] = useState({
     courseName: "",
+    courseYear:"",
     examId: "",
     typeofQuestion: "",
     courseStartDate: "",
@@ -225,6 +227,7 @@ const Coursecreation = () => {
         !isNaN(cost) && !isNaN(discountAmount) ? cost - discountAmount : "";
       setFormData({
         ...formData,
+        // courseYear:courseYear,
         typeOfTest: selectedtypeOfTest,
         examId: selectedexams,
         subjects: selectedSubjects,
@@ -420,6 +423,25 @@ const Coursecreation = () => {
       resetFormFields();
     }
   };
+  function generateYearOptions() {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2000;
+    const endYear = 2035;
+  
+    const yearOptions = [];
+    for (let year = endYear; year >= startYear; year--) {
+      yearOptions.push(
+        <option key={year} value={year}>
+          {year}
+        </option>
+      );
+    }
+  
+    return yearOptions;
+  }
+  
+  
+  
   return (
     <div className="otsMainPages">
       <div className="">
@@ -453,6 +475,18 @@ const Coursecreation = () => {
                       {validationMessages.courseName}
                     </div> */}
                   </div>
+                  <div className="testCreation_-list">
+  <label htmlFor="year">Select Year:</label>
+  <select
+    id="year"
+    name="courseYear"
+    value={formData.courseYear}
+    onChange={handleChange}
+  >
+    <option value="">Select Year</option>
+    {generateYearOptions()}
+  </select>
+</div>
 
                   <div className="testCreation_-list">
                     <label>type of test:</label>
