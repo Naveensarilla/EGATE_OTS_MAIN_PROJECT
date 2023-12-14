@@ -180,7 +180,7 @@ const TestUpdate = () => {
     });
   };
   return (
-    <div className="examUpdate_-container">
+    <div className="examUpdate_-container ">
       <form onSubmit={handleSubmit}>
         <div className="testCreation_-contant">
           <h2 className="otsTitels">Test Update Form</h2>

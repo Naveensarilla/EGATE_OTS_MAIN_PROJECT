@@ -55,7 +55,7 @@ const [documentData,setDocumentData] = useState([]);
     }
   };
   return (
-    <div className="documentInfo_container">
+    <div className="documentInfo_container ">
       <div className="otsTitels" style={{ padding: "0" }}>
     
       </div>

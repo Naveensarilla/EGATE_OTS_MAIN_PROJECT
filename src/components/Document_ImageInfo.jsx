@@ -31,7 +31,9 @@ function Document_ImageInfo() {
   const OptionLabels = ["(a)", "(b)", "(c)", "(d)"];
   // Render your component using the fetched data
   return (
+
     <div className="Document_-images_-container otsMainPages">
+
       {/* Access data as needed, for example: */}
       <h1>
         {data.document.documen_name} {data.document.subjectId}

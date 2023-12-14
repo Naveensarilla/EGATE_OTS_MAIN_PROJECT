@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export const UpdateInstruction = () => {
   const [points, setPoints] = useState([]);
   const { instructionId, id } = useParams();
+const navgate =useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +45,7 @@ export const UpdateInstruction = () => {
         }
       );
       window.location.reload();
+      navgate('/InstructionPage')
       console.log("Update Response:", response.data);
     } catch (error) {
       console.error("Error updating data:", error.message);
@@ -51,7 +53,7 @@ export const UpdateInstruction = () => {
   };
 
   return (
-    <div className="Instruction_-points_-container otsMainPages">
+    <div className="Instruction_-points_-container otsMainPages ">
       <h2 className="otsTitels">Update Instruction point</h2>
       <br />
       {points.map((item, index) => (

@@ -67,7 +67,7 @@ const HomeLandingPage = () => {
   return (
     <>  
 
-    <div>
+    <div className="overflowScrol">
     <Header />
       <Home_section />
       <Quiz_Courses />

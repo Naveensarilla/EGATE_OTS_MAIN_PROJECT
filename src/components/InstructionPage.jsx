@@ -92,7 +92,7 @@ const InstructionPage = () => {
   };
 
   return (
-    <div className="instruction_container otsMainPages">
+    <div className="instruction_container otsMainPages ">
       <div className="instruction_-div
       ">
       <h2 className="Coures_-otsTitels">Instruction Page </h2>

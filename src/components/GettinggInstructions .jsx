@@ -51,7 +51,7 @@ const GettinggInstructions = () => {
   };
 
   return (
-    <div className="Instruction_points otsMainPages">
+    <div className="Instruction_points otsMainPages ">
       <h3 className="list_-otsTitels"> Instruction Points</h3>
       
       <table className="otc_-table">
