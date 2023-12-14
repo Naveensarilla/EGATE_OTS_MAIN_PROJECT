@@ -66,7 +66,7 @@ function Document_ImageInfo() {
                 />
               </div>
 
-              {/* Map over options and render them */}
+          
               {data.options
                 .filter((opt) => opt.question_id === question.question_id)
                 .map((option, index) => (
@@ -83,7 +83,7 @@ function Document_ImageInfo() {
                   </div>
                 ))}
 
-              {/* Render solutions similarly */}
+            
               {data.solutions
                 .filter((sol) => sol.question_id === question.question_id)
                 .map((solution) => (
