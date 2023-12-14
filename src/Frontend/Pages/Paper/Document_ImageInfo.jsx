@@ -24,7 +24,7 @@ const {subjectId, testCreationTableId} = useParams();
  
   // Render your component using the fetched data
   return (
-    <div style={{height:'100vh',overflow:'scroll'}}>
+    <div style={{height:'100vh',overflow:'scroll'}} className='otsMainPages'>
       {/* Access data as needed, for example: */}
       <h1>{data.document.documen_name} {data.document.subjectId}{data.document.testCreationTableId}</h1>
       {/* Map over questions and render them */}
