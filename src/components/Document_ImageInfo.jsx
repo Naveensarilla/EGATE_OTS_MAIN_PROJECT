@@ -98,9 +98,8 @@ function Document_ImageInfo() {
               {data.answers
                 .filter((ans) => ans.question_id === question.question_id)
                 .map((answer) => (
-                  <div key={`answer_${answer.question_id}_${answer.answer_id}`}>
+                  <div key={answer.answer_id}>
                     <h3>Answer</h3>
-                    {console.log("Answer Text:", answer.answer_text)}
                     {answer.answer_text}
                   </div>
                 ))}
@@ -108,9 +107,8 @@ function Document_ImageInfo() {
               {data.marks
                 .filter((markes) => markes.question_id === question.question_id)
                 .map((markes) => (
-                  <div key={`marks_${markes.question_id}_${markes.markesId}`}>
+                  <div key={markes.markesId}>
                     <h3>Marks</h3>
-                    {console.log("Marks Text:", markes.marks_text)}
                     {markes.marks_text}
                   </div>
                 ))}
@@ -118,9 +116,8 @@ function Document_ImageInfo() {
               {data.qtypes
                 .filter((qtype) => qtype.question_id === question.question_id)
                 .map((qtype) => (
-                  <div key={`qtype_${qtype.question_id}_${qtype.qtypeId}`}>
+                  <div key={qtype.qtypeId}>
                     <h3>QType</h3>
-                    {console.log("QType Text:", qtype.qtype_text)}
                     {qtype.qtype_text}
                   </div>
                 ))}
