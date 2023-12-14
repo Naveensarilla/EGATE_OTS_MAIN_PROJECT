@@ -15,7 +15,7 @@ import DocumentUpload from "./components/DocumentUpload.jsx";
 import GettinggInstructions from "./components/GettinggInstructions .jsx";
 import './components/css/otcCss.css'
  
-// import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
+import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
 // import HomeLandingPage from './Pages/HomeLandingPage/HomeLandingPage'
 import HomeLandingPage from './Frontend/Pages/HomeLandingPage/HomeLandingPage.jsx'
 // import QuizHome from '../Pages/QuizHome/QuizHome'
@@ -40,7 +40,7 @@ import DownloadQuizPage from './Frontend/Pages/DownloadQuizPage/DownloadQuizPage
 // import CoursePage from './Pages/HomeLandingPage/CoursePage'
 import CoursePage from './Frontend/Pages/HomeLandingPage/CoursePage.jsx'
 // import Document_ImageInfo from './Pages/Paper/Document_ImageInfo';
-import Document_ImageInfo from './Frontend/Pages/Paper/Document_ImageInfo.jsx';
+// import Document_ImageInfo from './Frontend/Pages/Paper/Document_ImageInfo.jsx';
 // import QuestionsFunctionality from './Pages/MainQuizFunctionality/QuestionsFunctionality';
 import QuestionsFunctionality from './Frontend/Pages/MainQuizFunctionality/QuestionsFunctionality.jsx';
 // import TestResultsPage from './Pages/MainQuizFunctionality/TestResultsPage';
