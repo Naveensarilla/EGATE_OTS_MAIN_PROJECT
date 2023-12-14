@@ -238,6 +238,9 @@ const Testcreation = () => {
     setNumberOfSections((prevSections) => prevSections + 1);
   };
 
+  const removeSection = () => {
+    setNumberOfSections((prevSections) => prevSections - 1);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if (validateForm()) {
@@ -356,6 +359,13 @@ setSubmitting(false);
     setShowTotalSections(!showTotalSections);
   };
   const [showTotalSections, setShowTotalSections] = useState(false);
+  // const removeSection = () => {
+  //   setSectionsData((prevSectionsData) => {
+  //     const updatedSectionsData = [...prevSectionsData];
+  //     updatedSectionsData.pop(); // Remove the last added section
+  //     return updatedSectionsData;
+  //   });
+  // };
   return (
     <div className="otsMainPages testCreation_-container">
       <div className="TestCreation_-container">
@@ -623,85 +633,6 @@ setSubmitting(false);
                   />
                 </div>
               </div>
-
-              {/* <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Subjects:</th>
-                      <th>Section</th>
-                      <th>No of Question</th>
-                      {QuestionLimitChecked && <th>Question Limit</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: numberOfSections }, (_, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <div>
-                            <select
-                              value={
-                                sectionsData[index]?.selectedSubjects || ""
-                              }
-                              onChange={(e) =>
-                                handleSectionChange(
-                                  e,
-                                  index,
-                                  "selectedSubjects"
-                                )
-                              }
-                            >
-                              <option value="" disabled>
-                                Select a Subject
-                              </option>
-                              {subjects.map((Subject) => (
-                                <option
-                                  key={Subject.subjectId}
-                                  value={Subject.subjectId}
-                                >
-                                  {Subject.subjectName}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={sectionsData[index]?.sectionName || ""}
-                            onChange={(e) =>
-                              handleSectionChange(e, index, "sectionName")
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            value={sectionsData[index]?.noOfQuestions || ""}
-                            onChange={(e) =>
-                              handleSectionChange(e, index, "noOfQuestions")
-                            }
-                          />
-                        </td>
-                        {QuestionLimitChecked && (
-                          <td>
-                            <input
-                              type="number"
-                              value={sectionsData[index]?.QuestionLimit || ""}
-                              onChange={(e) =>
-                                handleSectionChange(e, index, "QuestionLimit")
-                              }
-                            />
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div> */}
-
               <div>
                 {showTotalSections && (
                   <div>
@@ -821,6 +752,13 @@ setSubmitting(false);
                     >
                       +
                     </button>
+                    <button
+  className="instructionBTN"
+  type="button"
+  onClick={removeSection}
+>
+  -
+</button>
                   </div>
                 )}
               </div>
