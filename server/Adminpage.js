@@ -912,12 +912,11 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
 
     // Insert data into the instruction table
     const queryInstruction =
-      "INSERT INTO instruction (examId, instructionHeading, examName, documentName) VALUES (?, ?, ?, ?)";
+      "INSERT INTO instruction (examId, instructionHeading, documentName) VALUES (?, ?, ?)";
     const valuesInstruction = [
       req.body.examId,
       req.body.instructionHeading,
-      req.body.examName,
-      fileName,
+     fileName || 'defaultFileName',
     ];
 
     const resultInstruction = await db.query(
@@ -947,16 +946,16 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
 
     // Insert each point into the instructions_points table with the correct instructionId
     const queryPoints =
-      "INSERT INTO instructions_points (examId, points, instructionId, instructionHeading) VALUES (?, ?, ?, ?)";
+      "INSERT INTO instructions_points (examId, points, instructionId) VALUES (?, ?, ?)";
     for (const point of filteredPointsArray) {
       // Log each point and instructionHeading before the insertion
       console.log(
         "Inserting point:",
         point,
         "with instructionId:",
-        instructionId,
-        "and instructionHeading:",
-        req.body.instructionHeading
+        instructionId
+        // "and instructionHeading:",
+        // req.body.instructionHeading
       );
       await db.query(queryPoints, [
         req.body.examId,
