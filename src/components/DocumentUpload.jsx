@@ -13,6 +13,26 @@ const DocumentUpload = () => {
   const [selectedSection, setSelectedSection] = useState("");
   const [file, setFile] = useState(null);
 const {testCreationTableId}= useParams()
+
+// const [formErrors, setFormErrors] = useState({});
+// const [submitting, setSubmitting] = useState(false);
+// const validateForm = () => {
+//   const errors = {};
+//   setFormErrors(errors);
+//   if (!selectedTest) {
+//     errors.selectedTest = 'required';
+//   }
+//   if (!selectedSubject) {
+//     errors.selectedSubject = 'required';
+//   }
+//   // if (!selectedSection) {
+//   //   errors.selectedSection = 'required';
+//   // }
+//   if (!file) {
+//     errors.file = 'required';
+//   }
+//     return Object.keys(errors).length === 0;
+//   };
   useEffect(() => {
     // Fetch tests data
     fetch("http://localhost:3081/tests")
@@ -59,7 +79,10 @@ const {testCreationTableId}= useParams()
     setSelectedSection(event.target.value);
   };
 
-  const handleUpload = () => {
+  const handleUpload = (e) => { 
+    e.preventDefault()
+    // if (validateForm()) {
+    //   setSubmitting(true);
     const formData = new FormData();
     formData.append("document", file);
     formData.append("subjectId", selectedSubject);
@@ -74,12 +97,15 @@ const {testCreationTableId}= useParams()
       .then((result) => {
         console.log(result);
         alert("Successfully uploaded Document");
-        window.location.reload();
+        // window.location.reload();
 
       })
       .catch((error) => {
         console.error(error);
       });
+  
+// setSubmitting(false);
+//   }
   };
 
   return (
@@ -104,6 +130,7 @@ const {testCreationTableId}= useParams()
                 </option>
               ))}
             </select>
+            {/* {formErrors.selectedTest && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.selectedTest}</span>} */}
           </div>
 
           <div className="uploadedDocumentFilds">
@@ -120,6 +147,7 @@ const {testCreationTableId}= useParams()
                 </option>
               ))}
             </select>
+            {/* {formErrors.selectedSubject && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.selectedSubject}</span>} */}
           </div>
 
           <div className="uploadedDocumentFilds">
@@ -136,18 +164,19 @@ const {testCreationTableId}= useParams()
                 </option>
               ))}
             </select>
+            {/* {formErrors.selectedSection && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.selectedSection}</span>} */}
           </div>
 
           <div className="uploadedDocumentFilds">
             <label htmlFor="">Upload file</label>
             <input type="file" accept=".docx" onChange={handleFileChange} />
-            
+            {/* {formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>} */}
           </div>
         </div>
 
         <div className="uploadedDocumentFilds" style={{float:'right'}}>
            
-            <button className="ots_-createBtn" onClick={handleUpload}>Upload</button>
+        <button className="ots_-createBtn" onClick={(e) => handleUpload(e)}>Upload</button>
           </div>
         <div>
 

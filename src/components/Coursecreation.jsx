@@ -16,10 +16,20 @@ const Coursecreation = () => {
   const [subjectsData, setSubjectsData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [courseData, setCourseData] = useState([]);
-
+  // const [validationMessages, setValidationMessages] = useState({
+  //   courseName: "",
+  //   typeOfTest: "",
+  //   exam: "",
+  //   subjects: "",
+  //   typeofQuestion: "",
+  //   courseStartDate: "",
+  //   courseEndDate: "",
+  //   cost: "",
+  // });
   const resetFormFields = () => {
     setFormData({
       courseName: "",
+      courseYear:"",
       examId: "",
       typeofQuestion: "",
       courseStartDate: "",
@@ -37,6 +47,7 @@ const Coursecreation = () => {
 
   const [formData, setFormData] = useState({
     courseName: "",
+    courseYear:"",
     examId: "",
     typeofQuestion: "",
     courseStartDate: "",
@@ -125,22 +136,6 @@ const Coursecreation = () => {
     setSelectedexams(selectedExamId);
   };
 
-  // const handleSubjectChange = (event, subjectId) => {
-  //   const { checked } = event.target;
-
-  //   const subject = subjectsData.find((subj) => subj.subjectId === subjectId);
-
-  //   if (subject) {
-  //     setSelectedSubjects((prevSelectedSubjects) => {
-  //       const updatedSelectedSubjects = checked
-  //         ? [...prevSelectedSubjects, subjectId]
-  //         : prevSelectedSubjects.filter((id) => id !== subjectId);
-
-  //       console.log('Selected Subjects:', updatedSelectedSubjects);
-  //       return updatedSelectedSubjects;
-  //     });
-  //   }
-  // };
   const handleSubjectChange = (event, subjectId) => {
     const { checked } = event.target;
 
@@ -232,6 +227,7 @@ const Coursecreation = () => {
         !isNaN(cost) && !isNaN(discountAmount) ? cost - discountAmount : "";
       setFormData({
         ...formData,
+        // courseYear:courseYear,
         typeOfTest: selectedtypeOfTest,
         examId: selectedexams,
         subjects: selectedSubjects,
@@ -252,24 +248,79 @@ const Coursecreation = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const requiredFields = [
-      "courseName",
-      "examId",
-      "courseStartDate",
-      "courseEndDate",
-      "cost",
-      "discount",
-      "totalPrice",
-    ];
 
-    const isEmptyField = requiredFields.some((field) => !formData[field]);
+    // Validation
+    // const newValidationMessages = {
+    //   courseName: "",
+    //   typeOfTest: "",
+    //   exam: "",
+    //   subjects: "",
+    //   courseStartDate:" ",
+    // courseEndDate:"",
+    // cost:"",
+    // };
 
-    if (isEmptyField) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+    // if (!formData.courseName) {
+    //   newValidationMessages.courseName = "* Required";
+    // }
+    // if (!formData.startDate) {
+    //   newValidationMessages.startDate = "* Required";
+    // }
+    // if (!formData.endDate) {
+    //   newValidationMessages.endDate = "* Required";
+    // }
+    // if (!formData.cost) {
+    //   newValidationMessages.cost = "* Required";
+    // }
+    // if (selectedtypeofQuestion.length === 0) {
+    //   newValidationMessages.typeofQuestion = "Please select at least one type of  Question.";
+    // }
+    // if (selectedtypeOfTest.length === 0) {
+    //   newValidationMessages.typeOfTest = "Please select at least one type of test.";
+    // }
+
+    // if (!selectedexams) {
+    //   newValidationMessages.exam = "* Required";
+    // }
+
+    // if (selectedSubjects.length === 0) {
+    //   newValidationMessages.subjects = "Please select at least one Subject.";
+    // }
+
+    // // Add more specific validation checks if needed
+
+    // setValidationMessages(newValidationMessages);
+
+    // // If there are validation errors, stop form submission
+    // if (Object.values(newValidationMessages).some(message => message !== "")) {
+    //   return;
+    // }
+
+    // const requiredFields = [
+    //   "courseName",
+    //   "examId",
+    //   "courseStartDate",
+    //   "courseEndDate",
+    //   "cost",
+    //   "discount",
+    //   "totalPrice",
+    // ];
+
+    // const isEmptyField = requiredFields.some((field) => !formData[field]);
+
+    // if (isEmptyField) {
+    //   alert("Please fill in all required fields.");
+    //   return;
+    // }
     // window.location.reload();
     resetFormFields();
+    // setValidationMessages({
+    //   courseName: "",
+    //   typeOfTest: "",
+    //   exam: "",
+    //   subjects: "",
+    //   typeofQuestion:"",
+    // });
     const data = {
       ...formData,
       typeOfTest: selectedtypeOfTest,
@@ -323,14 +374,6 @@ const Coursecreation = () => {
     }
   };
 
-  // function formatDate(dateString) {
-  //   const date = new Date(dateString);
-  //   const day = date.getDate().toString().padStart(2, "0");
-  //   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-based
-  //   const year = date.getFullYear();
-  //   return `${day}/${month}/${year}`;
-  // }
-
   const handleDelete = async (courseCreationId) => {
     // Display a confirmation dialog before deleting
     const confirmDelete = window.confirm(
@@ -380,6 +423,25 @@ const Coursecreation = () => {
       resetFormFields();
     }
   };
+  function generateYearOptions() {
+    const currentYear = new Date().getFullYear();
+    const startYear = 2000;
+    const endYear = 2035;
+  
+    const yearOptions = [];
+    for (let year = endYear; year >= startYear; year--) {
+      yearOptions.push(
+        <option key={year} value={year}>
+          {year}
+        </option>
+      );
+    }
+  
+    return yearOptions;
+  }
+  
+  
+  
   return (
     <div className="otsMainPages">
       <div className="">
@@ -409,7 +471,22 @@ const Coursecreation = () => {
                       value={formData.courseName}
                       onChange={handleChange}
                     />
+                     {/* <div className="error-message">
+                      {validationMessages.courseName}
+                    </div> */}
                   </div>
+                  <div className="testCreation_-list">
+  <label htmlFor="year">Select Year:</label>
+  <select
+    id="year"
+    name="courseYear"
+    value={formData.courseYear}
+    onChange={handleChange}
+  >
+    <option value="">Select Year</option>
+    {generateYearOptions()}
+  </select>
+</div>
 
                   <div className="testCreation_-list">
                     <label>type of test:</label>
@@ -440,6 +517,9 @@ const Coursecreation = () => {
                         </div>
                       ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.typeOfTest}
+                    </div> */}
                   </div>
                 </div>
 
@@ -458,6 +538,9 @@ const Coursecreation = () => {
                         </option>
                       ))}
                     </select>
+                    {/* <div className="error-message">
+                      {validationMessages.exam}
+                    </div> */}
                   </div>
 
                   <div className="testCreation_-list">
@@ -488,6 +571,9 @@ const Coursecreation = () => {
                         </div>
                       ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.subjects}
+                    </div> */}
                   </div>
                 </div>
 
@@ -519,6 +605,9 @@ const Coursecreation = () => {
                         </div>
                       ))}
                     </div>
+                    {/* <div className="error-message">
+                      {validationMessages.typeofQuestion}
+                    </div> */}
                   </div>
                 </div>
 
@@ -532,7 +621,10 @@ const Coursecreation = () => {
                       value={startDate}
                       onChange={handleStartDateChange}
                       min={new Date().toISOString().split("T")[0]}
-                    />
+                    /> 
+                     {/* <div className="error-message">
+                    {validationMessages.startDate}
+                  </div> */}
                   </div>
 
                   <div className="testCreation_-list">
@@ -546,6 +638,9 @@ const Coursecreation = () => {
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
+                  {/* <div className="error-message">
+                    {validationMessages.endDate}
+                  </div> */}
                 </div>
 
                 <div className="coures-contant_-flexCOntantc examSubjects_-contant">
@@ -558,6 +653,9 @@ const Coursecreation = () => {
                       value={formData.cost}
                       onChange={handleChange}
                     />
+                    {/* <div className="error-message">
+                    {validationMessages.cost}
+                  </div> */}
                   </div>
                   <div className="testCreation_-list">
                     <label htmlFor="discount">Discount (%):</label>

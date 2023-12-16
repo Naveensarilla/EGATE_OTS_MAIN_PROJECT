@@ -1,0 +1,8 @@
+.timer-btns {
+    display: flex;
+    gap: 90px;
+}
+
+.button {
+    padding: 5px;
+}

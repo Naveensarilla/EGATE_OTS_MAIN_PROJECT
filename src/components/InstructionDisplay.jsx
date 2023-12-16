@@ -6,8 +6,15 @@ import "react-tooltip/dist/react-tooltip.css";
 const InstructionsDisplay = () => {
   const [points, setPoints] = useState([]);
   const { instructionId } = useParams();
-
+  const [formErrors, setFormErrors] = useState({});
   const [instruction, instructionPoints] = useState([]);
+
+  const validateForm = () => {
+    const errors = {};
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {

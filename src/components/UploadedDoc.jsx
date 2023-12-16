@@ -5,20 +5,18 @@ export const UploadedDoc = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3081/documentName");
-        const jsonData = await response.json();
-        setData(jsonData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
-
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:3081/documentName");
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
 const [documentData,setDocumentData] = useState([]);
   const handleDelete = async (document_Id) => {

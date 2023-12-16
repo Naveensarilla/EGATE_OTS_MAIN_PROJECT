@@ -22,6 +22,80 @@ const Testcreation = () => {
   const [selectedSubjects, setSelectedSubjects] = useState("");
   const [numberOfSections, setNumberOfSections] = useState(1);
   const [QuestionLimitChecked, setQuestionLimitChecked] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const validateForm = (
+    testName,
+    selectedCourse,
+    selectedtypeOfTest,
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    duration,
+    totalQuestions,
+    totalMarks,
+    selectedInstruction
+  ) => {
+    const errors = {};
+  
+    if (!testName) {
+      errors.testName = 'Test name is required';
+    }
+  
+    if (!selectedCourse) {
+      errors.selectedCourse = 'Please select a course';
+    }
+  
+    if (!selectedtypeOfTest) {
+      errors.selectedtypeOfTest = 'Please select a type of test';
+    }
+  
+    if (!startDate) {
+      errors.startDate = 'Start date is required';
+    }
+  
+    if (!startTime) {
+      errors.startTime = 'Start time is required';
+    }
+  
+    if (!endDate) {
+      errors.endDate = 'End date is required';
+    }
+  
+    if (!endTime) {
+      errors.endTime = 'End time is required';
+    }
+  
+    if (!duration || isNaN(duration) || duration <= 0) {
+      errors.duration = 'Please enter a valid duration (in minutes)';
+    }
+  
+    if (!totalQuestions || isNaN(totalQuestions) || totalQuestions <= 0) {
+      errors.totalQuestions = 'Please enter a valid total number of questions';
+    }
+  
+    if (!totalMarks || isNaN(totalMarks) || totalMarks <= 0) {
+      errors.totalMarks = 'Please enter a valid total marks';
+    }
+  
+    if (!selectedInstruction) {
+      errors.selectedInstruction = 'Please select an instruction';
+    }
+    
+  if (!selectedCourse) {
+    errors.selectedCourse = 'Please select a course.';
+  }
+
+  if (!selectedtypeOfTest) {
+    errors.selectedtypeOfTest = 'Please select a type of test.';
+  }
+  
+    setFormErrors(errors);
+  
+    return Object.keys(errors).length === 0;
+  };
+  
   const [sectionsData, setSectionsData] = useState([
     {
       selectedSubjects: "",
@@ -164,8 +238,15 @@ const Testcreation = () => {
     setNumberOfSections((prevSections) => prevSections + 1);
   };
 
+  const removeSection = () => {
+    setNumberOfSections((prevSections) => prevSections - 1);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // if (validateForm()) {
+      let isValid = true; 
+      
+      setSubmitting(true);
     try {
       // Log the sectionsData before making the request
       console.log("Sections Data Before Request:", sectionsData);
@@ -201,7 +282,14 @@ const Testcreation = () => {
       console.log(data);
     } catch (error) {
       console.error("Error submitting form:", error);
+      isValid = false;
     }
+    console.log("Validation Result:", isValid);
+
+    return isValid;
+    setIsFormVisible(false);
+setSubmitting(false);
+//   }
   };
 
   useEffect(() => {
@@ -271,6 +359,13 @@ const Testcreation = () => {
     setShowTotalSections(!showTotalSections);
   };
   const [showTotalSections, setShowTotalSections] = useState(false);
+  // const removeSection = () => {
+  //   setSectionsData((prevSectionsData) => {
+  //     const updatedSectionsData = [...prevSectionsData];
+  //     updatedSectionsData.pop(); // Remove the last added section
+  //     return updatedSectionsData;
+  //   });
+  // };
   return (
     <div className="otsMainPages testCreation_-container">
       <div className="TestCreation_-container">
@@ -311,6 +406,12 @@ const Testcreation = () => {
                     value={testName}
                     onChange={handleInputChange}
                   />
+                  {formErrors.testName && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.testName}
+                    </span>
+                  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>Status:</label>
@@ -337,6 +438,9 @@ const Testcreation = () => {
                       </option>
                     ))}
                   </select>
+                  {formErrors.selectedCourse && (
+    <span className="error-message">{formErrors.selectedCourse}</span>
+  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>Type of Tests:</label>
@@ -356,6 +460,9 @@ const Testcreation = () => {
                       </option>
                     ))}
                   </select>
+                  {formErrors.selectedtypeOfTest && (
+    <span className="error-message">{formErrors.selectedtypeOfTest}</span>
+  )}
                 </div>
               </div>
 
@@ -367,6 +474,12 @@ const Testcreation = () => {
                     value={startDate}
                     onChange={handleStartDateChange}
                   />
+                  {formErrors.startDate && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.startDate}
+                    </span>
+                  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>Start Time:</label>
@@ -375,6 +488,12 @@ const Testcreation = () => {
                     value={startTime}
                     onChange={handleStartTimeChange}
                   />
+                  {formErrors.startTime && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.startTime}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -386,6 +505,12 @@ const Testcreation = () => {
                     value={endDate}
                     onChange={handleEndDateChange}
                   />
+                  {formErrors.endDate && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.endDate}
+                    </span>
+                  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>End Time:</label>
@@ -394,6 +519,12 @@ const Testcreation = () => {
                     value={endTime}
                     onChange={handleEndTimeChange}
                   />
+                  {formErrors.endTime && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.endTime}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -416,6 +547,12 @@ const Testcreation = () => {
                       </option>
                     ))}
                   </select>
+                  {formErrors.selectedInstruction && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.selectedInstruction}
+                    </span>
+                  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>Calculator:</label>
@@ -434,6 +571,12 @@ const Testcreation = () => {
                     onChange={handleDurationChange}
                     min="1"
                   />
+                   {formErrors.duration && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.duration}
+                    </span>
+                  )}
                 </div>
                 <div className="testCreation_-list">
                   <label>Total Questions:</label>
@@ -443,6 +586,12 @@ const Testcreation = () => {
                     onChange={handleTotalQuestionsChange}
                     min="1"
                   />
+                   {formErrors.totalQuestions && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.totalQuestions}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -455,6 +604,12 @@ const Testcreation = () => {
                     onChange={handleTotalMarksChange}
                     min="1"
                   />
+                    {formErrors.totalMarks && (
+                    <span className="error-message">
+                      <i className="fa-solid fa-circle"></i>
+                      {formErrors.totalMarks}
+                    </span>
+                  )}
                 </div>
                 {/* <div className="testCreation_-list">
                   <label>SECTION</label>
@@ -478,85 +633,6 @@ const Testcreation = () => {
                   />
                 </div>
               </div>
-
-              {/* <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Subjects:</th>
-                      <th>Section</th>
-                      <th>No of Question</th>
-                      {QuestionLimitChecked && <th>Question Limit</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: numberOfSections }, (_, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <div>
-                            <select
-                              value={
-                                sectionsData[index]?.selectedSubjects || ""
-                              }
-                              onChange={(e) =>
-                                handleSectionChange(
-                                  e,
-                                  index,
-                                  "selectedSubjects"
-                                )
-                              }
-                            >
-                              <option value="" disabled>
-                                Select a Subject
-                              </option>
-                              {subjects.map((Subject) => (
-                                <option
-                                  key={Subject.subjectId}
-                                  value={Subject.subjectId}
-                                >
-                                  {Subject.subjectName}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={sectionsData[index]?.sectionName || ""}
-                            onChange={(e) =>
-                              handleSectionChange(e, index, "sectionName")
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="number"
-                            value={sectionsData[index]?.noOfQuestions || ""}
-                            onChange={(e) =>
-                              handleSectionChange(e, index, "noOfQuestions")
-                            }
-                          />
-                        </td>
-                        {QuestionLimitChecked && (
-                          <td>
-                            <input
-                              type="number"
-                              value={sectionsData[index]?.QuestionLimit || ""}
-                              onChange={(e) =>
-                                handleSectionChange(e, index, "QuestionLimit")
-                              }
-                            />
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div> */}
-
               <div>
                 {showTotalSections && (
                   <div>
@@ -571,7 +647,7 @@ const Testcreation = () => {
                     </label>
 
                     <div className="testCreation_-contant_-flexCOntant  examSubjects_-contant">
-                      <table style={{textAlign:'justify'}}>
+                      <table style={{ textAlign: "justify" }}>
                         <thead>
                           <tr>
                             <th>#</th>
@@ -669,9 +745,20 @@ const Testcreation = () => {
                         </tbody>
                       </table>
                     </div>
-                    <button  className="instructionBTN" type="button" onClick={addSection}>
+                    <button
+                      className="instructionBTN"
+                      type="button"
+                      onClick={addSection}
+                    >
                       +
                     </button>
+                    <button
+  className="instructionBTN"
+  type="button"
+  onClick={removeSection}
+>
+  -
+</button>
                   </div>
                 )}
               </div>
