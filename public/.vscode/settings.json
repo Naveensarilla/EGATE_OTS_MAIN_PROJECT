@@ -1,0 +1,29 @@
+{
+    "git.autofetch": true,
+    "files.autoSave": "afterDelay",
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.wordWrap": "on",
+ 
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "emmet.includeLanguages": {
+ 
+        "javascript": "javascriptreact"
+   
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.colorTheme": "Vegetable Contrast (rainglow)",
+    "workbench.iconTheme": "developer-icon-theme",
+    "workbench.productIconTheme": "developer-icons",
+    "workbench.sideBar.location": "right",
+    "terminal.integrated.env.windows": {},
+    "console-ninja.featureSet": "Community",
+    "prettier.endOfLine": "auto",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.fontFamily": "\"Iosevka Slab\", monospace",
+}
