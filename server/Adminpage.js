@@ -1783,25 +1783,30 @@ app.post("/upload", upload.single("document"), async (req, res) => {
       "SELECT document_Id FROM ots_document WHERE documen_name = ?",
       [docName]
     );
-
+  
     if (existingDoc.length > 0) {
       return res.status(409).send("Document with the same name already exists.");
     }
-    const [existingTestSubjectDoc] = await db.query(
-      "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ?",
-      [req.body.testCreationTableId, req.body.subjectId]
-    );
-
-    if (existingTestSubjectDoc.length > 0) {
-      return res.status(409).send("Document with the same test and subject already exists.");
+  
+    let existingTestSubjectDoc;
+  
+    // Check if a section is specified
+    if (req.body.sectionId) {
+      // Check if a document with the same test, subject, and section already exists
+      [existingTestSubjectDoc] = await db.query(
+        "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId = ?",
+        [req.body.testCreationTableId, req.body.subjectId, req.body.sectionId]
+      );
+    } else {
+      // Check if a document with the same test and subject already exists
+      [existingTestSubjectDoc] = await db.query(
+        "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId IS NULL",
+        [req.body.testCreationTableId, req.body.subjectId]
+      );
     }
-    const [existingTestSubjectsectionDoc] = await db.query(
-      "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId = ?",
-      [req.body.testCreationTableId, req.body.subjectId ,req.body.sectionId]
-    );
-
-    if (existingTestSubjectsectionDoc.length > 0) {
-      return res.status(409).send("Document with the same test and subject and section already exists.");
+  
+    if (existingTestSubjectDoc.length > 0) {
+      return res.status(409).send("Document with the same test, subject, and section already exists.");
     }
     await fs.mkdir(outputDir, { recursive: true });
         const result = await mammoth.convertToHtml({ path: docxFilePath });
@@ -1865,16 +1870,32 @@ app.post("/upload", upload.single("document"), async (req, res) => {
           }
         }
         let que_id;
+        let qtypeMappings = {
+          mcq: 1,
+          msq: 2,
+          nsq: 3,
+          'True/False Questions': 4,
+        };
+
         for (let i = 0; i < textSections.length; i++) {
           if (textSections[i].startsWith('[qtype]')) {
             que_id=question_id[j];
             j++;
+            const qtypeText = textSections[i].replace('[qtype]', '').trim().toLowerCase();
             // Save in the qtype table
-            const qtypeRecord = {
-              qtype_text: textSections[i].replace('[qtype]', ''),
-              question_id: que_id
-            };
-            await insertRecord('qtype', qtypeRecord);
+            if (qtypeMappings.hasOwnProperty(qtypeText)) {
+              // Save in the qtype table
+              const qtypeRecord = {
+                qtype_text: textSections[i].replace('[qtype]', ''),
+                question_id: que_id,
+                quesionTypeId: qtypeMappings[qtypeText],
+              };
+              await insertRecord('qtype', qtypeRecord);
+            } else {
+              // Handle invalid qtypeText
+              console.error(`Invalid qtype text: ${qtypeText}`);
+              // You can choose to throw an error, skip the record, or handle it in any other way.
+            }
           } else if (textSections[i].startsWith('[ans]')) {
             // Save in the answer table
             const answerRecord = {
