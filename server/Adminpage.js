@@ -1865,16 +1865,32 @@ app.post("/upload", upload.single("document"), async (req, res) => {
           }
         }
         let que_id;
+        let qtypeMappings = {
+          mcq: 1,
+          msq: 2,
+          nsq: 3,
+          'True/False Questions': 4,
+        };
+
         for (let i = 0; i < textSections.length; i++) {
           if (textSections[i].startsWith('[qtype]')) {
             que_id=question_id[j];
             j++;
+            const qtypeText = textSections[i].replace('[qtype]', '').trim().toLowerCase();
             // Save in the qtype table
-            const qtypeRecord = {
-              qtype_text: textSections[i].replace('[qtype]', ''),
-              question_id: que_id
-            };
-            await insertRecord('qtype', qtypeRecord);
+            if (qtypeMappings.hasOwnProperty(qtypeText)) {
+              // Save in the qtype table
+              const qtypeRecord = {
+                qtype_text: textSections[i].replace('[qtype]', ''),
+                question_id: que_id,
+                quesionTypeId: qtypeMappings[qtypeText],
+              };
+              await insertRecord('qtype', qtypeRecord);
+            } else {
+              // Handle invalid qtypeText
+              console.error(`Invalid qtype text: ${qtypeText}`);
+              // You can choose to throw an error, skip the record, or handle it in any other way.
+            }
           } else if (textSections[i].startsWith('[ans]')) {
             // Save in the answer table
             const answerRecord = {
