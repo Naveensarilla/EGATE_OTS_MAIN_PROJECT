@@ -81,6 +81,7 @@ function App() {
             element={<GettinggInstructions />}  //done
           />
  
+ {/* http://localhost:3000/Instruction/editIns/1 */}
           {/* document list */}
           <Route
             path="/getSubjectData/:subjectId/:testCreationTableId"
