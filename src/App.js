@@ -87,10 +87,7 @@ function App() {
               element={<GettinggInstructions />}
             />
 
-            {/* <Route
-              path="/Instruction/editIns/:instructionId/"
-              element={<InstructionDetails />}
-            /> */}
+           
             <Route
               path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
               element={<Document_ImageInfo />}

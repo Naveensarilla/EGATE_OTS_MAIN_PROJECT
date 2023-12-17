@@ -19,6 +19,16 @@ const db = mysql.createPool({
   database: "admin_project",
 });
 
+// for uban
+
+// const db = mysql.createPool({
+//   host: "localhost",
+//   user: "naveen",
+//   password: "naveen123",
+//   database: "admin_project",
+// });
+
+
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     const uploadDir = "uploads/";
@@ -2293,6 +2303,7 @@ async getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTabl
     throw err;
   }
 }
+
 // Reusable function to get questions data based on subjectId and document_Id
 async getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
   try {
@@ -2359,6 +2370,7 @@ async  getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
+
 async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
@@ -2368,7 +2380,6 @@ async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
       WHERE question_id IN (?) 
     `;
     const [results] = await db.query(query, [questionIds, document_Id]);
-
     const answers = results.map((answer) => ({
       answer_id: answer.answer_id,
       question_id: answer.question_id,
