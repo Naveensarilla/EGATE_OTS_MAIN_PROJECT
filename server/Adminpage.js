@@ -1783,29 +1783,24 @@ app.post("/upload", upload.single("document"), async (req, res) => {
       "SELECT document_Id FROM ots_document WHERE documen_name = ?",
       [docName]
     );
-  
+
     if (existingDoc.length > 0) {
       return res.status(409).send("Document with the same name already exists.");
     }
-  
-    let existingTestSubjectDoc;
-  
-    // Check if a section is specified
-    if (req.body.sectionId) {
-      // Check if a document with the same test, subject, and section already exists
-      [existingTestSubjectDoc] = await db.query(
-        "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId = ?",
-        [req.body.testCreationTableId, req.body.subjectId, req.body.sectionId]
-      );
-    } else {
-      // Check if a document with the same test and subject already exists
-      [existingTestSubjectDoc] = await db.query(
-        "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId IS NULL",
-        [req.body.testCreationTableId, req.body.subjectId]
-      );
-    }
-  
+    const [existingTestSubjectDoc] = await db.query(
+      "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ?",
+      [req.body.testCreationTableId, req.body.subjectId]
+    );
+
     if (existingTestSubjectDoc.length > 0) {
+      return res.status(409).send("Document with the same test and subject already exists.");
+    }
+    const [existingTestSubjectSectionDoc] = await db.query(
+      "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId = ?",
+      [req.body.testCreationTableId, req.body.subjectId, req.body.sectionId]
+    );
+  
+    if (existingTestSubjectSectionDoc.length > 0) {
       return res.status(409).send("Document with the same test, subject, and section already exists.");
     }
     await fs.mkdir(outputDir, { recursive: true });

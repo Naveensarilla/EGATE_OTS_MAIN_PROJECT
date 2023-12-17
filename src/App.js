@@ -46,9 +46,6 @@ import QuestionsFunctionality from "./Frontend/Pages/MainQuizFunctionality/Quest
 // import TestResultsPage from './Pages/MainQuizFunctionality/TestResultsPage';
 import TestResultsPage from "./Frontend/Pages/MainQuizFunctionality/TestResultsPage.jsx";
 import { OvlHome } from "./Online Video Lectures/OvlHome.jsx";
-import Ug_Coures, {
-  Topic,
-} from "./Online Video Lectures/UgCouresList/Ug_Coures.jsx";
 import { Topics_List } from "./Online Video Lectures/UgCouresList/Topics/Topics_List.jsx";
 import DemPracticeQuestions from "./Online Video Lectures/UgCouresList/Topics/PracticeQuestions/DemPracticeQuestions.jsx";
 import InstructionDetails from "./Demo/InstructionDetails .jsx";
@@ -95,7 +92,7 @@ function App() {
               element={<InstructionDetails />}
             /> */}
             <Route
-              path="/getSubjectData/:subjectId/:testCreationTableId"
+              path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
               element={<Document_ImageInfo />}
             />
 
