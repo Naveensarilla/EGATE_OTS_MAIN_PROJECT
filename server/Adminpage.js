@@ -2182,8 +2182,6 @@ async function insertRecord(table, record) {
 }
 
 // end -------------------
-
-// doc name getting
 app.get("/documentName", async (req, res) => {
   try {
     const query =
@@ -2195,19 +2193,22 @@ app.get("/documentName", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+// doc name getting
 
-// end ----------
+
 
 // get doc upload iamges ---------------
-app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
+app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const testCreationTableId = req.params.testCreationTableId;
+    const sectionId = req.params.sectionId;
 
-    // Fetch document data based on subjectId and testCreationTableId
-    const documentData = await getDocumentBySubjectAndTestCreationId(
+    // Fetch document data based on subjectId, testCreationTableId, and sectionId
+    const documentData = await getDocumentBySubjectAndTestCreationIdSectionId(
       subjectId,
-      testCreationTableId
+      testCreationTableId,
+      sectionId
     );
 
     if (!documentData) {
@@ -2216,10 +2217,11 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
 
     const document_Id = documentData.document_Id;
 
-    // Fetch question data based on subjectId and document_Id
+    // Fetch question data based on subjectId, document_Id, and sectionId
     const questions = await getQuestionsBySubjectAndDocumentId(
       subjectId,
-      document_Id
+      document_Id,
+      sectionId
     );
 
     // Fetch option data based on questions and document_Id
@@ -2233,6 +2235,8 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
       questions,
       document_Id
     );
+
+    // Fetch answers data based on questions and document_Id
     const answers = await getAnswersByQuestionsAndDocumentId(
       questions,
       document_Id
@@ -2249,6 +2253,8 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
       questions,
       document_Id
     );
+
+    // Respond with the fetched data
     res.json({
       document: documentData,
       questions,
@@ -2264,7 +2270,8 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
   }
 });
 
-async function getDocumentBySubjectAndTestCreationId(
+
+async function getDocumentBySubjectAndTestCreationIdSectionId(
   subjectId,
   testCreationTableId
 ) {
@@ -2454,6 +2461,9 @@ app.delete("/DocumentDelete/:document_Id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// end --
 //  end for document section code ------------------------------------------/
 
 // ================================ end

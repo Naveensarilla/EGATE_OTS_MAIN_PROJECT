@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 
 function Document_ImageInfo() {
   const [data, setData] = useState(null);
-  const { subjectId, testCreationTableId } = useParams();
+  const { subjectId, testCreationTableId, sectionId } = useParams();
   useEffect(() => {
     fetchData();
   }, []);
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3081/getSubjectData/${subjectId}/${testCreationTableId}`
+        `http://localhost:3081/getSubjectData/${subjectId}/${testCreationTableId}/${sectionId}`
       );
 
       if (!response.ok) {
