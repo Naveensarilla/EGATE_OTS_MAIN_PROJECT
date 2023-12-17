@@ -53,29 +53,32 @@ function App() {
      <div className="common_grid_app">
         <Leftnav />
         <Routes>
-          <Route path="/" element={<Dashbaord />} />
-          <Route path="/exams" element={<ExamCreation />} />
-          <Route path="/update/:examId" element={<NewExamUpdataion />} />
-          <Route path="Coursecreation" element={<Coursecreation />} />
+          <Route path="/" element={<Dashbaord />} /> //done
+          <Route path="/exams" element={<ExamCreation />} />  //done
+
+          <Route path="/update/:examId" element={<NewExamUpdataion />} /> //done
+
+          
+          <Route path="Coursecreation" element={<Coursecreation />} /> //done
           <Route
             path="/courseupdate/:courseCreationId"
-            element={<Coureseupdate />}
+            element={<Coureseupdate />} //done
           />
-          <Route path="/InstructionPage" element={<InstructionPage />} />
-          <Route path="/Testcreation" element={<Testcreation />} />
+          <Route path="/InstructionPage" element={<InstructionPage />} /> //done
+          <Route path="/Testcreation" element={<Testcreation />} /> //done
           <Route
             path="/testUpdate/:testCreationTableId"
             element={<TestUpdate />}
-          />
-          <Route path="/DocumentUpload" element={<DocumentUpload />} />
+          /> //done
+          <Route path="/DocumentUpload" element={<DocumentUpload />} />  //done
           {/* <Route path="/Testcreation" element={<EditInstructions />} /> */}
           <Route
             path="/InstructionPage/editIns/:instructionId/:id"
-            element={<UpdateInstruction />}
-          />
+            element={<UpdateInstruction />} 
+          /> //done
            <Route
             path="/Instruction/editIns/:instructionId/"
-            element={<GettinggInstructions />}
+            element={<GettinggInstructions />}  //done
           />
  
           {/* document list */}

@@ -17,7 +17,9 @@ const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'TotalQuizdb',
+  // database: 'TotalQuizdb',
+  database: 'admin_project',
+
 });
 
 
