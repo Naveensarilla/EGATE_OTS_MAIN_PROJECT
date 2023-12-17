@@ -16,17 +16,17 @@ const InstructionUpdate = () => {
   const [formErrors, setFormErrors] = useState({});
   const validateForm = () => {
     const errors = {};
-  
+
     if (!selectedExam) {
-      errors.examId = 'required';
+      errors.examId = "required";
     }
     if (!instructionHeading) {
-      errors.instructionHeading = 'required';
+      errors.instructionHeading = "required";
     }
     if (!file) {
-      errors.file = 'required';
+      errors.file = "required";
     }
-  
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -79,38 +79,37 @@ const InstructionUpdate = () => {
   // };
 
   const handleUpdate = async () => {
-  if (validateForm()) {
-    setSubmitting(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("examId", selectedExam);
-      formData.append("instructionHeading", instructionHeading);
-      formData.append("instruction", instructionPoint);
-      await axios.put(
-        `http://localhost:3081/instructionupload/${instructionId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    if (validateForm()) {
+      setSubmitting(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("examId", selectedExam);
+        formData.append("instructionHeading", instructionHeading);
+        formData.append("instruction", instructionPoint);
+        await axios.put(
+          `http://localhost:3081/instructionupload/${instructionId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      alert("Instruction updated successfully!");
-    } catch (error) {
-      console.error("Error updating instruction:", error.response);
-      alert("Failed to update instruction. Please try again.");
+        alert("Instruction updated successfully!");
+      } catch (error) {
+        console.error("Error updating instruction:", error.response);
+        alert("Failed to update instruction. Please try again.");
+      }
+      // Assuming you intended to close the form after submitting
+      setFormOpen(false);
+      setSubmitting(false);
     }
-    // Assuming you intended to close the form after submitting
-    setFormOpen(false);
-    setSubmitting(false);
-  }
-};
-
+  };
 
   return (
-    <div >
+    <div>
       <h2>Update Instruction</h2>
       <form>
         <label>Select Exam:</label>
@@ -125,14 +124,25 @@ const InstructionUpdate = () => {
               {exam.examName}
             </option>
           ))}
-        </select> {formErrors.examId && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.examId}</span>}
+        </select>{" "}
+        {formErrors.examId && (
+          <span className="error-message">
+            <i class="fa-solid fa-circle"></i>
+            {formErrors.examId}
+          </span>
+        )}
         <label>Instructions Heading:</label>
         <input
           type="text"
           value={instructionHeading}
           onChange={(e) => setInstructionHeading(e.target.value)}
         />
- {formErrors.instructionHeading && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.instructionHeading}</span>}
+        {formErrors.instructionHeading && (
+          <span className="error-message">
+            <i class="fa-solid fa-circle"></i>
+            {formErrors.instructionHeading}
+          </span>
+        )}
         <div>
           <label>Instructions:</label>
           <textarea
@@ -145,7 +155,13 @@ const InstructionUpdate = () => {
         <div>
           <label>Instructions:</label>
           <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        </div> {formErrors.file && <span className="error-message"><i class="fa-solid fa-circle"></i>{formErrors.file}</span>}
+        </div>{" "}
+        {formErrors.file && (
+          <span className="error-message">
+            <i class="fa-solid fa-circle"></i>
+            {formErrors.file}
+          </span>
+        )}
         <button type="button" onClick={handleUpdate}>
           Update
         </button>

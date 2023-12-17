@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../components/css/Dashboard.css";
 // Custom hook for fetching data\
 import TotalExam from "./Imgs/TotalExam.png";
+import InstructionDetails from "../Demo/InstructionDetails ";
 
 const useFetchCount = (url) => {
   const [count, setCount] = useState(0);
@@ -67,6 +68,9 @@ const Dashboard = () => {
       </div>
       </div>
       </div>
+
+
+      {/* <InstructionDetails /> */}
     </div>
   );
 };
