@@ -267,8 +267,8 @@ const GettinggInstructions = () => {
           <img src={imageSrc} alt="Instruction" />
 
           {points.map((point) => (
-            <ul>
-              <li key={point.instructionId}>{point.points}</li>
+            <ul key={point.instructionId} className={point.id % 2 === 0 ? "color1" : 'color2'}>
+              <li >{point.points}</li>
 
               <Link
                 to={`/InstructionPage/editIns/${point.instructionId}/${point.id}`}
