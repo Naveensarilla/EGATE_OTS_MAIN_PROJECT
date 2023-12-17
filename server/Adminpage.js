@@ -2205,7 +2205,7 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
     const sectionId = req.params.sectionId;
 
     // Fetch document data based on subjectId, testCreationTableId, and sectionId
-    const documentData = await getDocumentBySubjectAndTestCreationIdSectionId(
+    const documentData = await dbHelper.getDocumentBySubjectAndTestCreationIdSectionId(
       subjectId,
       testCreationTableId,
       sectionId
@@ -2218,41 +2218,44 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
     const document_Id = documentData.document_Id;
 
     // Fetch question data based on subjectId, document_Id, and sectionId
-    const questions = await getQuestionsBySubjectAndDocumentId(
+    const questions = await dbHelper.getQuestionsBySubjectAndDocumentId(
       subjectId,
       document_Id,
       sectionId
     );
 
     // Fetch option data based on questions and document_Id
-    const options = await getOptionsByQuestionsAndDocumentId(
+    const options = await dbHelper.getOptionsByQuestionsAndDocumentId(
       questions,
       document_Id
     );
 
     // Fetch solution data based on questions and document_Id
-    const solutions = await getSolutionsByQuestionsAndDocumentId(
+    const solutions = await dbHelper.getSolutionsByQuestionsAndDocumentId(
       questions,
       document_Id
     );
 
     // Fetch answers data based on questions and document_Id
-    const answers = await getAnswersByQuestionsAndDocumentId(
+    const answers = await dbHelper.getAnswersByQuestionsAndDocumentId(
       questions,
       document_Id
     );
 
     // Fetch marks data based on questions and document_Id
-    const marks = await getMarksByQuestionsAndDocumentId(
+    const marks = await dbHelper.getMarksByQuestionsAndDocumentId(
       questions,
       document_Id
     );
 
     // Fetch qtypes data based on questions and document_Id
-    const qtypes = await getQTypesByQuestionsAndDocumentId(
+    const qtypes = await dbHelper.getQTypesByQuestionsAndDocumentId(
       questions,
       document_Id
     );
+
+    // Combine images
+    const combinedImages = dbHelper.combineImage(questions, options, solutions);
 
     // Respond with the fetched data
     res.json({
@@ -2263,6 +2266,7 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
       answers,
       marks,
       qtypes,
+      combinedImages,
     });
   } catch (error) {
     console.error(error);
@@ -2270,39 +2274,39 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
   }
 });
 
+class DatabaseHelper {
+  constructor(db) {
+    this.db = db;
+  }
 
-async function getDocumentBySubjectAndTestCreationIdSectionId(
-  subjectId,
-  testCreationTableId
-) {
+async getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
   try {
     const query = `
       SELECT document_Id, testCreationTableId, documen_name
       FROM ots_document
-      WHERE subjectId = ? AND testCreationTableId = ?
+      WHERE subjectId = ? AND testCreationTableId = ? AND sectionId = ?
     `;
-    const [result] = await db.query(query, [subjectId, testCreationTableId]);
+    const [result] = await this.db.query(query, [subjectId, testCreationTableId, sectionId]);
     return result[0];
   } catch (err) {
     console.error(`Error fetching document details: ${err}`);
     throw err;
   }
 }
-
 // Reusable function to get questions data based on subjectId and document_Id
-async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
+async getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
   try {
     const query = `
       SELECT question_id, question_img
       FROM questions
       WHERE subjectId = ? AND document_Id = ?  
     `;
-    const [results] = await db.query(query, [subjectId, document_Id]);
-    const optionsWithBase64 = results.map((option) => ({
-      question_id: option.question_id,
-      question_img: option.question_img.toString("base64"),
+    const [results] = await this.db.query(query, [subjectId, document_Id]);
+    const questionsWithBase64 = results.map((question) => ({
+      question_id: question.question_id,
+      question_img: question.question_img.toString("base64"),
     }));
-    return optionsWithBase64;
+    return questionsWithBase64;
   } catch (err) {
     console.error(`Error fetching questions: ${err}`);
     throw err;
@@ -2310,17 +2314,16 @@ async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
 }
 
 // Reusable function to get options data based on questions and document_Id
-async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
+async getOptionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
     const query = `
-    SELECT question_id, option_img
-    FROM options
-    WHERE question_id IN (?) 
+      SELECT question_id, option_img
+      FROM options
+      WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await this.db.query(query, [questionIds, document_Id]);
 
-    // Convert BLOB data to base64 for sending in the response
     const optionsWithBase64 = results.map((option) => ({
       question_id: option.question_id,
       option_img: option.option_img.toString("base64"),
@@ -2334,7 +2337,7 @@ async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
 }
 
 // Reusable function to get solutions data based on questions and document_Id
-async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
+async  getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
     const query = `
@@ -2356,7 +2359,7 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
+async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
     const query = `
@@ -2378,7 +2381,7 @@ async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
+async  getMarksByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
     const query = `
@@ -2400,7 +2403,7 @@ async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
+async  getQTypesByQuestionsAndDocumentId(questions, document_Id) {
   try {
     const questionIds = questions.map((question) => question.question_id);
     const query = `
@@ -2422,8 +2425,7 @@ async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-
-function combineImage(questions, options, solutions) {
+combineImage(questions, options, solutions) {
   const combinedImages = [];
 
   for (let i = 0; i < questions.length; i++) {
@@ -2443,6 +2445,9 @@ function combineImage(questions, options, solutions) {
 
   return combinedImages;
 }
+}
+
+const dbHelper = new DatabaseHelper(db);
 // end--------
 //doc delete
 app.delete("/DocumentDelete/:document_Id", async (req, res) => {
