@@ -85,11 +85,10 @@ const [documentData,setDocumentData] = useState([]);
                   <td  >
                     <div className="EditDelete_-btns">
                     <Link className="Ots_-edit " 
-                      to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}/${item.sectionId}`}
+                      to={`/getSubjectData/${item.subjectId}/${item.testCreationTableId}`}
                     >
                       Open Document
                     </Link>
-
                     <button  className="Ots_-delete"   onClick={() => handleDelete(item.document_Id)}><i className="fa-regular fa-trash-can"></i></button>
                     </div>
                   </td>
