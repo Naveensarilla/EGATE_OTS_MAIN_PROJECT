@@ -13,12 +13,12 @@ app.use(express.json());
 app.use(cors());
 
 
-const db = mysql.createPool({
+const db2 = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  // database: 'TotalQuizdb',
-  database: 'admin_project',
+  // database: 'TotalQuizdb2',
+  database: 'admin_project1',
 
 });
 
@@ -45,7 +45,7 @@ const upload = multer({ storage });
 app.get('/subjects', async (req, res) => {
   // Fetch subjects
   try {
-    const [rows] = await db.query('SELECT * FROM subjects');
+    const [rows] = await db2.query('SELECT * FROM subjects');
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -57,7 +57,7 @@ app.get('/feachingexams/:examId', async (req, res) => {
   const { examId } = req.params;
   try {
     // Fetch exams from the database
-    const [rows] = await db.query('SELECT * FROM exams WHERE examId = ?', [examId]);
+    const [rows] = await db2.query('SELECT * FROM exams WHERE examId = ?', [examId]);
 
     res.json(rows);
   } catch (error) {
@@ -72,7 +72,7 @@ app.get('/exams/:examId/subjects', async (req, res) => {
   try {
     console.log('Fetching subjects for examId:', examId);
 
-    const [rows] = await db.query(
+    const [rows] = await db2.query(
       'SELECT subjectId FROM exam_creation_table WHERE examId = ?',
       [examId]
     );
@@ -94,20 +94,20 @@ app.put('/update/:examId', async (req, res) => {
 
   try {
     // Update data in the exams table
-    await db.query('UPDATE exams SET examName = ?, startDate = ?, endDate = ? WHERE examId = ?', [examName, startDate, endDate, examId]);
+    await db2.query('UPDATE exams SET examName = ?, startDate = ?, endDate = ? WHERE examId = ?', [examName, startDate, endDate, examId]);
 
     // Update subjects in the exam_creation_table
     // 1. Delete existing subjects that are not in the updated list
-    await db.query('DELETE FROM exam_creation_table WHERE examId = ? AND subjectId NOT IN (?)', [examId, subjects]);
+    await db2.query('DELETE FROM exam_creation_table WHERE examId = ? AND subjectId NOT IN (?)', [examId, subjects]);
 
     // 2. Insert new subjects that are not already in the table
-    const existingSubjects = await db.query('SELECT subjectId FROM exam_creation_table WHERE examId = ?', [examId]);
+    const existingSubjects = await db2.query('SELECT subjectId FROM exam_creation_table WHERE examId = ?', [examId]);
     const existingSubjectIds = existingSubjects[0].map(row => row.subjectId);
 
     const newSubjects = subjects.filter(subjectId => !existingSubjectIds.includes(subjectId));
 
     const subjectInsertPromises = newSubjects.map(subjectId =>
-      db.query('INSERT INTO exam_creation_table (examId, subjectId) VALUES (?, ?)', [examId, subjectId])
+      db2.query('INSERT INTO exam_creation_table (examId, subjectId) VALUES (?, ?)', [examId, subjectId])
     );
 
     await Promise.all(subjectInsertPromises);
@@ -127,14 +127,14 @@ app.post('/exams', async (req, res) => {
   const { examName, startDate, endDate, selectedSubjects } = req.body;
 
   try {
-    const [examResult] = await db.query(
+    const [examResult] = await db2.query(
       'INSERT INTO exams (examName, startDate, endDate) VALUES (?, ?, ?)',
       [examName, startDate, endDate]
     );
 
     const insertedExamId = examResult.insertId;
     for (const subjectId of selectedSubjects) {
-      await db.query(
+      await db2.query(
         'INSERT INTO exam_creation_table (examId, subjectId) VALUES (?, ?)',
         [insertedExamId, subjectId]
       );
@@ -158,7 +158,7 @@ app.get('/exams-with-subjects', async (req, res) => {
       JOIN subjects AS s ON ec.subjectId = s.subjectId
       GROUP BY e.examId
     `;
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -171,7 +171,7 @@ app.get('/exams-with-subjects', async (req, res) => {
     const examId = req.params.examId;
   
     try {
-      await db.query('DELETE FROM exams WHERE examId = ?', [examId]);
+      await db2.query('DELETE FROM exams WHERE examId = ?', [examId]);
       // You might also want to delete related data in other tables (e.g., exam_creation) if necessary.
   
       res.json({ message: `Exam with ID ${examId} deleted from the database` });
@@ -190,11 +190,11 @@ app.get('/exams-with-subjects', async (req, res) => {
   
     try {
       // First, you can delete the existing subjects associated with the exam.
-      await db.query('DELETE FROM exam_creation_table WHERE examId = ?', [examId]);
+      await db2.query('DELETE FROM exam_creation_table WHERE examId = ?', [examId]);
   
       // Then, insert the updated subjects into the exam_creation_table.
       for (const subjectId of subjects) {
-        await db.query(
+        await db2.query(
           'INSERT INTO exam_creation_table (examId, subjectId) VALUES (?, ?)',
           [examId, subjectId]
         );
@@ -213,7 +213,7 @@ app.get('/exams-with-subjects', async (req, res) => {
     const query = 'SELECT * FROM exams WHERE examId = ?';
     const examId = req.params.examId;
     try {
-      const [result] = await db.query(query, [examId]);
+      const [result] = await db2.query(query, [examId]);
       res.json(result);
     } catch (error) {
       console.error(error);
@@ -231,12 +231,12 @@ app.put('/updatedata/:examId', async (req, res) => {
 
   try {
     // Update exam details
-    await db.query(updateExamQuery, [examName, startDate, endDate, examId]);
+    await db2.query(updateExamQuery, [examName, startDate, endDate, examId]);
 
     // Check if subjects is an array before updating
     if (Array.isArray(subjects)) {
       // Update subjects
-      await Promise.all(subjects.map(subjectId => db.query(updateSubjectsQuery, [subjectId, examId])));
+      await Promise.all(subjects.map(subjectId => db2.query(updateSubjectsQuery, [subjectId, examId])));
     }
 
     res.json({ updated: true });
@@ -252,7 +252,7 @@ app.put('/updatedata/:examId', async (req, res) => {
 //     const examId = req.params.examId;
   
 //     try {
-//       const [rows] = await db.query('SELECT subjectId FROM exam_creation_table WHERE examId = ?', [examId]);
+//       const [rows] = await db2.query('SELECT subjectId FROM exam_creation_table WHERE examId = ?', [examId]);
 //       const selectedSubjects = rows.map(row => row.subjectId);
 //       res.json(selectedSubjects);
 //     } catch (error) {
@@ -268,11 +268,11 @@ app.put('/updatedata/:examId', async (req, res) => {
   
     try {
       // First, delete the existing subjects associated with the exam.
-      await db.query('DELETE FROM exam_creation_table WHERE examId = ?', [examId]);
+      await db2.query('DELETE FROM exam_creation_table WHERE examId = ?', [examId]);
   
       // Then, insert the updated subjects into the exam_creation_table.
       for (const subjectId of subjects) {
-        await db.query(
+        await db2.query(
           'INSERT INTO exam_creation_table (examId, subjectId) VALUES (?, ?)',
           [examId, subjectId]
         );
@@ -291,7 +291,7 @@ app.put('/updatedata/:examId', async (req, res) => {
 // --------------- fetch type of test names -----------------------------
 app.get('/type_of_tests', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT typeOfTestId, typeOfTestName FROM type_of_test');
+    const [rows] = await db2.query('SELECT typeOfTestId, typeOfTestName FROM type_of_test');
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -301,7 +301,7 @@ app.get('/type_of_tests', async (req, res) => {
 // --------------- fetch type of Questions -----------------------------
 app.get('/type_of_questions', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT quesionTypeId, typeofQuestion FROM quesion_type');
+    const [rows] = await db2.query('SELECT quesionTypeId, typeofQuestion FROM quesion_type');
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -311,7 +311,7 @@ app.get('/type_of_questions', async (req, res) => {
 // --------------- fetch exams -----------------------------
 app.get('/courese-exams', async (req, res) =>{
   try{
-const [rows] = await db.query('SELECT  examId,examName FROM exams');
+const [rows] = await db2.query('SELECT  examId,examName FROM exams');
 res.json(rows);
   }catch (error) {
     console.error(error);
@@ -329,7 +329,7 @@ app.get('/courese-exam-subjects/:examId/subjects', async (req, res) => {
       JOIN exam_creation_table AS ec ON s.subjectId = ec.subjectId
       WHERE ec.examId = ?
     `;
-    const [rows] = await db.query(query, [examId]);
+    const [rows] = await db2.query(query, [examId]);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -345,7 +345,7 @@ app.post('/course-creation', async (req, res) => {
 
   try {
     // Insert the course data into the course_creation_table
-    const [result] = await db.query(
+    const [result] = await db2.query(
       'INSERT INTO course_creation_table (courseName,courseYear,  examId,  courseStartDate, courseEndDate , cost, Discount, totalPrice) VALUES (?, ?, ?, ?, ?, ?, ?,?)',
       [courseName,courseYear, examId, courseStartDate, courseEndDate, cost, discount, totalPrice]
     );
@@ -378,10 +378,10 @@ app.post('/course_type_of_question', async (req, res) => {
       const values = [courseCreationId, typeOfTestId];
     
       // Log the query before execution
-      console.log('Executing query:', db.format(query, values));
+      console.log('Executing query:', db2.format(query, values));
     
       // Execute the query
-      await db.query(query, values);
+      await db2.query(query, values);
     }
     
     // Insert subjects into the course_subjects table
@@ -389,16 +389,16 @@ app.post('/course_type_of_question', async (req, res) => {
     for (const subjectId of subjectIds) {
       const query = 'INSERT INTO course_subjects (courseCreationId, subjectId) VALUES (?, ?)';
       const values = [courseCreationId, subjectId]
-      console.log('Executing query:', db.format(query, values));
-      await db.query(query, values);
+      console.log('Executing query:', db2.format(query, values));
+      await db2.query(query, values);
     }
 
     // Insert question types into the course_type_of_question table
      for (const quesionTypeId of typeofQuestion) {
       const query = 'INSERT INTO course_type_of_question (courseCreationId, quesionTypeId) VALUES (?, ?)';
       const values = [courseCreationId, quesionTypeId]
-      console.log('Executing query:', db.format(query, values));
-      await db.query(query, values);
+      console.log('Executing query:', db2.format(query, values));
+      await db2.query(query, values);
     }
 
     // Respond with success message
@@ -464,7 +464,7 @@ JOIN exams AS e
 ON
     cc.examId = e.examId;
      `;
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -479,7 +479,7 @@ app.delete('/course_creation_table_Delete/:courseCreationId', async (req, res) =
   const courseCreationId = req.params.courseCreationId;
 
   try {
-    await db.query('DELETE course_creation_table, course_subjects, course_type_of_question, course_typeoftests FROM course_creation_table LEFT JOIN course_typeoftests ON course_creation_table.courseCreationId = course_typeoftests.courseCreationId LEFT JOIN course_subjects ON course_creation_table.courseCreationId = course_subjects.courseCreationId LEFT JOIN course_type_of_question ON course_creation_table.courseCreationId = course_type_of_question.courseCreationId WHERE course_creation_table.courseCreationId = ?', [courseCreationId]);
+    await db2.query('DELETE course_creation_table, course_subjects, course_type_of_question, course_typeoftests FROM course_creation_table LEFT JOIN course_typeoftests ON course_creation_table.courseCreationId = course_typeoftests.courseCreationId LEFT JOIN course_subjects ON course_creation_table.courseCreationId = course_subjects.courseCreationId LEFT JOIN course_type_of_question ON course_creation_table.courseCreationId = course_type_of_question.courseCreationId WHERE course_creation_table.courseCreationId = ?', [courseCreationId]);
 
     res.json({ message: `course with ID ${courseCreationId} deleted from the database` });
   } catch (error) {
@@ -547,7 +547,7 @@ app.get('/courseupdate/:courseCreationId', async (req, res) => {
       cc.courseCreationId = ?;
       `;
   
-      const [course] = await db.query(query, [courseCreationId]);
+      const [course] = await db2.query(query, [courseCreationId]);
   
       if (!course) {
         res.status(404).json({ error: 'Course not found' });
@@ -573,7 +573,7 @@ app.get('/courseupdate/:courseCreationId', async (req, res) => {
         FROM course_subjects AS cs
         WHERE cs.courseCreationId = ?
       `;
-      const [rows] = await db.query(query, [courseCreationId]);
+      const [rows] = await db2.query(query, [courseCreationId]);
       res.json(rows);
     } catch (error) {
       console.error(error);
@@ -591,7 +591,7 @@ app.get('/courseupdate/:courseCreationId', async (req, res) => {
         JOIN quesion_type AS qt ON ctoq.quesionTypeId = qt.quesionTypeId
         WHERE ctoq.courseCreationId = ?
       `;
-      const [rows] = await db.query(query, [courseCreationId]);
+      const [rows] = await db2.query(query, [courseCreationId]);
       res.json(rows);
     } catch (error) {
       console.error(error);
@@ -609,7 +609,7 @@ app.get('/courseupdate/:courseCreationId', async (req, res) => {
         JOIN type_of_test AS tt ON ctot.typeOfTestId  = tt.typeOfTestId 
         WHERE ctot.courseCreationId = ?
       `;
-      const [rows] = await db.query(query, [courseCreationId]);
+      const [rows] = await db2.query(query, [courseCreationId]);
       res.json(rows);
     } catch (error) {
       console.error(error);
@@ -649,7 +649,7 @@ app.put("/update-course/:courseCreationId", async (req, res) => {
   `;
 
   try {
-    await db.query(updateQuery, [
+    await db2.query(updateQuery, [
       courseName,
       selectedExam,
       courseStartDate,
@@ -663,34 +663,34 @@ app.put("/update-course/:courseCreationId", async (req, res) => {
     // Handle type of tests update
     const deleteTypeOfTestQuery =
       "DELETE FROM course_typeoftests WHERE courseCreationId = ?";
-    await db.query(deleteTypeOfTestQuery, [courseCreationId]);
+    await db2.query(deleteTypeOfTestQuery, [courseCreationId]);
 
     const insertTestOfTestQuery =
       "INSERT INTO course_typeoftests (courseCreationId, typeOfTestId) VALUES (?, ?)";
     for (const typeOfTestId of selectedTypeOfTests) {
-      await db.query(insertTestOfTestQuery, [courseCreationId, typeOfTestId]);
+      await db2.query(insertTestOfTestQuery, [courseCreationId, typeOfTestId]);
     }
 
     // Handle subjects update (assuming course_subjects table has columns courseCreationId and subjectId)
     const deleteSubjectsQuery =
       "DELETE FROM course_subjects WHERE courseCreationId = ?";
-    await db.query(deleteSubjectsQuery, [courseCreationId]);
+    await db2.query(deleteSubjectsQuery, [courseCreationId]);
 
     const insertSubjectsQuery =
       "INSERT INTO course_subjects (courseCreationId, subjectId) VALUES (?, ?)";
     for (const subjectId of selectedSubjects) {
-      await db.query(insertSubjectsQuery, [courseCreationId, subjectId]);
+      await db2.query(insertSubjectsQuery, [courseCreationId, subjectId]);
     }
 
     // Handle question types update (assuming course_type_of_question table has columns courseCreationId and quesionTypeId)
     const deleteQuestionTypesQuery =
       "DELETE FROM course_type_of_question WHERE courseCreationId = ?";
-    await db.query(deleteQuestionTypesQuery, [courseCreationId]);
+    await db2.query(deleteQuestionTypesQuery, [courseCreationId]);
 
     const insertQuestionTypesQuery =
       "INSERT INTO course_type_of_question (courseCreationId, quesionTypeId) VALUES (?, ?)";
     for (const quesionTypeId of selectedQuestionTypes) {
-      await db.query(insertQuestionTypesQuery, [
+      await db2.query(insertQuestionTypesQuery, [
         courseCreationId,
         quesionTypeId,
       ]);
@@ -706,7 +706,7 @@ app.put("/update-course/:courseCreationId", async (req, res) => {
 app.get("/exams", async (req, res) => {
   try {
     const query = "SELECT examId,examName FROM exams";
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -746,7 +746,7 @@ app.post("/instructionupload", upload.single("file"), async (req, res) => {
       fileName,
     ];
 
-    const resultInstruction = await db.query(
+    const resultInstruction = await db2.query(
       queryInstruction,
       valuesInstruction
     );
@@ -777,7 +777,7 @@ app.post("/instructionupload", upload.single("file"), async (req, res) => {
         "with instructionId:",
         instructionId
       );
-      await db.query(queryPoints, [req.body.examId, point, instructionId]);
+      await db2.query(queryPoints, [req.body.examId, point, instructionId]);
     }
 
     // Log data to the console
@@ -800,7 +800,7 @@ app.post("/instructionupload", upload.single("file"), async (req, res) => {
 app.get("/exams", async (req, res) => {
   try {
     const query = "SELECT examId,examName FROM exams";
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -841,7 +841,7 @@ app.use((req, res, next) => {
 //       fileName,
 //     ];
 
-//     const resultInstruction = await db.query(
+//     const resultInstruction = await db2.query(
 //       queryInstruction,
 //       valuesInstruction
 //     );
@@ -872,7 +872,7 @@ app.use((req, res, next) => {
 //         "with instructionId:",
 //         instructionId
 //       );
-//       await db.query(queryPoints, [req.body.examId, point, instructionId]);
+//       await db2.query(queryPoints, [req.body.examId, point, instructionId]);
 //     }
 
 //     // Log data to the console
@@ -921,7 +921,7 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
      fileName || 'defaultFileName',
     ];
 
-    const resultInstruction = await db.query(
+    const resultInstruction = await db2.query(
       queryInstruction,
       valuesInstruction
     );
@@ -959,7 +959,7 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
         // "and instructionHeading:",
         // req.body.instructionHeading
       );
-      await db.query(queryPoints, [
+      await db2.query(queryPoints, [
         req.body.examId,
         point,
         instructionId,
@@ -1022,8 +1022,8 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
 //       fileName,
 //     ];
 
-//     // Assuming db is properly initialized and connected
-//     const resultInstruction = await db.query(
+//     // Assuming db2 is properly initialized and connected
+//     const resultInstruction = await db2.query(
 //       queryInstruction,
 //       valuesInstruction
 //     );
@@ -1054,7 +1054,7 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
 //         "with instructionId:",
 //         instructionId
 //       );
-//       await db.query(queryPoints, [req.body.examId, point, instructionId]);
+//       await db2.query(queryPoints, [req.body.examId, point, instructionId]);
 //     }
 
 //     // Log data to the console
@@ -1081,7 +1081,7 @@ app.get("/instructionData", async (req, res) => {
 
     // Select all points for the specified examId from the instructions_points table
     const query = "SELECT * FROM instruction";
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
 
     // Send the fetched data in the response
     res.json({ success: true, points: rows });
@@ -1104,7 +1104,7 @@ app.get("/instructionpointsGet", async (req, res) => {
 
     // Select all points for the specified examId from the instructions_points table
     const query = "SELECT * FROM instructions_points";
-    const [rows] = await db.query(query, [instructionId]);
+    const [rows] = await db2.query(query, [instructionId]);
 
     // Send the fetched data in the response
     res.json({ success: true, points: rows });
@@ -1127,7 +1127,7 @@ app.get("/instructionpoints/:instructionId/:id", async (req, res) => {
     // Select points for the specified instructionId and examId from the instructions_points table
     const query =
       "SELECT * FROM instructions_points WHERE instructionId = ? AND id = ?";
-    const [rows] = await db.query(query, [instructionId, id]);
+    const [rows] = await db2.query(query, [instructionId, id]);
 
     // Send the fetched data in the response
     res.json({ success: true, points: rows });
@@ -1149,7 +1149,7 @@ app.get("/instructionpoints/:instructionId/", async (req, res) => {
 
     // Select points for the specified instructionId and examId from the instructions_points table
     const query = "SELECT * FROM instructions_points WHERE instructionId = ?";
-    const [rows] = await db.query(query, [instructionId]);
+    const [rows] = await db2.query(query, [instructionId]);
 
     // Send the fetched data in the response
     res.json({ success: true, points: rows });
@@ -1164,7 +1164,7 @@ app.get("/instructionpoints/:instructionId/", async (req, res) => {
     });
   }
 });
-// Assuming you have an Express app and a MySQL connection pool (`db`)
+// Assuming you have an Express app and a MySQL connection pool (`db2`)
 
 app.put("/updatepoints/:instructionId/:id", async (req, res) => {
   try {
@@ -1174,7 +1174,7 @@ app.put("/updatepoints/:instructionId/:id", async (req, res) => {
     // Update the instruction point in the database
     const updateQuery =
       "UPDATE instructions_points SET points = ? WHERE instructionId = ? AND id = ?";
-    await db.query(updateQuery, [points, instructionId, id]);
+    await db2.query(updateQuery, [points, instructionId, id]);
 
     res.json({
       success: true,
@@ -1197,14 +1197,14 @@ app.delete("/deleteinstruction/:instructionId", async (req, res) => {
     // Delete data from the instructions_points table
     const deletePointsQuery =
       "DELETE FROM instructions_points WHERE instructionId = ?";
-    const [deletePointsResult] = await db.query(deletePointsQuery, [
+    const [deletePointsResult] = await db2.query(deletePointsQuery, [
       instructionId,
     ]);
 
     // Delete data from the instruction table
     const deleteInstructionQuery =
       "DELETE FROM instruction WHERE instructionId = ?";
-    const [deleteInstructionResult] = await db.query(deleteInstructionQuery, [
+    const [deleteInstructionResult] = await db2.query(deleteInstructionQuery, [
       instructionId,
     ]);
 
@@ -1237,7 +1237,7 @@ app.delete("/deletepoint/:instructionId/:id", async (req, res) => {
     // Delete the point from the instructions_points table
     const deletePointQuery =
       "DELETE FROM instructions_points WHERE instructionId = ? AND id = ?";
-    const [deleteResult] = await db.query(deletePointQuery, [
+    const [deleteResult] = await db2.query(deletePointQuery, [
       instructionId,
       id,
     ]);
@@ -1266,7 +1266,7 @@ app.get("/instructionpointEdit/:instructionId", async (req, res) => {
   try {
     // Select all points for a specific instructionId from the instructions_points table
     const query = "SELECT * FROM instructions_points WHERE instructionId = ?";
-    const [rows] = await db.query(query, [instructionId]);
+    const [rows] = await db2.query(query, [instructionId]);
 
     // Send the fetched data in the response
     res.json({ success: true, points: rows });
@@ -1304,7 +1304,7 @@ app.get("/instructionpointEdit/:instructionId", async (req, res) => {
 //     const columns = Object.keys(data[0]);
 //     const insertStatement = `INSERT INTO your_table (${columns.join(', ')}) VALUES ?`;
 
-//     db.query(insertStatement, [data.map(item => columns.map(col => item[col]))], (err, result) => {
+//     db2.query(insertStatement, [data.map(item => columns.map(col => item[col]))], (err, result) => {
 //       if (err) {
 //         console.error('Database query error:', err);
 //         res.status(500).json({ error: 'Internal Server Error' });
@@ -1353,7 +1353,7 @@ app.get("/instructionpointEdit/:instructionId", async (req, res) => {
 
 //     // Use async/await to wait for the query result
 //     const result = await new Promise((resolve, reject) => {
-//       db.query(
+//       db2.query(
 //         insertStatement,
 //         [
 //           data.map((item) => [
@@ -1386,7 +1386,7 @@ app.get("/instructionpointEdit/:instructionId", async (req, res) => {
 //______________________TEST CREATION PAGE __________________________
 app.get('/testcourses', async (req, res) => {
   try {
-    const [ rows ] = await db.query('SELECT courseCreationId,courseName FROM course_creation_table');
+    const [ rows ] = await db2.query('SELECT courseCreationId,courseName FROM course_creation_table');
     res.json(rows);
   } catch (error) {
     console.error('Error fetching courses:', error);
@@ -1399,7 +1399,7 @@ app.get('/course-subjects/:courseCreationId', async (req, res) => {
   const { courseCreationId } = req.params;
  
   try {
-    const [subjects] = await db.query(
+    const [subjects] = await db2.query(
       'SELECT s.subjectId, s.subjectName FROM subjects s JOIN course_subjects cs ON s.subjectId = cs.subjectId WHERE cs.courseCreationId = ?',
       [courseCreationId]
     );
@@ -1430,7 +1430,7 @@ app.post('/create-test', async (req, res) => {
   } = req.body;
  
   try {
-    const [result] = await db.query(
+    const [result] = await db2.query(
       'INSERT INTO test_creation_table (TestName, courseCreationId, courseTypeOfTestId, testStartDate, testEndDate, testStartTime, testEndTime, Duration, TotalQuestions, totalMarks, calculator, status, instructionId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [testName, selectedCourse, selectedtypeOfTest, startDate, endDate, startTime, endTime, duration, totalQuestions, totalMarks, calculator, status, selectedInstruction]
     );
@@ -1444,7 +1444,7 @@ app.post('/create-test', async (req, res) => {
           // Ensure selectedSubjects is defined and has a value
           const subjectId = section.selectedSubjects || 0;
      
-          const [sectionResult] = await db.query(
+          const [sectionResult] = await db2.query(
             'INSERT INTO sections (testCreationTableId, sectionName, noOfQuestions, QuestionLimit, subjectId) VALUES (?, ?, ?, ?, ?)',
             [testCreationTableId, section.sectionName || null, section.noOfQuestions, section.QuestionLimit || null, subjectId]
           );
@@ -1463,7 +1463,7 @@ app.post('/create-test', async (req, res) => {
  
 app.get('/instructions', async (req, res) => {
   try {
-    const [instructions] = await db.query('SELECT instructionId, instructionHeading FROM instruction');
+    const [instructions] = await db2.query('SELECT instructionId, instructionHeading FROM instruction');
     res.json(instructions);
   } catch (error) {
     console.error('Error fetching instructions:', error);
@@ -1475,7 +1475,7 @@ app.get('/course-typeoftests/:courseCreationId', async (req, res) => {
   const { courseCreationId } = req.params;
  
   try {
-    const [rows] = await db.query(
+    const [rows] = await db2.query(
       'SELECT type_of_test.TypeOfTestId, type_of_test.TypeOfTestName,course_typeoftests.courseTypeOfTestId ' +
       'FROM course_typeoftests ' +
       'INNER JOIN type_of_test ON course_typeoftests.TypeOfTestId = type_of_test.TypeOfTestId ' +
@@ -1494,7 +1494,7 @@ app.get('/course-typeoftests/:courseCreationId', async (req, res) => {
 app.get('/test_creation_table', async (req, res) => {
   try {
     const query =` SELECT tt.testCreationTableId,tt.TestName,cc.courseName,tt.testStartDate,tt.testEndDate,tt.testStartTime,tt.testEndTime,tt.status  FROM test_creation_table tt JOIN  course_creation_table cc ON tt.courseCreationId=cc.courseCreationId `
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error('Error creating sections:', error);
@@ -1506,7 +1506,7 @@ app.delete('/test_table_data_delete/:testCreationTableId', async (req, res) => {
   const testCreationTableId = req.params.testCreationTableId;
  
   try {
-    await db.query('DELETE test_creation_table, sections FROM test_creation_table LEFT JOIN sections ON test_creation_table.testCreationTableId = sections.testCreationTableId WHERE test_creation_table.testCreationTableId = ?', [testCreationTableId]);
+    await db2.query('DELETE test_creation_table, sections FROM test_creation_table LEFT JOIN sections ON test_creation_table.testCreationTableId = sections.testCreationTableId WHERE test_creation_table.testCreationTableId = ?', [testCreationTableId]);
     res.json({ message: `course with ID ${testCreationTableId} deleted from the database` });
   } catch (error) {
     console.error(error);
@@ -1519,7 +1519,7 @@ app.get('/testupdate/:testCreationTableId', async (req, res) => {
   const { testCreationTableId } = req.params;
  
   try {
-    const [rows] = await db.query(`
+    const [rows] = await db2.query(`
     SELECT
     tc.testCreationTableId,
     tc.TestName,
@@ -1604,7 +1604,7 @@ app.put('/test-update/:testCreationTableId', async (req, res) => {
                        WHERE testCreationTableId=?`;
  
   try {
-    await db.query(updateQuery, [
+    await db2.query(updateQuery, [
       TestName,
       selectedCourse,
       selectedTypeOfTests,
@@ -1622,7 +1622,7 @@ app.put('/test-update/:testCreationTableId', async (req, res) => {
     ]);
  
     // Log the update result
-    const updateResult = await db.query('SELECT * FROM test_creation_table WHERE testCreationTableId = ?', [testCreationTableId]);
+    const updateResult = await db2.query('SELECT * FROM test_creation_table WHERE testCreationTableId = ?', [testCreationTableId]);
     console.log('Update Result:', updateResult);
  
     // Update section
@@ -1630,7 +1630,7 @@ app.put('/test-update/:testCreationTableId', async (req, res) => {
                                 SET sectionName=?, noOfQuestions=?, QuestionLimit=?
                                 WHERE testCreationTableId=? AND sectionId=?`;
  
-    await db.query(updateSectionQuery, [
+    await db2.query(updateSectionQuery, [
       sectionName,
       noOfQuestions,
       QuestionLimit,
@@ -1655,7 +1655,7 @@ app.put('/test-update/:testCreationTableId', async (req, res) => {
 
 app.get('/tests', async (req, res) => {
   try {
-      const [rows] = await db.query('SELECT testCreationTableId, TestName FROM test_creation_table');
+      const [rows] = await db2.query('SELECT testCreationTableId, TestName FROM test_creation_table');
       res.json(rows);
   } catch (error) {
       console.error('Error fetching test data:', error);
@@ -1668,7 +1668,7 @@ app.get('/subjects/:testCreationTableId', async (req, res) => {
   const { testCreationTableId } = req.params;
  
   try {
-    const [subjects] = await db.query(`
+    const [subjects] = await db2.query(`
       SELECT s.subjectName,s.subjectId
       FROM test_creation_table tt
       INNER JOIN course_subjects AS cs ON tt.courseCreationId = cs.courseCreationId
@@ -1686,7 +1686,7 @@ app.get('/subjects/:testCreationTableId', async (req, res) => {
 app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
   const { subjectId, testCreationTableId } = req.params;
   try {
-    const [rows] = await db.query(
+    const [rows] = await db2.query(
       'SELECT s.sectionName, s.sectionId, s.testCreationTableId, s.subjectId FROM sections s JOIN test_creation_table tt ON s.testCreationTableId = tt.testCreationTableId WHERE s.subjectId = ? AND s.testCreationTableId = ?',
       [subjectId, testCreationTableId]
     );
@@ -1714,7 +1714,7 @@ app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
 //     const textSections = textContent.split("\n\n");
 
 //     // Insert documentName and get documentId
-//     const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+//     const [documentResult] = await db2.query("INSERT INTO ots_document SET ?", {
 //       documen_name: docName,
 //       testCreationTableId: req.body.testCreationTableId,
 //       subjectId: req.body.subjectId,
@@ -1781,7 +1781,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
   const docName = `${req.file.originalname}`;
   try {
     // Check if a document with the same name already exists
-    const [existingDoc] = await db.query(
+    const [existingDoc] = await db2.query(
       "SELECT document_Id FROM ots_document WHERE documen_name = ?",
       [docName]
     );
@@ -1795,13 +1795,13 @@ app.post("/upload", upload.single("document"), async (req, res) => {
     // Check if a section is specified
     if (req.body.sectionId) {
       // Check if a document with the same test, subject, and section already exists
-      [existingTestSubjectDoc] = await db.query(
+      [existingTestSubjectDoc] = await db2.query(
         "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId = ?",
         [req.body.testCreationTableId, req.body.subjectId, req.body.sectionId]
       );
     } else {
       // Check if a document with the same test and subject already exists
-      [existingTestSubjectDoc] = await db.query(
+      [existingTestSubjectDoc] = await db2.query(
         "SELECT document_Id FROM ots_document WHERE testCreationTableId = ? AND subjectId = ? AND sectionId IS NULL",
         [req.body.testCreationTableId, req.body.subjectId]
       );
@@ -1819,7 +1819,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
         const textSections = textContent.split("\n\n");
     
         // Insert documentName and get documentId
-        const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+        const [documentResult] = await db2.query("INSERT INTO ots_document SET ?", {
           documen_name: docName,
           testCreationTableId: req.body.testCreationTableId,
           subjectId: req.body.subjectId,
@@ -1929,7 +1929,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
 
 async function insertRecord(table, record) {
   try {
-    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+    const [result] = await db2.query(`INSERT INTO ${table} SET ?`, record);
     console.log(`${table} id: ${result.insertId}`);
     return result.insertId;
   } catch (err) {
@@ -1945,7 +1945,7 @@ app.get("/documentName", async (req, res) => {
   try {
     const query =
       "SELECT o.document_Id,o.documen_name,o.testCreationTableId,o.subjectId,o.sectionId ,tt.TestName,s.subjectName FROM ots_document AS o INNER JOIN test_creation_table AS tt ON o.testCreationTableId=tt.testCreationTableId INNER JOIN subjects AS s ON s.subjectId=o.subjectId ";
-    const [rows] = await db.query(query);
+    const [rows] = await db2.query(query);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -2008,7 +2008,7 @@ async function getDocumentBySubjectAndTestCreationId(subjectId, testCreationTabl
       FROM ots_document
       WHERE subjectId = ? AND testCreationTableId = ?
     `;
-    const [result] = await db.query(query, [subjectId, testCreationTableId]);
+    const [result] = await db2.query(query, [subjectId, testCreationTableId]);
     return result[0];
   } catch (err) {
     console.error(`Error fetching document details: ${err}`);
@@ -2025,7 +2025,7 @@ async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
       FROM questions
       WHERE subjectId = ? AND document_Id = ?  
     `;
-    const [results] = await db.query(query, [subjectId, document_Id]);
+    const [results] = await db2.query(query, [subjectId, document_Id]);
     const optionsWithBase64 = results.map(option => ({
       question_id: option.question_id,
       question_img: option.question_img.toString('base64'),
@@ -2046,7 +2046,7 @@ async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
     FROM options
     WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db2.query(query, [questionIds, document_Id]);
 
     // Convert BLOB data to base64 for sending in the response
     const optionsWithBase64 = results.map(option => ({
@@ -2071,7 +2071,7 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
       FROM solution
       WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db2.query(query, [questionIds, document_Id]);
 
     // Convert BLOB data to base64 for sending in the response
     const solutionsWithBase64 = results.map(solution => ({
@@ -2093,7 +2093,7 @@ async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
       FROM answer
       WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db2.query(query, [questionIds, document_Id]);
 
     const answers = results.map(answer => ({
       answer_id: answer.answer_id,
@@ -2115,7 +2115,7 @@ async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
       FROM marks
       WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db2.query(query, [questionIds, document_Id]);
 
     const marks = results.map(mark => ({
       markesId: mark.	markesId,
@@ -2137,7 +2137,7 @@ async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
       FROM qtype
       WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await db2.query(query, [questionIds, document_Id]);
 
     const qtypes = results.map(qtype => ({
       qtypeId: qtype.qtypeId,
@@ -2178,7 +2178,7 @@ app.delete('/DocumentDelete/:document_Id', async (req, res) => {
   const document_Id = req.params.document_Id;
  
   try {
-    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id   WHERE ots_document.document_Id = ? ', [document_Id]);
+    await db2.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id   WHERE ots_document.document_Id = ? ', [document_Id]);
     res.json({ message: `course with ID ${document_Id} deleted from the database` });
   } catch (error) {
     console.error(error);
@@ -2194,7 +2194,7 @@ app.delete('/DocumentDelete/:document_Id', async (req, res) => {
 
 app.get('/courses/count', async (req, res) => {
   try {
-    const [results, fields] = await db.execute(
+    const [results, fields] = await db2.execute(
       'SELECT COUNT(courseCreationId) AS count FROM course_creation_table'
     );
     res.json(results);
@@ -2206,7 +2206,7 @@ app.get('/courses/count', async (req, res) => {
 
 app.get('/exam/count', async (req, res) => {
   try {
-    const [results, fields] = await db.execute(
+    const [results, fields] = await db2.execute(
       'SELECT COUNT(examId) AS count FROM exams'
     );
     res.json(results);
@@ -2217,7 +2217,7 @@ app.get('/exam/count', async (req, res) => {
 });
 app.get('/test/count', async (req, res) => {
   try {
-    const [results, fields] = await db.execute(
+    const [results, fields] = await db2.execute(
       'SELECT COUNT(testCreationTableId) AS count FROM test_creation_table'
     );
     res.json(results);
@@ -2228,7 +2228,7 @@ app.get('/test/count', async (req, res) => {
 });
 app.get('/question/count', async (req, res) => {
   try {
-    const [results, fields] = await db.execute(
+    const [results, fields] = await db2.execute(
       'SELECT COUNT(question_id) AS count FROM questions'
     );
     res.json(results);
@@ -2245,7 +2245,7 @@ app.get('/question/count', async (req, res) => {
 app.get('/examData', async (req, res) => {
   // FetchData
   try {
-      const [rows] = await db.query('SELECT * FROM exams');
+      const [rows] = await db2.query('SELECT * FROM exams');
       res.json(rows);
 
   } catch (error) {
@@ -2259,7 +2259,7 @@ app.get('/examData', async (req, res) => {
       const { examId } = req.params;
       try {
         // Fetch exams from the database
-        const [rows] = await db.query('SELECT * FROM course_creation_table WHERE examId = ?', [examId]);
+        const [rows] = await db2.query('SELECT * FROM course_creation_table WHERE examId = ?', [examId]);
     
         res.json(rows);
       } catch (error) {
@@ -2272,7 +2272,7 @@ app.get('/examData', async (req, res) => {
       const { 	courseCreationId  } = req.params;
       try {
         // Fetch exams from the database
-        const [rows] = await db.query('SELECT * FROM test_creation_table WHERE 	courseCreationId  = ?', [	courseCreationId ]);
+        const [rows] = await db2.query('SELECT * FROM test_creation_table WHERE 	courseCreationId  = ?', [	courseCreationId ]);
     
         res.json(rows);
       } catch (error) {
@@ -2284,7 +2284,7 @@ app.get('/examData', async (req, res) => {
     app.get('/feachingtypeoftest', async (req, res) => {
       try {
         // Fetch type_of_test data from the database
-        const [typeOfTestRows] = await db.query('SELECT * FROM type_of_test');
+        const [typeOfTestRows] = await db2.query('SELECT * FROM type_of_test');
         res.json(typeOfTestRows);
       } catch (error) {
         console.error(error);
@@ -2296,7 +2296,7 @@ app.get('/examData', async (req, res) => {
       const { typeOfTestId } = req.params;
       try {
         // Fetch tests from the database based on typeOfTestId
-        const [testRows] = await db.query('SELECT * FROM test_creation_table WHERE courseTypeOfTestId = ?', [typeOfTestId]);
+        const [testRows] = await db2.query('SELECT * FROM test_creation_table WHERE courseTypeOfTestId = ?', [typeOfTestId]);
         res.json(testRows);
       } catch (error) {
         console.error(error);
@@ -2308,7 +2308,7 @@ app.get('/examData', async (req, res) => {
       const { testCreationTableId } = req.params;
       try {
         // Fetch instructions from the database based on testCreationTableId
-        const [instructionsRows] = await db.query(
+        const [instructionsRows] = await db2.query(
           'SELECT instruction.instructionId, instructionHeading, points, id FROM instructions_points ' +
           'JOIN instruction ON instructions_points.instructionId = instruction.instructionId ' +
           'JOIN test_creation_table ON instruction.instructionId = test_creation_table.instructionId ' +
@@ -2326,7 +2326,7 @@ app.get('/examData', async (req, res) => {
     app.get('/fetchSections/:testCreationTableId', async (req, res) => {
       const { testCreationTableId } = req.params;
       try {
-        const [rows] = await db.query('SELECT * FROM sections WHERE testCreationTableId = ?', [testCreationTableId]);
+        const [rows] = await db2.query('SELECT * FROM sections WHERE testCreationTableId = ?', [testCreationTableId]);
         res.json(rows);
       } catch (error) {
         console.error(error);
@@ -2390,7 +2390,7 @@ app.get('/examData', async (req, res) => {
     
     // function queryDatabase(sql, params) {
     //   return new Promise((resolve, reject) => {
-    //     db.query(sql, params, (err, results) => {
+    //     db2.query(sql, params, (err, results) => {
     //       if (err) {
     //         reject(err);
     //       } else {
@@ -2432,7 +2432,7 @@ app.get('/examData', async (req, res) => {
     //       FROM questions
     //       WHERE  testCreationTableId = ?  
     //     `;
-    //     const [results] = await db.query(query, [testCreationTableId]);
+    //     const [results] = await db2.query(query, [testCreationTableId]);
     //     const optionsWithBase64 = results.map(option => ({
     //       question_id: option.question_id,
     //       question_img: option.question_img.toString('base64'),
@@ -2453,7 +2453,7 @@ app.get('/examData', async (req, res) => {
     //     FROM options
     //     WHERE question_id IN (?) 
     //     `;
-    //     const [results] = await db.query(query, [questionIds, testCreationTableId]);
+    //     const [results] = await db2.query(query, [questionIds, testCreationTableId]);
     
     //     // Convert BLOB data to base64 for sending in the response
     //     const optionsWithBase64 = results.map(option => ({
@@ -2518,7 +2518,7 @@ app.get('/examData', async (req, res) => {
     //       FROM questions
     //       WHERE subjectId = ? AND testCreationTableId = ?  
     //     `;
-    //     const [results] = await db.query(query, [subjectId, testCreationTableId]);
+    //     const [results] = await db2.query(query, [subjectId, testCreationTableId]);
     //     const optionsWithBase64 = results.map(option => ({
     //       question_id: option.question_id,
     //       question_img: option.question_img.toString('base64'),
@@ -2539,7 +2539,7 @@ app.get('/examData', async (req, res) => {
     //     FROM options
     //     WHERE question_id IN (?) 
     //     `;
-    //     const [results] = await db.query(query, [questionIds, testCreationTableId]);
+    //     const [results] = await db2.query(query, [questionIds, testCreationTableId]);
     
     //     // Convert BLOB data to base64 for sending in the response
     //     const optionsWithBase64 = results.map(option => ({
@@ -2574,6 +2574,18 @@ app.get('/examData', async (req, res) => {
     
     //   return combinedImages;
     // }
+
+
+
+
+
+
+
+
+
+
+
+    
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
