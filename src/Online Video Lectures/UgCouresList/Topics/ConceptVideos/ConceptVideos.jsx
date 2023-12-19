@@ -33,7 +33,7 @@ const VideoModal = ({ onClose, videoSource }) => {
         Close
       </button>
       <video width="640" height="360" controls controlsList="nodownload">
-        <source src={videoSource} type="video/mp4" />
+        <source src={videoSource} />
       </video>
     </div>
   );
@@ -63,9 +63,9 @@ export const ConceptVideos = () => {
     { id: 8, title: "Lecture  8 ", videoSource: video3 },
     { id: 9, title: "Lecture 9", videoSource: video3 },
     { id: 10, title: "Lecture 10", videoSource: video1 },
-    { id: 11, title: "Lecture 11", videoSource: video2 },
-    { id: 12, title: "Lecture 12", videoSource: video3 },
-    { id: 13, title: "Lecture 13", videoSource: video3 },
+    { id: 11, title: "Lecture 11", videoSource:'https://drive.google.com/uc?export=view&id=1WFTRKYMWf-IggC6LBMLDPZVaUSGltZov' },
+    { id: 12, title: "Lecture 12", videoSource:'https://drive.google.com/uc?export=view&id=1WFTRKYMWf-IggC6LBMLDPZVaUSGltZov' },
+    { id: 13, title: "Lecture 13", videoSource: 'https://drive.google.com/uc?export=view&id=142uQ9Ew_mE2Hq-1U1qCyNKcsb85-5m3V' },
     // Add more video sets as needed
   ];
   return (
