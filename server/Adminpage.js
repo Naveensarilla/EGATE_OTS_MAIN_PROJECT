@@ -12,21 +12,21 @@ const port = 3081;
 app.use(express.json());
 app.use(cors());
 
-const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "admin_project",
-});
+// const db = mysql.createPool({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "admin_project",
+// });
 
 // for uban
 
-// const db = mysql.createPool({
-//   host: "localhost",
-//   user: "naveen",
-//   password: "naveen123",
-//   database: "admin_project",
-// });
+const db = mysql.createPool({
+  host: "localhost",
+  user: "naveen",
+  password: "naveen123",
+  database: "admin_project",
+});
 
 
 const storage = multer.diskStorage({

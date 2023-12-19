@@ -49,9 +49,11 @@ import { OvlHome } from "./Online Video Lectures/OvlHome.jsx";
 import { Topics_List } from "./Online Video Lectures/UgCouresList/Topics/Topics_List.jsx";
 import DemPracticeQuestions from "./Online Video Lectures/UgCouresList/Topics/PracticeQuestions/DemPracticeQuestions.jsx";
 import InstructionDetails from "./Demo/InstructionDetails .jsx";
+import Ug_Coures from "./Online Video Lectures/UgCouresList/Ug_Coures.jsx";
 function App() {
   return (
     <Router>
+      {/* 
       <Header />
       <div className="appp">
         <div className="common_grid_app">
@@ -113,7 +115,7 @@ function App() {
         </div>
       </div>
 
-      {/* demo */}
+    demo */}
 
       {/* below code working */}
       {/* <YourComponent /> */}
@@ -121,11 +123,11 @@ function App() {
       {/* <DocgetImages /> */}
       {/* <ImageComponent /> */}
 
-      {/* <Routes>
+      <Routes>
   <Route path='/' element={<Ug_Coures/>}/>
   <Route path='/topicsIn' element={<Topics_List/>}/>
   <Route path='/p_Questions' element={<DemPracticeQuestions/>}/>
-  </Routes> */}
+  </Routes> 
     </Router>
   );
 }
