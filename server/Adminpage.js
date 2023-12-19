@@ -891,105 +891,105 @@ app.use((req, res, next) => {
 //   }
 // });
 
-app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
-  try {
-    const { file } = req;
-    const fileName = file.originalname;
+// app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
+//   try {
+//     const { file } = req;
+//     const fileName = file.originalname;
 
-    // Read the content of the Word document
-    const { value: fileContent } = await mammoth.extractRawText({
-      path: file.path,
-    });
+//     // Read the content of the Word document
+//     const { value: fileContent } = await mammoth.extractRawText({
+//       path: file.path,
+//     });
 
-    // Split the text into points based on a specific delimiter (e.g., dot)
-    const pointsArray = fileContent.split("/").map((point) => point.trim());
+//     // Split the text into points based on a specific delimiter (e.g., dot)
+//     const pointsArray = fileContent.split("/").map((point) => point.trim());
 
-    // Filter out empty points
-    const filteredPointsArray = pointsArray.filter((point) => point !== "");
+//     // Filter out empty points
+//     const filteredPointsArray = pointsArray.filter((point) => point !== "");
 
-    // Join the array of points with a separator (e.g., comma)
-    const pointsText = filteredPointsArray.join(", ");
+//     // Join the array of points with a separator (e.g., comma)
+//     const pointsText = filteredPointsArray.join(", ");
 
-    // Insert data into the instruction table
-    const queryInstruction =
-      "INSERT INTO instruction (examId, instructionHeading, documentName) VALUES (?, ?, ?)";
-    const valuesInstruction = [
-      req.body.examId,
-      req.body.instructionHeading,
-     fileName || 'defaultFileName',
-    ];
+//     // Insert data into the instruction table
+//     const queryInstruction =
+//       "INSERT INTO instruction (examId, instructionHeading, documentName) VALUES (?, ?, ?)";
+//     const valuesInstruction = [
+//       req.body.examId,
+//       req.body.instructionHeading,
+//      fileName || 'defaultFileName',
+//     ];
 
-    const resultInstruction = await db.query(
-      queryInstruction,
-      valuesInstruction
-    );
+//     const resultInstruction = await db.query(
+//       queryInstruction,
+//       valuesInstruction
+//     );
 
-    if (!resultInstruction || resultInstruction[0].affectedRows !== 1) {
-      // Handle the case where the query did not succeed
-      console.error(
-        "Error uploading file: Failed to insert into instruction table.",
-        resultInstruction
-      );
-      res.status(500).json({
-        success: false,
-        message:
-          "Failed to upload file. Couldn't insert into instruction table.",
-        error: resultInstruction,
-      });
-      return;
-    }
+//     if (!resultInstruction || resultInstruction[0].affectedRows !== 1) {
+//       // Handle the case where the query did not succeed
+//       console.error(
+//         "Error uploading file: Failed to insert into instruction table.",
+//         resultInstruction
+//       );
+//       res.status(500).json({
+//         success: false,
+//         message:
+//           "Failed to upload file. Couldn't insert into instruction table.",
+//         error: resultInstruction,
+//       });
+//       return;
+//     }
 
-    const instructionId = resultInstruction[0].insertId;
+//     const instructionId = resultInstruction[0].insertId;
 
-    // Log the obtained instructionId
-    console.log("Obtained instructionId:", instructionId);
+//     // Log the obtained instructionId
+//     console.log("Obtained instructionId:", instructionId);
 
-    // Insert each point into the instructions_points table with the correct instructionId
-    const queryPoints =
-      "INSERT INTO instructions_points (examId, points, instructionId) VALUES (?, ?, ?)";
-    for (const point of filteredPointsArray) {
-      // Log each point and instructionHeading before the insertion
-      console.log(
-        "Inserting point:",
-        point,
-        "with instructionId:",
-        instructionId
-        // "and instructionHeading:",
-        // req.body.instructionHeading
-      );
-      await db.query(queryPoints, [
-        req.body.examId,
-        point,
-        instructionId,
-        req.body.instructionHeading,
-      ]);
-    }
+//     // Insert each point into the instructions_points table with the correct instructionId
+//     const queryPoints =
+//       "INSERT INTO instructions_points (examId, points, instructionId) VALUES (?, ?, ?)";
+//     for (const point of filteredPointsArray) {
+//       // Log each point and instructionHeading before the insertion
+//       console.log(
+//         "Inserting point:",
+//         point,
+//         "with instructionId:",
+//         instructionId
+//         // "and instructionHeading:",
+//         // req.body.instructionHeading
+//       );
+//       await db.query(queryPoints, [
+//         req.body.examId,
+//         point,
+//         instructionId,
+//         req.body.instructionHeading,
+//       ]);
+//     }
 
-    // Log data to the console
-    console.log("File uploaded successfully:", {
-      success: true,
-      instructionId,
-      message: "File uploaded successfully.",
-    });
+//     // Log data to the console
+//     console.log("File uploaded successfully:", {
+//       success: true,
+//       instructionId,
+//       message: "File uploaded successfully.",
+//     });
 
-    // Respond with a simple success message
-    res.json({
-      success: true,
-      instructionId,
-      message: "File uploaded successfully.",
-    });
-  } catch (error) {
-    // Log error to the console
-    console.error("Error uploading file:", error);
+//     // Respond with a simple success message
+//     res.json({
+//       success: true,
+//       instructionId,
+//       message: "File uploaded successfully.",
+//     });
+//   } catch (error) {
+//     // Log error to the console
+//     console.error("Error uploading file:", error);
 
-    // Respond with a detailed error message
-    res.status(500).json({
-      success: false,
-      message: "Failed to upload file.",
-      error: error.message,
-    });
-  }
-});
+//     // Respond with a detailed error message
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to upload file.",
+//       error: error.message,
+//     });
+//   }
+// });
 
 // app.post("/upload", upload.single("file"), async (req, res) => {
 //   try {
@@ -1072,6 +1072,171 @@ app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
 //     res.status(500).send("Failed to upload file.");
 //   }
 // });
+app.post("/InstructionsUpdate", upload.single("file"), async (req, res) => {
+  const docxFilePath = `uploads/${req.file.filename}`;
+  const { file } = req;
+  const fileName = file.originalname;
+
+  try {
+    // Read the content of the Word document
+    const fileContent = await mammoth.extractRawText({ path: file.path });
+    const result = await mammoth.convertToHtml({ path: docxFilePath });
+    const htmlContent = result.value;
+    const $ = cheerio.load(htmlContent);
+
+    // Read the image content using the correct function
+    const imageContent = await readImageContent(file.path);
+
+    // Check if there are images
+    const images = [];
+    $("img").each(function (i, element) {
+      const base64Data = $(this).attr("src").replace(/^data:image\/\w+;base64,/, "");
+      const imageBuffer = Buffer.from(base64Data, "base64");
+      images.push(imageBuffer);
+    });
+
+    // Insert data into the instruction table
+    const queryInstruction =
+      "INSERT INTO instruction (examId, instructionHeading, documentName, instructionTable_Img) VALUES (?, ?, ?, ?)";
+    const valuesInstruction = [
+      req.body.examId,
+      req.body.instructionHeading,
+      fileName,
+      images.length > 0 ? images[0] : imageContent,
+    ];
+
+    const resultInstruction = await db.query(queryInstruction, valuesInstruction);
+
+    if (!resultInstruction || resultInstruction[0].affectedRows !== 1) {
+      console.error(
+        "Error uploading file: Failed to insert into instruction table.",
+        resultInstruction
+      );
+      return res.status(500).json({
+        success: false,
+        message: "Failed to upload file. Couldn't insert into instruction table.",
+        error: resultInstruction,
+      });
+    }
+
+    const instructionId = resultInstruction[0].insertId;
+
+    // Assuming you have filtered points as before
+    const pointsArray = fileContent.value.split("/").map((point) => point.trim());
+    const filteredPointsArray = pointsArray.filter((point) => point !== "");
+
+    // Insert each point into the instructions_points table with the correct instructionId
+    const queryPoints =
+      "INSERT INTO instructions_points (examId, points, instructionId) VALUES (?, ?, ?)";
+    for (const point of filteredPointsArray) {
+      console.log(
+        "Inserting point:",
+        point,
+        "with instructionId:",
+        instructionId,
+        "and instructionHeading:",
+      );
+      await db.query(queryPoints, [
+        req.body.examId,
+        point,
+        instructionId,
+      ]);
+    }
+
+    console.log("File and image uploaded successfully:", {
+      success: true,
+      instructionId,
+      message: "File and image uploaded successfully.",
+    });
+
+    // Respond with a simple success message
+    res.json({
+      success: true,
+      instructionId,
+      message: "File and image uploaded successfully.",
+    });
+  } catch (error) {
+    console.error("Error uploading file and image:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to upload file and image.",
+      error: error.message,
+    });
+  }
+});
+
+
+async function readImageContent(imagePath) {
+  try {
+    return await fs.readFile(imagePath);
+  } catch (error) {
+    console.error("Error reading image content:", error);
+    return null;
+  }
+}
+
+
+
+
+app.get("/getInstructionData/:instructionId", async (req, res) => {
+  try {
+    const { instructionId, id } = req.params;
+
+    // Fetch instruction image
+    const imageBase64 = await getInstructionImage(instructionId);
+
+    if (!imageBase64) {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found.",
+      });
+    }
+
+    // Fetch points for the specified instructionId and id from the instructions_points table
+    const queryPoints = "SELECT * FROM instructions_points WHERE instructionId = ?";
+    const [pointsRows] = await db.query(queryPoints, [instructionId]);
+
+    // Send the fetched image and points data in the response
+    res.json({
+      success: true,
+      image: imageBase64,
+      points: pointsRows,
+    });
+  } catch (error) {
+    console.error("Error fetching instruction data:", error);
+
+    // Send a consistent error response
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch instruction data.",
+      error: error.message,
+    });
+  }
+});
+// Function to fetch instruction image
+async function getInstructionImage(instructionId) {
+  try {
+    const queryImage = "SELECT instructionTable_Img FROM instruction WHERE instructionId = ?";
+    const [resultImage] = await db.query(queryImage, [instructionId]);
+
+    if (!resultImage || resultImage.length === 0) {
+      return null; // Image not found
+    }
+
+    // Convert BLOB data to base64 for sending in the response
+    const imageBase64 = resultImage[0].instructionTable_Img.toString("base64");
+
+    return imageBase64;
+  } catch (error) {
+    console.error(`Error fetching instruction image: ${error.message}`);
+    throw error;
+  }
+}
+
+
+
+
 
 app.get("/instructionData", async (req, res) => {
   try {
@@ -1954,13 +2119,235 @@ app.get("/documentName", async (req, res) => {
 // end ----------
 
 // get doc upload iamges ---------------
-app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
+// app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
+//   try {
+//     const subjectId = req.params.subjectId;
+//     const testCreationTableId = req.params.testCreationTableId;
+
+//     // Fetch document data based on subjectId and testCreationTableId
+//     const documentData = await getDocumentBySubjectAndTestCreationId(subjectId, testCreationTableId);
+
+//     if (!documentData) {
+//       return res.status(404).send("Document not found");
+//     }
+
+//     const document_Id = documentData.document_Id;
+
+//     // Fetch question data based on subjectId and document_Id
+//     const questions = await getQuestionsBySubjectAndDocumentId(subjectId, document_Id);
+
+//     // Fetch option data based on questions and document_Id
+//     const options = await getOptionsByQuestionsAndDocumentId(questions, document_Id);
+
+//     // Fetch solution data based on questions and document_Id
+//     const solutions = await getSolutionsByQuestionsAndDocumentId(questions, document_Id);
+//     const answers = await getAnswersByQuestionsAndDocumentId(questions, document_Id);
+
+//     // Fetch marks data based on questions and document_Id
+//     const marks = await getMarksByQuestionsAndDocumentId(questions, document_Id);
+
+//     // Fetch qtypes data based on questions and document_Id
+//     const qtypes = await getQTypesByQuestionsAndDocumentId(questions, document_Id);
+//     res.json({
+//       document: documentData,
+//       questions,
+//       options,
+//       solutions,
+//       answers,
+//       marks,
+//       qtypes,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error fetching data from the database.');
+//   }
+// });
+
+
+// async function getDocumentBySubjectAndTestCreationId(subjectId, testCreationTableId) {
+//   try {
+//     const query = `
+//       SELECT document_Id, testCreationTableId, documen_name
+//       FROM ots_document
+//       WHERE subjectId = ? AND testCreationTableId = ?
+//     `;
+//     const [result] = await db.query(query, [subjectId, testCreationTableId]);
+//     return result[0];
+//   } catch (err) {
+//     console.error(`Error fetching document details: ${err}`);
+//     throw err;
+//   }
+// }
+
+
+// // Reusable function to get questions data based on subjectId and document_Id
+// async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
+//   try {
+//     const query = `
+//       SELECT question_id, question_img
+//       FROM questions
+//       WHERE subjectId = ? AND document_Id = ?  
+//     `;
+//     const [results] = await db.query(query, [subjectId, document_Id]);
+//     const optionsWithBase64 = results.map(option => ({
+//       question_id: option.question_id,
+//       question_img: option.question_img.toString('base64'),
+//     }));
+//     return optionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching questions: ${err}`);
+//     throw err;
+//   }
+// }
+
+// // Reusable function to get options data based on questions and document_Id
+// async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//     SELECT question_id, option_img
+//     FROM options
+//     WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     // Convert BLOB data to base64 for sending in the response
+//     const optionsWithBase64 = results.map(option => ({
+//       question_id: option.question_id,
+//       option_img: option.option_img.toString('base64'),
+//     }));
+
+//     return optionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching options: ${err.message}`);
+//     throw err;
+//   }
+// }
+
+
+// // Reusable function to get solutions data based on questions and document_Id
+// async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//       SELECT question_id, solution_img
+//       FROM solution
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     // Convert BLOB data to base64 for sending in the response
+//     const solutionsWithBase64 = results.map(solution => ({
+//       question_id: solution.question_id,
+//       solution_img: solution.solution_img.toString('base64'),
+//     }));
+
+//     return solutionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching solutions: ${err}`);
+//     throw err;
+//   }
+// }
+// async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//       SELECT answer_id, question_id, answer_text
+//       FROM answer
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     const answers = results.map(answer => ({
+//       answer_id: answer.answer_id,
+//       question_id: answer.question_id,
+//       answer_text: answer.answer_text,
+//     }));
+
+//     return answers;
+//   } catch (err) {
+//     console.error(`Error fetching answers: ${err.message}`);
+//     throw err;
+//   }
+// }
+// async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//       SELECT 	markesId, marks_text, question_id
+//       FROM marks
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     const marks = results.map(mark => ({
+//       markesId: mark.	markesId,
+//       marks_text: mark.marks_text,
+//       question_id: mark.question_id,
+//     }));
+
+//     return marks;
+//   } catch (err) {
+//     console.error(`Error fetching marks: ${err.message}`);
+//     throw err;
+//   }
+// }
+// async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map(question => question.question_id);
+//     const query = `
+//       SELECT qtypeId, qtype_text, question_id
+//       FROM qtype
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+
+//     const qtypes = results.map(qtype => ({
+//       qtypeId: qtype.qtypeId,
+//       qtype_text: qtype.qtype_text,
+//       question_id: qtype.question_id,
+//     }));
+
+//     return qtypes;
+//   } catch (err) {
+//     console.error(`Error fetching qtypes: ${err.message}`);
+//     throw err;
+//   }
+// }
+
+// function combineImage(questions, options, solutions) {
+//   const combinedImages = [];
+
+//   for (let i = 0; i < questions.length; i++) {
+//     const questionImage = questions[i].question_img;
+//     const optionImages = options
+//       .filter((opt) => opt.question_id === questions[i].question_id)
+//       .map((opt) => opt.option_img);
+//     const solutionImage = solutions.find(
+//       (sol) => sol.question_id === questions[i].question_id
+//     )?.solution_img;
+//     combinedImages.push({
+//       questionImage,
+//       optionImages,
+//       solutionImage,
+//     });
+//   }
+
+//   return combinedImages;
+// }
+
+app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req, res) => {
   try {
     const subjectId = req.params.subjectId;
     const testCreationTableId = req.params.testCreationTableId;
+    const sectionId = req.params.sectionId;
 
-    // Fetch document data based on subjectId and testCreationTableId
-    const documentData = await getDocumentBySubjectAndTestCreationId(subjectId, testCreationTableId);
+    // Fetch document data based on subjectId, testCreationTableId, and sectionId
+    const documentData = await dbHelper.getDocumentBySubjectAndTestCreationIdSectionId(
+      subjectId,
+      testCreationTableId,
+      sectionId
+    );
 
     if (!documentData) {
       return res.status(404).send("Document not found");
@@ -1968,21 +2355,47 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
 
     const document_Id = documentData.document_Id;
 
-    // Fetch question data based on subjectId and document_Id
-    const questions = await getQuestionsBySubjectAndDocumentId(subjectId, document_Id);
+    // Fetch question data based on subjectId, document_Id, and sectionId
+    const questions = await dbHelper.getQuestionsBySubjectAndDocumentId(
+      subjectId,
+      document_Id,
+      sectionId
+    );
 
     // Fetch option data based on questions and document_Id
-    const options = await getOptionsByQuestionsAndDocumentId(questions, document_Id);
+    const options = await dbHelper.getOptionsByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
 
     // Fetch solution data based on questions and document_Id
-    const solutions = await getSolutionsByQuestionsAndDocumentId(questions, document_Id);
-    const answers = await getAnswersByQuestionsAndDocumentId(questions, document_Id);
+    const solutions = await dbHelper.getSolutionsByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
+
+    // Fetch answers data based on questions and document_Id
+    const answers = await dbHelper.getAnswersByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
 
     // Fetch marks data based on questions and document_Id
-    const marks = await getMarksByQuestionsAndDocumentId(questions, document_Id);
+    const marks = await dbHelper.getMarksByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
 
     // Fetch qtypes data based on questions and document_Id
-    const qtypes = await getQTypesByQuestionsAndDocumentId(questions, document_Id);
+    const qtypes = await dbHelper.getQTypesByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
+
+    // Combine images
+    const combinedImages = dbHelper.combineImage(questions, options, solutions);
+
+    // Respond with the fetched data
     res.json({
       document: documentData,
       questions,
@@ -1991,22 +2404,27 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
       answers,
       marks,
       qtypes,
+      combinedImages,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error fetching data from the database.');
+    res.status(500).send("Error fetching data from the database.");
   }
 });
 
+class DatabaseHelper {
+  constructor(db) {
+    this.db = db;
+  }
 
-async function getDocumentBySubjectAndTestCreationId(subjectId, testCreationTableId) {
+async getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
   try {
     const query = `
       SELECT document_Id, testCreationTableId, documen_name
       FROM ots_document
-      WHERE subjectId = ? AND testCreationTableId = ?
+      WHERE subjectId = ? AND testCreationTableId = ? AND sectionId = ?
     `;
-    const [result] = await db.query(query, [subjectId, testCreationTableId]);
+    const [result] = await this.db.query(query, [subjectId, testCreationTableId, sectionId]);
     return result[0];
   } catch (err) {
     console.error(`Error fetching document details: ${err}`);
@@ -2014,21 +2432,20 @@ async function getDocumentBySubjectAndTestCreationId(subjectId, testCreationTabl
   }
 }
 
-
 // Reusable function to get questions data based on subjectId and document_Id
-async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
+async getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
   try {
     const query = `
       SELECT question_id, question_img
       FROM questions
       WHERE subjectId = ? AND document_Id = ?  
     `;
-    const [results] = await db.query(query, [subjectId, document_Id]);
-    const optionsWithBase64 = results.map(option => ({
-      question_id: option.question_id,
-      question_img: option.question_img.toString('base64'),
+    const [results] = await this.db.query(query, [subjectId, document_Id]);
+    const questionsWithBase64 = results.map((question) => ({
+      question_id: question.question_id,
+      question_img: question.question_img.toString("base64"),
     }));
-    return optionsWithBase64;
+    return questionsWithBase64;
   } catch (err) {
     console.error(`Error fetching questions: ${err}`);
     throw err;
@@ -2036,20 +2453,19 @@ async function getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
 }
 
 // Reusable function to get options data based on questions and document_Id
-async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
+async getOptionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
-    const questionIds = questions.map(question => question.question_id);
+    const questionIds = questions.map((question) => question.question_id);
     const query = `
-    SELECT question_id, option_img
-    FROM options
-    WHERE question_id IN (?) 
+      SELECT question_id, option_img
+      FROM options
+      WHERE question_id IN (?) 
     `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+    const [results] = await this.db.query(query, [questionIds, document_Id]);
 
-    // Convert BLOB data to base64 for sending in the response
-    const optionsWithBase64 = results.map(option => ({
+    const optionsWithBase64 = results.map((option) => ({
       question_id: option.question_id,
-      option_img: option.option_img.toString('base64'),
+      option_img: option.option_img.toString("base64"),
     }));
 
     return optionsWithBase64;
@@ -2059,11 +2475,10 @@ async function getOptionsByQuestionsAndDocumentId(questions, document_Id) {
   }
 }
 
-
 // Reusable function to get solutions data based on questions and document_Id
-async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
+async  getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
   try {
-    const questionIds = questions.map(question => question.question_id);
+    const questionIds = questions.map((question) => question.question_id);
     const query = `
       SELECT question_id, solution_img
       FROM solution
@@ -2072,9 +2487,9 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
     const [results] = await db.query(query, [questionIds, document_Id]);
 
     // Convert BLOB data to base64 for sending in the response
-    const solutionsWithBase64 = results.map(solution => ({
+    const solutionsWithBase64 = results.map((solution) => ({
       question_id: solution.question_id,
-      solution_img: solution.solution_img.toString('base64'),
+      solution_img: solution.solution_img.toString("base64"),
     }));
 
     return solutionsWithBase64;
@@ -2083,17 +2498,17 @@ async function getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
+
+async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
   try {
-    const questionIds = questions.map(question => question.question_id);
+    const questionIds = questions.map((question) => question.question_id);
     const query = `
       SELECT answer_id, question_id, answer_text
       FROM answer
       WHERE question_id IN (?) 
     `;
     const [results] = await db.query(query, [questionIds, document_Id]);
-
-    const answers = results.map(answer => ({
+    const answers = results.map((answer) => ({
       answer_id: answer.answer_id,
       question_id: answer.question_id,
       answer_text: answer.answer_text,
@@ -2105,9 +2520,9 @@ async function getAnswersByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
+async  getMarksByQuestionsAndDocumentId(questions, document_Id) {
   try {
-    const questionIds = questions.map(question => question.question_id);
+    const questionIds = questions.map((question) => question.question_id);
     const query = `
       SELECT 	markesId, marks_text, question_id
       FROM marks
@@ -2115,8 +2530,8 @@ async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
     `;
     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    const marks = results.map(mark => ({
-      markesId: mark.	markesId,
+    const marks = results.map((mark) => ({
+      markesId: mark.markesId,
       marks_text: mark.marks_text,
       question_id: mark.question_id,
     }));
@@ -2127,9 +2542,9 @@ async function getMarksByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
+async  getQTypesByQuestionsAndDocumentId(questions, document_Id) {
   try {
-    const questionIds = questions.map(question => question.question_id);
+    const questionIds = questions.map((question) => question.question_id);
     const query = `
       SELECT qtypeId, qtype_text, question_id
       FROM qtype
@@ -2137,7 +2552,7 @@ async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
     `;
     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    const qtypes = results.map(qtype => ({
+    const qtypes = results.map((qtype) => ({
       qtypeId: qtype.qtypeId,
       qtype_text: qtype.qtype_text,
       question_id: qtype.question_id,
@@ -2149,8 +2564,7 @@ async function getQTypesByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
-
-function combineImage(questions, options, solutions) {
+combineImage(questions, options, solutions) {
   const combinedImages = [];
 
   for (let i = 0; i < questions.length; i++) {
@@ -2170,6 +2584,9 @@ function combineImage(questions, options, solutions) {
 
   return combinedImages;
 }
+}
+
+const dbHelper = new DatabaseHelper(db);
 // end--------
 //doc delete 
 app.delete('/DocumentDelete/:document_Id', async (req, res) => {

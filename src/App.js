@@ -80,9 +80,9 @@ function App() {
  
           {/* document list */}
           <Route
-            path="/getSubjectData/:subjectId/:testCreationTableId"
-            element={<Document_ImageInfo />}
-          />
+              path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
+              element={<Document_ImageInfo />}
+            />
  
           {/* Frontend */}
           <Route path='/HomeLandingPage' element={<HomeLandingPage/>}/>
