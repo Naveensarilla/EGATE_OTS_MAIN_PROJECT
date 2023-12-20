@@ -45,6 +45,7 @@ import CoursePage from './Frontend/Pages/HomeLandingPage/CoursePage.jsx'
 import QuestionsFunctionality from './Frontend/Pages/MainQuizFunctionality/QuestionsFunctionality.jsx';
 // import TestResultsPage from './Pages/MainQuizFunctionality/TestResultsPage';
 import TestResultsPage from './Frontend/Pages/MainQuizFunctionality/TestResultsPage.jsx';
+import ReplaceAndUpdate from "./components/ReplaceAndUpdate.jsx";
 function App() {
   return (
     <Router>
@@ -83,6 +84,7 @@ function App() {
               path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
               element={<Document_ImageInfo />}
             />
+            <Route path='/ReplaceAndUpdate' element={<ReplaceAndUpdate />}/>
  
           {/* Frontend */}
           <Route path='/HomeLandingPage' element={<HomeLandingPage/>}/>

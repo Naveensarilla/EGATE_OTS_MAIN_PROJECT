@@ -121,6 +121,15 @@ function Document_ImageInfo() {
                     {qtype.qtype_text}
                   </div>
                 ))}
+
+{data.sortid
+                .filter((sortid) => sortid.question_id === question.question_id)
+                .map((sortid) => (
+                  <div key={sortid.sort_id}>
+                    <h3>sortid</h3>
+                    {sortid.sortid_text}
+                  </div>
+                ))}
             </div>
           </div>
         ))}

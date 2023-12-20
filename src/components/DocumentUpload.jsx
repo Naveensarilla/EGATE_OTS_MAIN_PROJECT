@@ -57,6 +57,7 @@ const {testCreationTableId}= useParams()
       console.error("Error fetching subjects data:", error);
     }
   };
+
   const handleSubjectChange = async (event) => {
     const selectedSubject = event.target.value;
     setSelectedSubject(selectedSubject);

@@ -1999,7 +1999,8 @@ app.post("/upload", upload.single("document"), async (req, res) => {
           const imageBuffer = Buffer.from(base64Data, "base64");
           images.push(imageBuffer);
         });
-    
+      
+
         let j = 0;
         let Question_id;
         let question_id=[];
@@ -2012,11 +2013,12 @@ app.post("/upload", upload.single("document"), async (req, res) => {
               document_Id: document_Id,
               subjectId: req.body.subjectId,
             };
-            console.log(j);
+            console.log(j); 
             Question_id = await insertRecord("questions", questionRecord);
             question_id.push(Question_id)
             j++;
-          } else if (j > 0 && j < 5) {
+          }
+           else if (j > 0 && j < 5) {
             const optionRecord = {
               option_img: images[i],
               question_id: Question_id,
@@ -2075,8 +2077,16 @@ app.post("/upload", upload.single("document"), async (req, res) => {
               question_id: que_id
             };
             await insertRecord('marks', marksRecord);
-          }
+          }  
+          else if (textSections[i].startsWith('[sortid]')) {
+            const sortidRecord = {
+              sortid_text: textSections[i].replace('[sortid]', ''),
+              question_id: que_id
+            };
+            await insertRecord('sortid', sortidRecord);
+          }  
         }
+
         res.send(
           "Text content and images extracted and saved to the database with the selected topic ID successfully."
         );
@@ -2391,6 +2401,10 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
       questions,
       document_Id
     );
+    const sortid = await dbHelper.getsortidByQuestionsAndDocumentId(
+      questions,
+      document_Id
+    );
 
     // Combine images
     const combinedImages = dbHelper.combineImage(questions, options, solutions);
@@ -2404,6 +2418,7 @@ app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req
       answers,
       marks,
       qtypes,
+      sortid,
       combinedImages,
     });
   } catch (error) {
@@ -2564,6 +2579,30 @@ async  getQTypesByQuestionsAndDocumentId(questions, document_Id) {
     throw err;
   }
 }
+async  getsortidByQuestionsAndDocumentId(questions, document_Id) {
+  try {
+    const questionIds = questions.map((question) => question.question_id);
+    const query = `
+      SELECT sort_id,sortid_text, question_id
+      FROM sortid
+      WHERE question_id IN (?) 
+    `;
+    const [results] = await db.query(query, [questionIds, document_Id]);
+
+    const sortid = results.map((sortid) => ({
+      sort_id: sortid.sort_id,
+      sortid_text: sortid.sortid_text,
+      question_id: sortid.question_id,
+    }));
+
+    return sortid;
+  } catch (err) {
+    console.error(`Error fetching sortid: ${err.message}`);
+    throw err;
+  }
+}
+
+
 combineImage(questions, options, solutions) {
   const combinedImages = [];
 
@@ -2593,7 +2632,7 @@ app.delete('/DocumentDelete/:document_Id', async (req, res) => {
   const document_Id = req.params.document_Id;
  
   try {
-    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id   WHERE ots_document.document_Id = ? ', [document_Id]);
+    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id LEFT JOIN sortid ON sortid.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
     res.json({ message: `course with ID ${document_Id} deleted from the database` });
   } catch (error) {
     console.error(error);
@@ -2989,6 +3028,78 @@ app.get('/examData', async (req, res) => {
     
     //   return combinedImages;
     // }
+
+//__________________________________________________REPLACE AND UPDATE _______________________________________________________________________________________________________
+
+app.get('/examRAU', async (req, res) => {
+  // FetchData
+  try {
+      const [rows] = await db.query('SELECT examId,examName	 FROM exams');
+      res.json(rows);
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  app.get('/CourseRAU/:examId', async (req, res) => {
+    const { examId } = req.params;
+   
+    try {
+      const [Course] = await db.query(`SELECT courseCreationId,courseName,examId FROM course_creation_table WHERE examId = ? `, [examId]);
+   
+      res.json(Course);
+    } catch (error) {
+      console.error('Error fetching Course:', error);
+      res.status(500).send('Error fetching Course.');
+    }
+  });
+
+
+  app.get('/testRAU/:courseCreationId', async (req,res) =>{
+    const { courseCreationId } = req.params;
+    try{
+const[test] = await db.query(`SELECT testCreationTableId,TestName,courseCreationId FROM test_creation_table WHERE courseCreationId=? `,[courseCreationId])
+
+res.json(test);
+    }catch (error) {
+      console.error('Error fetching Course:', error);
+      res.status(500).send('Error fetching Course.');
+    }
+  })
+  app.get('/subjectRAU/:testCreationTableId', async (req, res) => {
+    const { testCreationTableId } = req.params;
+   
+    try {
+      const [subjects] = await db.query(`
+        SELECT s.subjectName,s.subjectId
+        FROM test_creation_table tt
+        INNER JOIN course_subjects AS cs ON tt.courseCreationId = cs.courseCreationId
+        INNER JOIN subjects AS s ON cs.subjectId = s.subjectId
+        WHERE tt.testCreationTableId = ?
+      `, [testCreationTableId]);
+   
+      res.json(subjects);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+      res.status(500).send('Error fetching subjects.');
+    }
+  });
+
+  app.get('/sectionRAU/:subjectId/:testCreationTableId', async (req, res) => {
+    const { subjectId, testCreationTableId } = req.params;
+    try {
+      const [rows] = await db.query(
+        'SELECT s.sectionName, s.sectionId, s.testCreationTableId, s.subjectId FROM sections s JOIN test_creation_table tt ON s.testCreationTableId = tt.testCreationTableId WHERE s.subjectId = ? AND s.testCreationTableId = ?',
+        [subjectId, testCreationTableId]
+      );
+      res.json(rows);
+    } catch (error) {
+      console.error('Error fetching sections data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }); 
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

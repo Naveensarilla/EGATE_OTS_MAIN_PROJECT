@@ -87,6 +87,7 @@ const Leftnav = () => {
             <li>
               <Link className="LeftnavLinks" to='/HomeLandingPage'><i class="fa-brands fa-quora"></i><p>Quiz App</p></Link>
             </li>
+            <li> <Link className="LeftnavLinks" to='/ReplaceAndUpdate'><i class="fa-solid fa-reply-all"></i><p>Replace and Update</p></Link></li>
           </ul>
         </div>
       </div>
