@@ -6,11 +6,15 @@ const ReplaceAndUpdate = () => {
   const [test,setTest] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [sections, setSections] = useState([]);
+  const [sortid,setSortid] = useState([]);
+  const [data, setData] = useState([]);
   const [selectedExam, setSelectedExam] = useState("");
 const [selectedCourse,setSelectedCourse] = useState(" ");
 const [selectedTest,setSelectedTest] = useState(" ");
 const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedSection, setSelectedSection] = useState("");
+
+  const [selectedSortid, setSelectedSortid] = useState("");
   useEffect(() => {
     fetchExams();
   }, []); 
@@ -82,9 +86,33 @@ const [selectedSubject, setSelectedSubject] = useState("");
       console.error('Error fetching sections data:', error);
     }
   };
-  const handleSectionChange = (event) => {
-    setSelectedSection(event.target.value);
+  const handleSectionChange = async (event) => {
+    const  selectedSection = event.target.value;
+    setSelectedSection(selectedSection);
+try{
+  const response = await fetch(`http://localhost:3081/sortidRAU/${selectedTest}/${selectedSubject}/${selectedSection}`);
+const data = await response.json();
+setSortid(data);
+}catch (error) {
+      console.error('Error fetching sections data:', error);
+    }
   };
+
+  const handleSortidChange = async (event) => {
+    const selectedSortid = event.target.value;
+    setSelectedSortid(selectedSortid);
+    try{
+      const response = await fetch(`http://localhost:3081/singleQuetionRAU/${selectedSortid}`);
+    const data = await response.json();
+    setData(data);
+    }catch (error) {
+          console.error('Error fetching sections data:', error);
+        }
+
+  };
+ 
+  const OptionLabels = ["(a)", "(b)", "(c)", "(d)"];
+
 
   return (
     <div className="otsMainPages">
@@ -150,6 +178,125 @@ const [selectedSubject, setSelectedSubject] = useState("");
               ))}
             </select>
           </div>
+          <br/>
+          <div className="uploadedDocumentFilds">
+            <label htmlFor="sortidSelect">Select Question Number:</label>
+            <select
+              id="sortidSelect"
+              onChange={handleSortidChange}
+              value={selectedSortid}
+            >
+              <option value="">Select a Question Number</option>
+              {sortid.map((sortid) => (
+                <option key={sortid.sort_id} value={sortid.sort_id}>
+                  {sortid.sortid_text}
+                </option>
+              ))}
+            </select>
+          </div>
+<div>
+
+<div className="Document_-images_-container otsMainPages">
+    
+<div
+        className="q1s"
+        style={{
+          display: "flex",
+          gap: "4rem",
+          flexDirection: "column",
+          width: "81vw",
+          margin: "2rem",
+        }}
+      >
+        {data.questions && data.questions.map((question, index) => (
+          <div
+            className="outColor examSubjects_-contant"
+            style={{ background: "", padding: "2rem 2rem" }}
+          >
+            <div key={question.question_id}>
+              <div className="question" key={index}>
+                <h3 style={{ display: "flex", gap: "1rem" }}>
+                  {" "}
+                  <p>Question </p> {index + 1}
+                </h3>
+
+                <img
+                  src={`data:image/png;base64,${question.question_img}`}
+                  alt="Question"
+                />
+              </div>
+
+              {data.options
+                .filter((opt) => opt.question_id === question.question_id)
+                .map((option, index) => (
+                  <div
+                    className="option"
+                    key={option.question_id}
+                    style={{ display: "flex", gap: "1rem" }}
+                  >
+                    <span>{OptionLabels[index]}</span>
+                    <img
+                      src={`data:image/png;base64,${option.option_img}`}
+                      alt={`Option ${OptionLabels[index]}`}
+                    />
+                  </div>
+                ))}
+
+              {data.solutions
+                .filter((sol) => sol.question_id === question.question_id)
+                .map((solution) => (
+                  <div className="solution">
+                    <h3>solution </h3>
+                    <img
+                      key={solution.question_id}
+                      src={`data:image/png;base64,${solution.solution_img}`}
+                      alt="Solution"
+                    />
+                  </div>
+                ))}
+
+              {data.answers
+                .filter((ans) => ans.question_id === question.question_id)
+                .map((answer) => (
+                  <div key={answer.answer_id}>
+                    <h3>Answer</h3>
+                    {answer.answer_text}
+                  </div>
+                ))}
+
+              {data.marks
+                .filter((markes) => markes.question_id === question.question_id)
+                .map((markes) => (
+                  <div key={markes.markesId}>
+                    <h3>Marks</h3>
+                    {markes.marks_text}
+                  </div>
+                ))}
+
+              {data.qtypes
+                .filter((qtype) => qtype.question_id === question.question_id)
+                .map((qtype) => (
+                  <div key={qtype.qtypeId}>
+                    <h3>QType</h3>
+                    {qtype.qtype_text}
+                  </div>
+                ))}
+
+{data.sortid
+                .filter((sortid) => sortid.question_id === question.question_id)
+                .map((sortid) => (
+                  <div key={sortid.sort_id}>
+                    <h3>sortid</h3>
+                    {sortid.sortid_text}
+                  </div>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+</div>
     </div>
   );
 };
