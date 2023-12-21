@@ -3104,7 +3104,7 @@ res.json(test);
   app.get('/sortidRAU/:testCreationTableId/:subjectId/:sectionId' ,async(req,res) =>{
     const { testCreationTableId,subjectId,sectionId} = req.params;
     try{
-const [rows] =await db.query( `SELECT q.question_id ,q.testCreationTableId,q.sectionId,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.testCreationTableId=? AND q.subjectId=? AND q.sectionId=? `,[ testCreationTableId,subjectId,sectionId] );
+const [rows] =await db.query( `SELECT s.question_id ,q.testCreationTableId,q.sectionId,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.testCreationTableId=? AND q.subjectId=? AND q.sectionId=? `,[ testCreationTableId,subjectId,sectionId] );
 res.json(rows);
 
 
