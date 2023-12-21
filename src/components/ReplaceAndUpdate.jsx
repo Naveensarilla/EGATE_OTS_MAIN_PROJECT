@@ -7,7 +7,7 @@ const ReplaceAndUpdate = () => {
   const [subjects, setSubjects] = useState([]);
   const [sections, setSections] = useState([]);
   const [sortid,setSortid] = useState([]);
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [selectedExam, setSelectedExam] = useState("");
 const [selectedCourse,setSelectedCourse] = useState(" ");
 const [selectedTest,setSelectedTest] = useState(" ");
@@ -112,7 +112,16 @@ setSortid(data);
   };
  
   const OptionLabels = ["(a)", "(b)", "(c)", "(d)"];
-
+  const [data, setData] = useState({
+    questions: [],
+    options: [],
+    solutions: [],
+    answers: [],
+    marks: [],
+    qtypes: [],
+    sortid: [],
+  });
+  
 
   return (
     <div className="otsMainPages">
@@ -172,7 +181,7 @@ setSortid(data);
             >
               <option value="">Select a Section</option>
               {sections.map((section) => (
-                <option key={section.sectionId} value={section.sectionId}>
+                <option key={section.sectionId} value={section.sectionId }>
                   {section.sectionName}
                 </option>
               ))}
@@ -188,7 +197,7 @@ setSortid(data);
             >
               <option value="">Select a Question Number</option>
               {sortid.map((sortid) => (
-                <option key={sortid.sort_id} value={sortid.sort_id}>
+                <option key={sortid.sort_id} value={sortid.question_id}>
                   {sortid.sortid_text}
                 </option>
               ))}
@@ -212,12 +221,13 @@ setSortid(data);
           <div
             className="outColor examSubjects_-contant"
             style={{ background: "", padding: "2rem 2rem" }}
+            key={question.question_id}
           >
             <div key={question.question_id}>
               <div className="question" key={index}>
                 <h3 style={{ display: "flex", gap: "1rem" }}>
                   {" "}
-                  <p>Question </p> {index + 1}
+                  <p>Question </p> {question.question_id}
                 </h3>
 
                 <img
@@ -226,7 +236,7 @@ setSortid(data);
                 />
               </div>
 
-              {data.options
+              {data.options && data.options
                 .filter((opt) => opt.question_id === question.question_id)
                 .map((option, index) => (
                   <div
@@ -242,7 +252,8 @@ setSortid(data);
                   </div>
                 ))}
 
-              {data.solutions
+              {data.solutions  &&
+        data.solutions
                 .filter((sol) => sol.question_id === question.question_id)
                 .map((solution) => (
                   <div className="solution">
@@ -255,7 +266,8 @@ setSortid(data);
                   </div>
                 ))}
 
-              {data.answers
+              {data.answers  &&
+        data.answers 
                 .filter((ans) => ans.question_id === question.question_id)
                 .map((answer) => (
                   <div key={answer.answer_id}>
@@ -264,7 +276,8 @@ setSortid(data);
                   </div>
                 ))}
 
-              {data.marks
+              {data.marks &&
+        data.marks 
                 .filter((markes) => markes.question_id === question.question_id)
                 .map((markes) => (
                   <div key={markes.markesId}>
@@ -273,7 +286,8 @@ setSortid(data);
                   </div>
                 ))}
 
-              {data.qtypes
+              {data.qtypes &&
+        data.qtypes 
                 .filter((qtype) => qtype.question_id === question.question_id)
                 .map((qtype) => (
                   <div key={qtype.qtypeId}>
@@ -282,14 +296,14 @@ setSortid(data);
                   </div>
                 ))}
 
-{data.sortid
+{/* {data.sortid
                 .filter((sortid) => sortid.question_id === question.question_id)
                 .map((sortid) => (
                   <div key={sortid.sort_id}>
                     <h3>sortid</h3>
                     {sortid.sortid_text}
                   </div>
-                ))}
+                ))} */}
             </div>
           </div>
         ))}

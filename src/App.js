@@ -46,6 +46,7 @@ import QuestionsFunctionality from './Frontend/Pages/MainQuizFunctionality/Quest
 // import TestResultsPage from './Pages/MainQuizFunctionality/TestResultsPage';
 import TestResultsPage from './Frontend/Pages/MainQuizFunctionality/TestResultsPage.jsx';
 import ReplaceAndUpdate from "./components/ReplaceAndUpdate.jsx";
+import UploadFile from './components/UploadFile.jsx';
 function App() {
   return (
     <Router>
@@ -101,7 +102,12 @@ function App() {
         <Route path='/Test_List/:courseCreationId' element={<FullTest />} />
         <Route path='/Instructions/:testCreationTableId' element={<Instructions />} />
         <Route path='/General_intructions_page/:testCreationTableId' element={<General_intructions_page/>}/>
+
+
+        <Route path='/UploadFile' element={<UploadFile/>}/>
         </Routes>
+
+
       </div>
      </div>
  
