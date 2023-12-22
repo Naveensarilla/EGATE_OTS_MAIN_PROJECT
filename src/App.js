@@ -13,8 +13,8 @@ import Testcreation from "./components/Testcreation.jsx";
 import TestUpdate from "./components/TestUpdate.jsx";
 import DocumentUpload from "./components/DocumentUpload.jsx";
 import GettinggInstructions from "./components/GettinggInstructions .jsx";
-import './components/css/otcCss.css'
- 
+import './components/css/otcCss.css';
+ import UpdateQuestion from './components/UpdateQuestion.jsx';
 import Document_ImageInfo from "./components/Document_ImageInfo.jsx";
 // import HomeLandingPage from './Pages/HomeLandingPage/HomeLandingPage'
 import HomeLandingPage from './Frontend/Pages/HomeLandingPage/HomeLandingPage.jsx'
@@ -86,6 +86,9 @@ function App() {
               element={<Document_ImageInfo />}
             />
             <Route path='/ReplaceAndUpdate' element={<ReplaceAndUpdate />}/>
+
+<Route path='/singleQuetionRAU/:question_id' element={<UpdateQuestion />}/>
+
  
           {/* Frontend */}
           <Route path='/HomeLandingPage' element={<HomeLandingPage/>}/>

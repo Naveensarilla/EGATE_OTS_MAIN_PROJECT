@@ -2790,69 +2790,6 @@ app.get('/examData', async (req, res) => {
 
 
 
-    // app.get("quiz_all/:testCreationTableId", async (req, res) => {
-    //   const testCreationTableId = req.params.testCreationTableId;
-    
-    //   const sql = `
-    //     SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
-    //     FROM test_creation_table tt, sections s, questions q, options o
-    //     WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
-    //   `;
-   
-    //   try {
-    //     const results = await queryDatabase(sql, [testCreationTableId]);
-    
-    //     const sections = {};
-    
-    //     results.forEach((row) => {
-    //       const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
-
-    //       if (!sections[sectionName]) {
-    //         sections[sectionName] = {
-    //           sectionId,
-    //           sectionName,
-    //           questions: [],
-    //         };
-    //       }
-    
-    //       const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
-    //       if (!question) {
-    //         sections[sectionName].questions.push({
-    //           qustion_id,
-    //           userAnswers: "",
-    //           isvisited: 0,
-    //           question_img: question_img.toString('base64'),
-    //           option_img: [],
-    //         });
-    //       }
-    
-    //       const option = {
-    //         Option_Index,
-    //         option_img: option_img.toString('base64'),
-         
-    //       };
-    
-    //       sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
-    //     });
-    
-    //     res.json(sections);
-    //   } catch (err) {
-    //     console.error('Error querying the database: ' + err.message);
-    //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
-    //   }
-    // });
-    
-    // function queryDatabase(sql, params) {
-    //   return new Promise((resolve, reject) => {
-    //     db.query(sql, params, (err, results) => {
-    //       if (err) {
-    //         reject(err);
-    //       } else {
-    //         resolve(results);
-    //       }
-    //     });
-    //   });
-    // }
 
 
 
@@ -3106,8 +3043,6 @@ res.json(test);
     try{
 const [rows] =await db.query( `SELECT s.question_id ,q.testCreationTableId,q.sectionId,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.testCreationTableId=? AND q.subjectId=? AND q.sectionId=? `,[ testCreationTableId,subjectId,sectionId] );
 res.json(rows);
-
-
     }catch (error) {
       console.error('Error fetching sections data:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -3357,8 +3292,331 @@ res.json(rows);
     return combinedImages;
   }
 
+//   app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
+//     const questionId = req.params.questionId;
+//     const updatedData = req.body;
+//     const imageFiles = req.files;
+//     const imagePaths = imageFiles.map(file => `uploads/${file.filename}`);
+  
+//     try {
+//       // Update question_img in the questions table
+//       if (imagePaths[0]) {
+//         await db.query("UPDATE questions SET question_img = ? WHERE question_id = ?", [
+//           imagePaths[0],
+//           questionId,
+//         ]);
+//       }
+  
+//       // Update option_img in the options table
+//       if (imagePaths[1]) {
+//         await db.query("UPDATE options SET option_img = ? WHERE question_id = ?", [
+//           imagePaths[1],
+//           questionId,
+//         ]);
+//       }
+  
+//       // Update solution_img in the solution table
+//       if (imagePaths[2]) {
+//         await db.query("UPDATE solution SET solution_img = ? WHERE question_id = ?", [
+//           imagePaths[2],
+//           questionId,
+//         ]);
+//       }
+  
+//       // Update answer_text in the answer table
+//       await db.query("UPDATE answer SET answer_text = ? WHERE question_id = ?", [
+//         updatedData.answer,
+//         questionId,
+//       ]);
+  
+//       // Update marks_text in the marks table
+//       await db.query("UPDATE marks SET marks_text = ? WHERE question_id = ?", [
+//         updatedData.marks,
+//         questionId,
+//       ]);
+  
+//       // Update qtype_text in the qtype table
+//       await db.query("UPDATE qtype SET qtype_text = ? WHERE question_id = ?", [
+//         updatedData.qtype,
+//         questionId,
+//       ]);
+  
+//       // Additional logic for handling image updates or other specific requirements can be added here
+  
+//       res.json({ message: "Question and related data updated successfully" });
+//     } catch (error) {
+//       console.error("Error updating question:", error);
+//       res.status(500).json({ error: "Internal server error" });
+//     }
+// });
 
 
+app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
+  const questionId = req.params.questionId;
+  const updatedData = req.body;
+  const imageFiles = req.files;
+  
+  try {
+    // Convert image files to base64
+    const imageBase64 = await Promise.all(imageFiles.map(async file => {
+      const imageData = await fs.readFile(file.path, { encoding: 'base64' });
+      return `data:${file.mimetype};base64,${imageData}`;
+    }));
+
+    // Update question_img in the questions table
+    if (imageBase64[0]) {
+      await db.query("UPDATE questions SET question_img = ? WHERE question_id = ?", [
+        imageBase64[0],
+        questionId,
+      ]);
+    }
+
+    // Update option_img in the options table
+    if (imageBase64[1]) {
+      await db.query("UPDATE options SET option_img = ? WHERE question_id = ?", [
+        imageBase64[1],
+        questionId,
+      ]);
+    }
+
+    // ... (omitting other updates for brevity)
+  
+    res.json({ message: "Question and related data updated successfully" });
+  } catch (error) {
+    console.error("Error updating question:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+ app.get("/quiz_all/:sort_id", async (req, res) => {
+  const sort_id = req.params.sort_id;
+  console.log('Received request for sort_id:', sort_id);
+  const sql = `
+    SELECT
+      q.question_id, q.question_img,
+      o.option_id, o.option_img,
+      s.solution_id, s.solution_img,
+      a.answer_id, a.answer_text,
+      qt.qtypeId, qt.qtype_text,
+      m.markesId, m.marks_text,
+      si.sort_id, si.question_id
+    FROM
+      questions q
+      JOIN options o ON q.question_id = o.question_id
+      JOIN solution s ON q.question_id = s.question_id
+      JOIN answer a ON q.question_id = a.question_id
+      JOIN qtype qt ON q.question_id = qt.question_id
+      JOIN marks m ON q.question_id = m.question_id
+      JOIN sortid si ON q.question_id = si.question_id WHERE si.sort_id=? `;
+  
+  try {
+    const results = await queryDatabase(sql, [sort_id]);
+    console.log('Query results:', results);
+ 
+    const response = {};
+
+    results.forEach((row) => {
+      const {
+        sort_id,
+        question_id,
+        question_img,
+        option_id,
+        option_img,
+        solution_id,
+        solution_img,
+        answer_id,
+        answer_text,
+        qtypeId,
+        qtype_text,
+        markesId,
+        marks_text,
+      } = row;
+
+      if (!response[sort_id]) {
+        response[sort_id] = {
+          sort_id,
+          questions: [],
+        };
+      }
+
+      const question = response[sort_id].questions.find(q => q.question_id === question_id);
+
+      if (!question) {
+        response[sort_id].questions.push({
+          question_id,
+          userAnswers: "",
+          isvisited: 0,
+          question_img: question_img.toString('base64'),
+          option_img: [],
+          solution_img: [],
+          answer: {
+            answer_id,
+            answer_text,
+          },
+          qtype: {
+            qtypeId,
+            qtype_text,
+          },
+          marks: {
+            markesId,
+            marks_text,
+          },
+        });
+      }
+
+      const option = {
+        option_id,
+        option_img: option_img.toString('base64'),
+      };
+
+      response[sort_id].questions.find(q => q.question_id === question_id).option_img.push(option);
+
+      const solution = {
+        solution_id,
+        solution_img: solution_img.toString('base64'),
+      };
+
+      response[sort_id].questions.find(q => q.question_id === question_id).solution_img.push(solution);
+    });
+
+    res.json(response);
+  } catch (err) {
+    console.error('Error querying the database: ' + err.message);
+    res.status(500).json({ error: 'Error fetching testCreationTableId' });
+  }
+});
+
+  
+  function queryDatabase(sql, params) {
+    console.log('Executing SQL query:', sql, 'with params:', params);
+    return new Promise((resolve, reject) => {
+      db.query(sql, params, (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  }
+  
+
+
+
+      //   if (!existingQuestion) {
+      //     const newQuestion = {
+      //       question_id,
+      //       question_img: question_img.toString("base64"),
+      //       options: [],
+      //       solution: {
+      //         solution_id,
+      //         solution_img: solution_img.toString("base64"),
+      //       },
+      //       answer: {
+      //         answer_id,
+      //         answer_text,
+      //       },
+      //       qtype: {
+      //         qtypeId,
+      //         qtype_text,
+      //       },
+      //       marks: {
+      //         markesId,
+      //         marks_text,
+      //       },
+      //     };
+  
+      //     newQuestion.options.push({
+      //       option_id,
+      //       option_img: option_img.toString("base64"),
+      //     });
+  
+      //     questions.push(newQuestion);
+      //   } else {
+      //     existingQuestion.options.push({
+      //       option_id,
+      //       option_img: option_img.toString("base64"),
+      //     });
+      //   }
+      // });
+  
+  //     res.json(questions);
+  //   } catch (err) {
+  //     console.error('Error in /quiz_all route:', err);
+  //     console.error('Error querying the database: ' + err.message);
+  //     res.status(500).json({ error: 'Error fetching quiz information' });
+  //   }
+  // });
+  
+  
+  
+  
+
+    // app.get("quiz_all/:testCreationTableId", async (req, res) => {
+    //   const testCreationTableId = req.params.testCreationTableId;
+    
+    //   const sql = `
+    //     SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
+    //     FROM test_creation_table tt, sections s, questions q, options o
+    //     WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
+    //   `;
+   
+    //   try {
+    //     const results = await queryDatabase(sql, [testCreationTableId]);
+    
+    //     const sections = {};
+    
+    //     results.forEach((row) => {
+    //       const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
+
+    //       if (!sections[sectionName]) {
+    //         sections[sectionName] = {
+    //           sectionId,
+    //           sectionName,
+    //           questions: [],
+    //         };
+    //       }
+    
+    //       const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
+    //       if (!question) {
+    //         sections[sectionName].questions.push({
+    //           qustion_id,
+    //           userAnswers: "",
+    //           isvisited: 0,
+    //           question_img: question_img.toString('base64'),
+    //           option_img: [],
+    //         });
+    //       }
+    
+    //       const option = {
+    //         Option_Index,
+    //         option_img: option_img.toString('base64'),
+         
+    //       };
+    
+    //       sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
+    //     });
+    
+    //     res.json(sections);
+    //   } catch (err) {
+    //     console.error('Error querying the database: ' + err.message);
+    //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
+    //   }
+    // });
+    
+    // function queryDatabase(sql, params) {
+    //   return new Promise((resolve, reject) => {
+    //     db.query(sql, params, (err, results) => {
+    //       if (err) {
+    //         reject(err);
+    //       } else {
+    //         resolve(results);
+    //       }
+    //     });
+    //   });
+    // }
 
 
 
