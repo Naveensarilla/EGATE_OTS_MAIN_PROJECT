@@ -24,7 +24,7 @@ const [documentData,setDocumentData] = useState([]);
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this document ?"
     );
- 
+    window.location.reload();
     if (confirmDelete) {
       try {
         const response = await fetch(

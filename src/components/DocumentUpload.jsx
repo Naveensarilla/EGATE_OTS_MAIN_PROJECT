@@ -38,6 +38,8 @@ const {testCreationTableId}= useParams()
       console.error("Error fetching subjects data:", error);
     }
   };
+
+  
   const handleSubjectChange = async (event) => {
     const selectedSubject = event.target.value;
     setSelectedSubject(selectedSubject);
@@ -74,10 +76,13 @@ const {testCreationTableId}= useParams()
       method: "POST",
       body: formData,
     })
+    
       .then((response) => response.text())
       .then((result) => {
         console.log(result);
+      
         alert("Successfully uploaded Document");
+        // window.location.reload();
         // window.location.reload();
 
       })
