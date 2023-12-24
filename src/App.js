@@ -54,8 +54,8 @@ import { Replace_And_Update } from "./components/Document edit delte/Replace_And
 function App() {
   return (
     <Router>
-      <Header />
 
+      <Header />
       <div className="appp">
         <div className="common_grid_app">
           <Leftnav />
@@ -120,6 +120,7 @@ function App() {
         </div>
       </div>
 
+
       {/* below code working */}
       {/* <YourComponent /> */}
       {/* <QuestionDetails /> */}
@@ -131,6 +132,7 @@ function App() {
         <Route path="/topicsIn" element={<Topics_List />} />
         <Route path="/p_Questions" element={<DemPracticeQuestions />} />
       </Routes> */}
+
     </Router>
   );
 }
