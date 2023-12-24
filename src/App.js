@@ -53,10 +53,8 @@ import Ug_Coures from "./Online Video Lectures/UgCouresList/Ug_Coures.jsx";
 function App() {
   return (
     <Router>
-
       {/* 
       <Header />
-
       <div className="appp">
         <div className="common_grid_app">
           <Leftnav />
@@ -115,7 +113,7 @@ function App() {
             />
           </Routes>
         </div>
-      </div> */}
+      </div>
 
     demo */}
 
@@ -129,10 +127,7 @@ function App() {
   <Route path='/' element={<Ug_Coures/>}/>
   <Route path='/topicsIn' element={<Topics_List/>}/>
   <Route path='/p_Questions' element={<DemPracticeQuestions/>}/>
-
-
   </Routes> 
-
     </Router>
   );
 }
