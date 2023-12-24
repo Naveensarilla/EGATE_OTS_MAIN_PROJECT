@@ -50,10 +50,11 @@ import { Topics_List } from "./Online Video Lectures/UgCouresList/Topics/Topics_
 import DemPracticeQuestions from "./Online Video Lectures/UgCouresList/Topics/PracticeQuestions/DemPracticeQuestions.jsx";
 import InstructionDetails from "./Demo/InstructionDetails .jsx";
 import Ug_Coures from "./Online Video Lectures/UgCouresList/Ug_Coures.jsx";
+import { Replace_And_Update } from "./components/Document edit delte/Replace_And_Update.jsx";
 function App() {
   return (
     <Router>
-      {/* 
+
       <Header />
       <div className="appp">
         <div className="common_grid_app">
@@ -89,7 +90,6 @@ function App() {
               element={<GettinggInstructions />}
             />
 
-           
             <Route
               path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
               element={<Document_ImageInfo />}
@@ -111,11 +111,15 @@ function App() {
               path="/General_intructions_page/:testCreationTableId"
               element={<General_intructions_page />}
             />
+
+            <Route
+              path="/Replace_And_Update"
+              element={<Replace_And_Update/>}
+            />
           </Routes>
         </div>
       </div>
 
-    demo */}
 
       {/* below code working */}
       {/* <YourComponent /> */}
@@ -123,11 +127,12 @@ function App() {
       {/* <DocgetImages /> */}
       {/* <ImageComponent /> */}
 
-      <Routes>
-  <Route path='/' element={<Ug_Coures/>}/>
-  <Route path='/topicsIn' element={<Topics_List/>}/>
-  <Route path='/p_Questions' element={<DemPracticeQuestions/>}/>
-  </Routes> 
+      {/* <Routes>
+        <Route path="/" element={<Ug_Coures />} />
+        <Route path="/topicsIn" element={<Topics_List />} />
+        <Route path="/p_Questions" element={<DemPracticeQuestions />} />
+      </Routes> */}
+
     </Router>
   );
 }
