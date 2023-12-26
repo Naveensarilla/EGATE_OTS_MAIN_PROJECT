@@ -2089,7 +2089,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
       images.push(imageBuffer);
     });
 
-    let que_id; // Change here
+    let que_id; 
 
     const QUESTION_MARK = "[Q]";
     const ANSWER_MARK = "[ans]";
@@ -2098,18 +2098,17 @@ app.post("/upload", upload.single("document"), async (req, res) => {
     const QTYPE_MARK = "[qtype]";
     const OPTION_MARKERS = ["(a)", "(b)", "(c)", "(d)"];
 
-    let j = 0; // Change here
-
-    // ... (previous code)
-
-    for (let i = 0; i < images.length; i++) {
+    let j = 0; 
+   
+    for (let i = 0; i < images.length && i < textSections.length; i++) {
       if (textSections[i].startsWith(QUESTION_MARK)) {
         console.log("text", textSections[i], "?");
         // Save question content in the questions table
+        
         const questionRecord = {
           question_img: images[i]
             .toString()
-            .replace(new RegExp(`^${QUESTION_MARK}`), ""),
+            .replace(new RegExp(`${QUESTION_MARK}`), ""),
           testCreationTableId: req.body.testCreationTableId,
           sectionId: req.body.sectionId,
           document_Id: document_Id,
@@ -2133,15 +2132,13 @@ app.post("/upload", upload.single("document"), async (req, res) => {
         const solutionRecord = {
           solution_img: images[i]
             .toString()
-            .replace(new RegExp(`^${SOLN}`), ""),
+            .replace(new RegExp(`${SOLN}`), ""),
           question_id: que_id,
         };
         await insertRecord("solution", solutionRecord);
         j = 0;
       }
     }
-
-    // ... (rest of the code)
 
     j = 0;
 
