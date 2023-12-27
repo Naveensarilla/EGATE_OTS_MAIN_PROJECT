@@ -273,6 +273,8 @@ setSortid(data);
               </div>
             ))} */}
 
+
+
         {data.solutions &&
           data.solutions
             .filter((sol) => sol.question_id === question.question_id)
