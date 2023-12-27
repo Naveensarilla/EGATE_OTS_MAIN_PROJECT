@@ -3133,8 +3133,7 @@ res.json(rows);
 
   
    
-<<<<<<< HEAD
-=======
+
       // Fetch document data based on subjectId, testCreationTableId, and sectionId
       // const documentData = await getDocumentBySubjectAndTestCreationIdSectionId(
       //   subjectId,
@@ -3149,61 +3148,25 @@ res.json(rows);
       // const document_Id = documentData.document_Id;
    
       // Fetch question data based on subjectId, document_Id, and sectionId
-      const questions = await getQuestionsBySubjectAndDocumentId(
-        // subjectId,
-        // document_Id
-        question_id
-      );
+      // const questions = await getQuestionsBySubjectAndDocumentId(
+      //   // subjectId,
+      //   // document_Id
+      //   question_id
+      // );
    
       // Fetch option data based on questions and document_Id
-      const options = await getOptionsByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
+      // const options = await getOptionsByQuestionsAndDocumentId(
+      //   questions
+      //   // document_Id
+      // );
    
-      // Fetch solution data based on questions and document_Id
-      const solutions = await getSolutionsByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
+      // // Fetch solution data based on questions and document_Id
+      // const solutions = await getSolutionsByQuestionsAndDocumentId(
+      //   questions
+      //   // document_Id
+      // );
    
-      // Fetch answers data based on questions and document_Id
-      const answers = await getAnswersByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Fetch marks data based on questions and document_Id
-      const marks = await getMarksByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Fetch qtypes data based on questions and document_Id
-      const qtypes = await getQTypesByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Combine images
-      const combinedImages = combineImage(questions, options, solutions);
-   
-      // Respond with the fetched data
-      res.json({
-        // document: documentData,
-        questions,
-        options,
-        solutions,
-        answers,
-        marks,
-        qtypes,
-        combinedImages,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error fetching data from the database.");
-    }
-  });
+  //    npn
    
   // async function getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
   //   try {
@@ -3427,7 +3390,7 @@ res.json(rows);
 //       res.status(500).json({ error: "Internal server error" });
 //     }
 // });
->>>>>>> 07731aaa3d3a05003e4be80ce561a6cb2f3390f7
+
 
 
 app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {

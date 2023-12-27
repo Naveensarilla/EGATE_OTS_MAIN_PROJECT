@@ -9,11 +9,9 @@ const ReplaceAndUpdate = () => {
   const [subjects, setSubjects] = useState([]);
   const [sections, setSections] = useState([]);
   const [sortid,setSortid] = useState([]);
-<<<<<<< HEAD
-  
-=======
+
   // const [data, setData] = useState([]);
->>>>>>> 07731aaa3d3a05003e4be80ce561a6cb2f3390f7
+
   const [selectedExam, setSelectedExam] = useState("");
 const [selectedCourse,setSelectedCourse] = useState(" ");
 const [selectedTest,setSelectedTest] = useState(" ");
@@ -119,14 +117,12 @@ setSortid(data);
     try{
       const response = await fetch(`http://localhost:3081/singleQuetionRAU/${selectedSortid}`);
     const data = await response.json();
-<<<<<<< HEAD
-    
-=======
+
     if (isMounted.current) {
       setData(data.questions); 
     }
     setData(data);
->>>>>>> 07731aaa3d3a05003e4be80ce561a6cb2f3390f7
+
     }catch (error) {
           console.error('Error fetching sections data:', error);
         }
@@ -228,8 +224,6 @@ setSortid(data);
           </div></div>
 <div>
 
-<<<<<<< HEAD
-=======
 
 <div className="Document_-images_-container otsMainPages">
     
@@ -262,7 +256,7 @@ setSortid(data);
           />
         </div>
 
-        {data.options &&
+        {/* {data.options &&
           data.options
             .filter((opt) => opt.question_id === question.question_id)
             .map((option) => (
@@ -277,7 +271,7 @@ setSortid(data);
                   alt={`Option ${OptionLabels[option.option_index]}`}
                 />
               </div>
-            ))}
+            ))} */}
 
         {data.solutions &&
           data.solutions
@@ -327,7 +321,7 @@ setSortid(data);
       </button>
     </div>
   ))}
->>>>>>> 07731aaa3d3a05003e4be80ce561a6cb2f3390f7
+
 
       
       </div>
