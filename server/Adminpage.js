@@ -3614,10 +3614,14 @@ FROM
 WHERE
     tt.testCreationTableId = q.testCreationTableId AND q.question_id  = o.question_id AND tt.testCreationTableId = ?
       `;
-   
+      console.log('SQL Query:', sql);
       try {
         const results = await queryDatabase(sql, [testCreationTableId]);
-      
+        if (results.length === 0) {
+          res.status(404).json({ error: 'No data found for the specified testCreationTableId' });
+          return;
+        }
+        console.log('Query Results:', results);
         const questionsMap = new Map();
 
         results.forEach((row) => {
