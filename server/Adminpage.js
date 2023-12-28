@@ -3601,70 +3601,76 @@ app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) 
   
   
 
-    // app.get("quiz_all/:testCreationTableId", async (req, res) => {
-    //   const testCreationTableId = req.params.testCreationTableId;
+    app.get("quiz_all/:testCreationTableId", async (req, res) => {
+      const testCreationTableId = req.params.testCreationTableId;
     
-    //   const sql = `
-    //     SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
-    //     FROM test_creation_table tt, sections s, questions q, options o
-    //     WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
-    //   `;
-   
-    //   try {
-    //     const results = await queryDatabase(sql, [testCreationTableId]);
-    
-    //     const sections = {};
-    
-    //     results.forEach((row) => {
-    //       const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
+      const sql = `
+      SELECT
+    tt.testCreationTableId,
+    q.question_id ,
+    q.question_img,
+    o.option_id,
+    o.option_img,
+    o.option_index
+FROM
+    test_creation_table tt,
+    questions q,
+    options o
+WHERE
+    tt.testCreationTableId = q.testCreationTableId AND q.question_id  = o.question_id AND tt.testCreationTableId = ?
+      `;
+      console.log('SQL Query:', sql);
+      try {
+        const results = await queryDatabase(sql, [testCreationTableId]);
+        if (results.length === 0) {
+          res.status(404).json({ error: 'No data found for the specified testCreationTableId' });
+          return;
+        }
+        console.log('Query Results:', results);
+        const questionsMap = new Map();
 
-    //       if (!sections[sectionName]) {
-    //         sections[sectionName] = {
-    //           sectionId,
-    //           sectionName,
-    //           questions: [],
-    //         };
-    //       }
+        results.forEach((row) => {
+          const {question_id, question_img, Option_Index, option_img } = row;
     
-    //       const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
-    //       if (!question) {
-    //         sections[sectionName].questions.push({
-    //           qustion_id,
-    //           userAnswers: "",
-    //           isvisited: 0,
-    //           question_img: question_img.toString('base64'),
-    //           option_img: [],
-    //         });
-    //       }
+          if (!questionsMap.has(question_id)) {
+            questionsMap.set(question_id, {
+              question_id,
+              userAnswers: "",
+              isvisited: 0,
+              question_img: question_img.toString('base64'),
+              options: [],
+            });
+          }
     
-    //       const option = {
-    //         Option_Index,
-    //         option_img: option_img.toString('base64'),
-         
-    //       };
+          const option = {
+            Option_Index,
+            option_img: option_img.toString('base64'),
+          };
     
-    //       sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
-    //     });
+          questionsMap.get(question_id).options.push(option);
+        });
     
-    //     res.json(sections);
-    //   } catch (err) {
-    //     console.error('Error querying the database: ' + err.message);
-    //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
-    //   }
-    // });
+        const questionsArray = Array.from(questionsMap.values());
+        const jsonResult = { questions: questionsArray };
     
-    // function queryDatabase(sql, params) {
-    //   return new Promise((resolve, reject) => {
-    //     db.query(sql, params, (err, results) => {
-    //       if (err) {
-    //         reject(err);
-    //       } else {
-    //         resolve(results);
-    //       }
-    //     });
-    //   });
-    // }
-
+        res.json(jsonResult);
+      } catch (err) {
+        console.error('Error querying the database: ' + err.message);
+        res.status(500).json({ error: 'Error fetching testCreationTableId' });
+      }
+    });
+    
+    function queryDatabase(sql, params) {
+      return new Promise((resolve, reject) => {
+        db.query(sql, params, (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+        });
+      });
+    }
 
 
 app.listen(port, () => {
