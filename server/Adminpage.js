@@ -2632,7 +2632,7 @@ app.delete('/DocumentDelete/:document_Id', async (req, res) => {
   const document_Id = req.params.document_Id;
  
   try {
-    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id LEFT JOIN sortid ON sortid.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
+    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype,sortid  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id LEFT JOIN sortid ON sortid.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
     res.json({ message: `course with ID ${document_Id} deleted from the database` });
   } catch (error) {
     console.error(error);
@@ -2788,8 +2788,88 @@ app.get('/examData', async (req, res) => {
       }
     });
 
+    app.get("/singleQuetionRAU/:question_id", async (req, res) => {
+      try {
+        const sql="SELECT q.question_id,q.question_img,o.option_id,o.option_img,s.solution_id,s.solution_img,a.answer_id,a.answer_text,qt.qtypeId,qt.qtype_text,m.markesId,m.marks_text FROM questions q, options o,solution s,answer a , qtype qt , marks m WHERE q.question_id=o.question_id and q.question_id=s.question_id and a.question_id=q.question_id and qt.question_id=q.question_id and m.question_id=q.question_id"
+        const results = await queryDatabase(sql);
+        const data={};
+             results.forEach((row) => {
+        const { question_id,question_img,option_id,option_img,solution_id,solution_img,answer_id,answer_text,qtypeId,qtype_text,markesId,marks_text} = row;
+      
 
 
+
+      });
+
+      } catch (error) {
+        console.error(error);
+        res.status(500).send("Error fetching data from the database.");
+      }
+    });
+
+    // app.get("quiz_all/:testCreationTableId", async (req, res) => {
+    //   const testCreationTableId = req.params.testCreationTableId;
+    
+    //   const sql = `
+    //     SELECT tt.testCreationTableId, s.sectionId, q.qustion_id, q.question_img, o.option_id, o.option_img, o.option_index
+    //     FROM test_creation_table tt, sections s, questions q, options o
+    //     WHERE tt.testCreationTableId=q.testCreationTableId AND s.testCreationTableId=tt.testCreationTableId AND q.qustion_id=o.question_id AND tt.testCreationTableId=?
+    //   `;
+   
+    //   try {
+    //     const results = await queryDatabase(sql, [testCreationTableId]);
+    
+    //     const sections = {};
+    
+    //     results.forEach((row) => {
+    //       const { sectionId, sectionName, qustion_id, question_img, Option_Index, option_img } = row;
+
+    //       if (!sections[sectionName]) {
+    //         sections[sectionName] = {
+    //           sectionId,
+    //           sectionName,
+    //           questions: [],
+    //         };
+    //       }
+    
+    //       const question = sections[sectionName].questions.find(q => q.qustion_id === qustion_id);
+    //       if (!question) {
+    //         sections[sectionName].questions.push({
+    //           qustion_id,
+    //           userAnswers: "",
+    //           isvisited: 0,
+    //           question_img: question_img.toString('base64'),
+    //           option_img: [],
+    //         });
+    //       }
+    
+    //       const option = {
+    //         Option_Index,
+    //         option_img: option_img.toString('base64'),
+         
+    //       };
+    
+    //       sections[sectionName].questions.find(q => q.qustion_id === qustion_id).option_img.push(option);
+    //     });
+    
+    //     res.json(sections);
+    //   } catch (err) {
+    //     console.error('Error querying the database: ' + err.message);
+    //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
+    //   }
+    // });
+    
+     function queryDatabase(sql) {
+      return new Promise((resolve, reject) => {
+         db.query(sql, (err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(results);
+          }
+     });
+       });
+     }
 
 
 
@@ -3051,12 +3131,9 @@ res.json(rows);
 
 
 
-  app.get("/singleQuetionRAU/:question_id", async (req, res) => {
-    try {
-      const question_id = req.params.question_id;
-      // const testCreationTableId = req.params.testCreationTableId;
-      // const sectionId = req.params.sectionId;
+  
    
+
       // Fetch document data based on subjectId, testCreationTableId, and sectionId
       // const documentData = await getDocumentBySubjectAndTestCreationIdSectionId(
       //   subjectId,
@@ -3071,61 +3148,25 @@ res.json(rows);
       // const document_Id = documentData.document_Id;
    
       // Fetch question data based on subjectId, document_Id, and sectionId
-      const questions = await getQuestionsBySubjectAndDocumentId(
-        // subjectId,
-        // document_Id
-        question_id
-      );
+      // const questions = await getQuestionsBySubjectAndDocumentId(
+      //   // subjectId,
+      //   // document_Id
+      //   question_id
+      // );
    
       // Fetch option data based on questions and document_Id
-      const options = await getOptionsByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
+      // const options = await getOptionsByQuestionsAndDocumentId(
+      //   questions
+      //   // document_Id
+      // );
    
-      // Fetch solution data based on questions and document_Id
-      const solutions = await getSolutionsByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
+      // // Fetch solution data based on questions and document_Id
+      // const solutions = await getSolutionsByQuestionsAndDocumentId(
+      //   questions
+      //   // document_Id
+      // );
    
-      // Fetch answers data based on questions and document_Id
-      const answers = await getAnswersByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Fetch marks data based on questions and document_Id
-      const marks = await getMarksByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Fetch qtypes data based on questions and document_Id
-      const qtypes = await getQTypesByQuestionsAndDocumentId(
-        questions
-        // document_Id
-      );
-   
-      // Combine images
-      const combinedImages = combineImage(questions, options, solutions);
-   
-      // Respond with the fetched data
-      res.json({
-        // document: documentData,
-        questions,
-        options,
-        solutions,
-        answers,
-        marks,
-        qtypes,
-        combinedImages,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error fetching data from the database.");
-    }
-  });
+  //    npn
    
   // async function getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
   //   try {
@@ -3349,6 +3390,7 @@ res.json(rows);
 //       res.status(500).json({ error: "Internal server error" });
 //     }
 // });
+
 
 
 app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
