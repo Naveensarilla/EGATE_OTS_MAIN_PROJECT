@@ -47,6 +47,7 @@ import QuestionsFunctionality from './Frontend/Pages/MainQuizFunctionality/Quest
 import TestResultsPage from './Frontend/Pages/MainQuizFunctionality/TestResultsPage.jsx';
 import ReplaceAndUpdate from "./components/ReplaceAndUpdate.jsx";
 import UploadFile from './components/UploadFile.jsx';
+import Quiz from './components/Quiz.jsx'
 function App() {
   return (
     <Router>
@@ -108,9 +109,12 @@ function App() {
 
 
         <Route path='/UploadFile' element={<UploadFile/>}/>
+
+        <Route path='/Quiz' element={<Quiz/>}/>
         </Routes>
 
-
+        
+    
       </div>
      </div>
  
