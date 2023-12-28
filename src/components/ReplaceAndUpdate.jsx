@@ -130,6 +130,7 @@ setSortid(data);
   };
  
   
+  const OptionLabels = ["(a)", "(b)", "(c)", "(d)"];
 
   const [data, setData] = useState({ });
   
@@ -256,7 +257,7 @@ setSortid(data);
           />
         </div>
 
-        {/* {data.options &&
+         {data.options &&
           data.options
             .filter((opt) => opt.question_id === question.question_id)
             .map((option) => (
@@ -271,8 +272,7 @@ setSortid(data);
                   alt={`Option ${OptionLabels[option.option_index]}`}
                 />
               </div>
-            ))} */}
-
+            ))} 
 
 
         {data.solutions &&

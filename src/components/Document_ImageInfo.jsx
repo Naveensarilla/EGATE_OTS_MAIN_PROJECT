@@ -7,6 +7,32 @@ function Document_ImageInfo() {
   useEffect(() => {
     fetchData();
   }, []);
+  const handlechange=async(type,main_key,file)=>{
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await axios.post(
+        `http://localhost:3081/uploadFile/${type}/${main_key}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // File uploaded successfully, you can update the state or take any other actions
+        console.log("File uploaded successfully");
+      } else {
+        console.error("Error uploading file");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error.message);
+    }
+
+  }
   const fetchData = async () => {
     try {
       const response = await fetch(
@@ -65,8 +91,19 @@ function Document_ImageInfo() {
                   alt="Question"
                 />
               </div>
-
-              {data.options
+              <br></br>
+              <input type="file" id={`question${question.question_id}`} />
+              <input
+                type="button"
+                value="Change"
+                onClick={() =>
+                  handlechange(
+                    "question",
+                    question.question_id,
+                    document.getElementById(`question${question.question_id}`).files[0]
+                  )
+                }
+              />              {data.options
                 .filter((opt) => opt.question_id === question.question_id)
                 .map((option, index) => (
                   <div
