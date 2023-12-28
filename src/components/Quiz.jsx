@@ -5,7 +5,7 @@ const Quiz = () => {
 
     
   return (
-    <div>
+    <div className="otsMainPages">
 
 
 
