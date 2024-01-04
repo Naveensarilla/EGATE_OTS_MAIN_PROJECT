@@ -1445,105 +1445,6 @@ app.get("/instructionpointEdit/:instructionId", async (req, res) => {
   }
 });
 
-// Ex
-// const fileUpload = require("express-fileupload");
-// app.use(fileUpload());
-// const xlsx = require("xlsx");
-// app.post('/uploadExcel', (req, res) => {
-//   try {
-//     if (!req.files || Object.keys(req.files).length === 0) {
-//       return res.status(400).json({ error: 'No files were uploaded.' });
-//     }
-
-//     const excelFile = req.files.file;
-//     const workbook = xlsx.read(excelFile.data, { type: 'buffer' });
-//     const sheetName = workbook.SheetNames[0];
-//     const sheet = workbook.Sheets[sheetName];
-//     const data = xlsx.utils.sheet_to_json(sheet);
-
-//     console.log('Received file:', excelFile);
-//     console.log('Data from file:', data);
-
-//     const columns = Object.keys(data[0]);
-//     const insertStatement = `INSERT INTO your_table (${columns.join(', ')}) VALUES ?`;
-
-//     db.query(insertStatement, [data.map(item => columns.map(col => item[col]))], (err, result) => {
-//       if (err) {
-//         console.error('Database query error:', err);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//       } else {
-//         console.log('Result:', result);
-//         res.status(200).json({ message: 'Data inserted successfully.' });
-//       }
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// app.post("/uploadexcel", async (req, res) => {
-//   try {
-//     if (!req.files || Object.keys(req.files).length === 0) {
-//       return res.status(400).json({ error: "No files were uploaded." });
-//     }
-
-//     const { file, examId, instructionHeading } = req.files;
-//     console.log(
-//       `examId : ${examId}, instructionHeading : ${instructionHeading}`
-//     );
-
-//     const workbook = xlsx.read(file.data, { type: "buffer" });
-//     const sheetName = workbook.SheetNames[0];
-//     const sheet = workbook.Sheets[sheetName];
-//     const data = xlsx.utils.sheet_to_json(sheet);
-
-//     console.log("Received file:", file);
-//     console.log("Data from file:", data);
-
-//     // Assuming you have a column named 'examId' and 'instructionHeading' in your excel file
-//     // Modify the columns array accordingly based on your file structure
-//     const columns = Object.keys(data[0]);
-
-//     // Add 'examId' and 'instructionHeading' to the insert statement
-//     const insertStatement = `INSERT INTO your_table (examId, instructionHeading, ${columns.join(
-//       ", "
-//     )}) VALUES ?`;
-
-//     console.log("examId:", examId);
-//     console.log("instructionHeading:", instructionHeading);
-//     console.log("columns:", columns);
-
-//     // Use async/await to wait for the query result
-//     const result = await new Promise((resolve, reject) => {
-//       db.query(
-//         insertStatement,
-//         [
-//           data.map((item) => [
-//             examId,
-//             instructionHeading,
-//             ...columns.map((col) => item[col]),
-//           ]),
-//         ],
-//         (err, result) => {
-//           if (err) {
-//             console.error("Database query error:", err);
-//             reject(err);
-//           } else {
-//             console.log("Result:", result, examId);
-//             resolve(result);
-//           }
-//         }
-//       );
-//     });
-
-//     res.status(200).json({ message: "Data inserted successfully.", result });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
 //______________________end __________________________
 
 //______________________TEST CREATION PAGE __________________________
@@ -1734,14 +1635,6 @@ WHERE
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
- 
- 
- 
-
-
-
-
-
 app.put('/test-update/:testCreationTableId', async (req, res) => {
   const testCreationTableId = req.params.testCreationTableId;
   const {
@@ -1865,12 +1758,11 @@ app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
   }
 });
 
+//documemt upload in uploads folder and imeage path in data base table 
 
-// doc upload code -----------------
-app.post("/upload", upload.single("document"), async (req, res) => {
+app.post('/upload', upload.single('document'), async (req, res) => {
   const docxFilePath = `uploads/${req.file.filename}`;
-  const outputDir = `uploads/${req.file.originalname}_images`;
-
+  const outputDir = `uploads/${req.file.originalname}`;
   const docName = `${req.file.originalname}`;
   try {
     await fs.mkdir(outputDir, { recursive: true });
@@ -1879,68 +1771,827 @@ app.post("/upload", upload.single("document"), async (req, res) => {
     const $ = cheerio.load(htmlContent);
     const textResult = await mammoth.extractRawText({ path: docxFilePath });
     const textContent = textResult.value;
-    const textSections = textContent.split("\n\n");
-
-    // Insert documentName and get documentId
+    const textSections = textContent.split('\n\n');
+ 
     const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
       documen_name: docName,
-      testCreationTableId: req.body.testCreationTableId,
-      subjectId: req.body.subjectId,
-    });
-    const document_Id = documentResult.insertId;
-
+            testCreationTableId: req.body.testCreationTableId,
+            subjectId: req.body.subjectId,
+            sectionId:req.body.sectionId,
+          });
+          const document_Id = documentResult.insertId;
+ 
+ 
     // Get all images in the order they appear in the HTML
     const images = [];
-    $("img").each(function (i, element) {
-      const base64Data = $(this)
-        .attr("src")
-        .replace(/^data:image\/\w+;base64,/, "");
-      const imageBuffer = Buffer.from(base64Data, "base64");
+    $('img').each(function (i, element) {
+      const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
+      const imageBuffer = Buffer.from(base64Data, 'base64');
       images.push(imageBuffer);
     });
-
-    let j = 0;
-    let Question_id;
-    for (let i = 0; i < images.length; i++) {
-      if (j == 0) {
+ 
+ 
+    let j=0;let image_index=0;
+    let que_id=0;let k=1;
+    console.log(textSections);
+    for (let i = 0; i < textSections.length; i++) {
+      if (textSections[i].includes('[qtype]')) {
+        // que_id=question_id[j];
+        // j++;
+        // Save in the qtype table
+        const qtypeRecord = {
+          qtype_text: textSections[i].replace('[qtype]', ''),
+          question_id: que_id
+        };
+        console.log()
+        await insertRecord('qtype', qtypeRecord);
+      } else if (textSections[i].includes('[ans]')) {
+        // Save in the answer table
+        const answerRecord = {
+          answer_text: textSections[i].replace('[ans]', ''),
+          question_id: que_id
+        };
+        await insertRecord('answer', answerRecord);
+      } else if (textSections[i].includes('[Marks]')) {
+        // Save in the marks table
+        const marksRecord = {
+          marks_text: textSections[i].replace('[Marks]', ''),
+          question_id: que_id
+        };
+        await insertRecord('marks', marksRecord);
+      }else if (textSections[i].includes('[sortid]')) {
+        const sortidRecord = {
+          sortid_text: textSections[i].replace('[sortid]', ''),
+          question_id: que_id
+        };
+        await insertRecord('sortid', sortidRecord);
+      }
+      else if (textSections[i].includes('[Q]')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_question_${k}.png`;k++;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
         const questionRecord = {
-          question_img: images[i],
+          questionImgName: imageName,
           testCreationTableId: req.body.testCreationTableId,
-          sectionId: req.body.sectionId,
-          document_Id: document_Id,
           subjectId: req.body.subjectId,
+          document_Id: document_Id,
+          sectionId: req.body.sectionId
         };
-        console.log(j);
-        Question_id = await insertRecord("questions", questionRecord);
-        j++;
-      } else if (j > 0 && j < 5) {
+        que_id = await insertRecord('questions', questionRecord);
+        // question_id.push(Question_id)
+
+      }
+      else if (textSections[i].includes('(a)')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_a_${k}.png`;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
         const optionRecord = {
-          option_img: images[i],
-          question_id: Question_id,
+          optionImgName: imageName,
+          option_index:'a',
+          question_id: que_id
         };
-        console.log(j);
-        await insertRecord("options", optionRecord);
-        j++;
-      } else if (j == 5) {
+        await insertRecord('options', optionRecord);
+        
+      }else if (textSections[i].includes('(b)')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_b_${k}.png`;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
+        const optionRecord = {
+          optionImgName: imageName,
+          option_index:'b',
+          question_id: que_id
+        };
+        await insertRecord('options', optionRecord);
+        
+      }else if (textSections[i].includes('(c)')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_c_${k}.png`;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
+        const optionRecord = {
+          optionImgName: imageName,
+          option_index:'c',
+          question_id: que_id
+        };
+        await insertRecord('options', optionRecord);
+        
+      }else if (textSections[i].includes('(d)')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_d_${k}.png`;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
+        const optionRecord = {
+          optionImgName: imageName,
+          option_index:'d',
+          question_id: que_id
+        };
+        await insertRecord('options', optionRecord);
+        
+      }else if (textSections[i].includes('[soln]')) {
+        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_solution_${k}.png`;
+        const imagePath = `${outputDir}/${imageName}`;
+        await fs.writeFile(imagePath, images[image_index]);image_index++;
         const solutionRecord = {
-          solution_img: images[i],
-          question_id: Question_id,
+          solutionImgName: imageName,
+          question_id: que_id
         };
-        console.log(j);
-        await insertRecord("solution", solutionRecord);
-        j = 0;
+        await insertRecord('solution', solutionRecord);
+        
       }
     }
-    res.send(
-      "Text content and images extracted and saved to the database with the selected topic ID successfully."
-    );
+ 
+    res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .send("Error extracting content and saving it to the database.");
+    res.status(500).send('Error extracting content and saving it to the database.');
   }
 });
+async function insertRecord(table, record) {
+  try {
+    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+    console.log(`${table} id: ${result.insertId}`);
+    return result.insertId;
+  } catch (err) {
+    console.error(`Error inserting data into ${table}: ${err}`);
+    throw err;
+  }
+}
+ 
+const imagesDirectory = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(imagesDirectory));
+ 
+app.use(express.json());
+app.use('/images', express.static(imagesDirectory));
+ 
+app.get('/image-list', async (req, res) => {
+  try {
+    const files = await fs.readdir(imagesDirectory);
+    console.log('Files in uploads directory:', files);
+    const imageNames = files.filter(file => file.endsWith('.png'));
+    res.json(imageNames);
+  } catch (error) {
+    console.error('Error fetching image list:', error);
+    res.status(500).send('Error fetching image list.');
+  }
+});
+
+
+
+
+async function insertRecord(table, record) {
+  try {
+    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+    console.log(`${table} id: ${result.insertId}`);
+    return result.insertId;
+  } catch (err) {
+    console.error(`Error inserting data into ${table}: ${err}`);
+    throw err;
+  }
+}
+// end -------------------
+
+
+// doc name getting 
+app.get("/documentName", async (req, res) => {
+  try {
+    const query =
+      "SELECT o.document_Id,o.documen_name,o.testCreationTableId,o.subjectId,o.sectionId ,tt.TestName,s.subjectName FROM ots_document AS o INNER JOIN test_creation_table AS tt ON o.testCreationTableId=tt.testCreationTableId INNER JOIN subjects AS s ON s.subjectId=o.subjectId ";
+    const [rows] = await db.query(query);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get('/fulldocimages/:testCreationTableId/:subjectId/:sectionId', async (req, res) => {
+  const { testCreationTableId, subjectId, sectionId } = req.params;
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        q.question_id, q.questionImgName, 
+        o.option_id, o.optionImgName,o.option_index,
+        s.solution_id, s.solutionImgName, 
+        qt.qtypeId,qt.qtype_text,
+        ans.answer_id,ans.answer_text,
+        m.markesId ,m.marks_text,
+        si.sort_id ,si.sortid_text,
+        doc.documen_name, doc.sectionId, 
+        doc.subjectId, doc.testCreationTableId 
+      FROM 
+        questions q 
+        LEFT OUTER JOIN options o ON q.question_id = o.question_id
+        LEFT OUTER JOIN qtype qt ON q.question_id = qt.question_id 
+        LEFT OUTER JOIN answer ans ON q.question_id = ans.question_id 
+        LEFT OUTER JOIN marks m ON q.question_id = m.question_id 
+        LEFT OUTER JOIN sortid si ON q.question_id = si.question_id 
+        LEFT OUTER JOIN solution s ON q.question_id = s.question_id 
+        LEFT OUTER JOIN ots_document doc ON q.testCreationTableId = doc.testCreationTableId 
+      WHERE 
+        doc.testCreationTableId = ? AND doc.subjectId = ? AND doc.sectionId = ?;
+    `, [testCreationTableId, subjectId, sectionId]);
+
+    // Check if rows is not empty
+    if (rows.length > 0) {
+      const questionData = {
+        questions: [],
+      };
+
+      // Organize data into an array of questions
+      rows.forEach(row => {
+        const existingQuestion = questionData.questions.find(q => q.question_id === row.question_id);
+
+        if (existingQuestion) {
+          // Question already exists, add option to the existing question
+          existingQuestion.options.push({
+            option_id: row.option_id,
+            option_index:row.option_index,
+            optionImgName: row.optionImgName,
+          });
+        } else {
+          // Question doesn't exist, create a new question
+          const newQuestion = {
+            question_id: row.question_id,
+            questionImgName: row.questionImgName,
+            documen_name: row.documen_name,
+            options: [
+              {
+                option_id: row.option_id,
+                optionImgName: row.optionImgName,
+              },
+            ],
+            solution: {
+              solution_id: row.solution_id,
+              solutionImgName: row.solutionImgName,
+            },
+            qtype:{
+              qtypeId:row.qtypeId,
+              qtype_text:row.qtype_text,
+            },
+            answer:{
+              answer_id :row.answer_id ,
+              answer_text:row.answer_text,
+            },
+            marks:{
+              markesId:row.markesId,
+              marks_text:row.marks_text,
+            },
+            sortid:{
+              sort_id:row.sort_id,
+              sortid_text:row.sortid_text
+            }
+          };
+
+          questionData.questions.push(newQuestion);
+        }
+      });
+
+      res.json(questionData);
+    } else {
+      // Handle the case where no rows are returned (empty result set)
+      res.status(404).json({ error: 'No data found' });
+    }
+  } catch (error) {
+    console.error('Error fetching question data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// end ----------
+
+
+// end--------
+//doc delete 
+app.delete('/DocumentDelete/:document_Id', async (req, res) => {
+  const document_Id = req.params.document_Id;
+ 
+  try {
+    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype,sortid  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id LEFT JOIN sortid ON sortid.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
+    res.json({ message: `course with ID ${document_Id} deleted from the database` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+//  end for document section code ------------------------------------------/
+
+
+
+// ================================ end
+//_________________________________________________Dashboard_____________________________________
+
+app.get('/courses/count', async (req, res) => {
+  try {
+    const [results, fields] = await db.execute(
+      'SELECT COUNT(courseCreationId) AS count FROM course_creation_table'
+    );
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching course count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/exam/count', async (req, res) => {
+  try {
+    const [results, fields] = await db.execute(
+      'SELECT COUNT(examId) AS count FROM exams'
+    );
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching course count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.get('/test/count', async (req, res) => {
+  try {
+    const [results, fields] = await db.execute(
+      'SELECT COUNT(testCreationTableId) AS count FROM test_creation_table'
+    );
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching course count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.get('/question/count', async (req, res) => {
+  try {
+    const [results, fields] = await db.execute(
+      'SELECT COUNT(question_id) AS count FROM questions'
+    );
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching course count:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//_____________________________________________________END________________________________
+
+//_________________________________________________FRONT END_______________________________________
+
+app.get('/examData', async (req, res) => {
+  // FetchData
+  try {
+      const [rows] = await db.query('SELECT * FROM exams');
+      res.json(rows);
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
+  app.get('/feachingcourse/:examId', async (req, res) => {
+      const { examId } = req.params;
+      try {
+        // Fetch exams from the database
+        const [rows] = await db.query('SELECT * FROM course_creation_table WHERE examId = ?', [examId]);
+    
+        res.json(rows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+    app.get('/feachingtest/:courseCreationId', async (req, res) => {
+      const { 	courseCreationId  } = req.params;
+      try {
+        // Fetch exams from the database
+        const [rows] = await db.query('SELECT * FROM test_creation_table WHERE 	courseCreationId  = ?', [	courseCreationId ]);
+    
+        res.json(rows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+    app.get('/feachingtypeoftest', async (req, res) => {
+      try {
+        // Fetch type_of_test data from the database
+        const [typeOfTestRows] = await db.query('SELECT * FROM type_of_test');
+        res.json(typeOfTestRows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+    
+    app.get('/feachingtestbytype/:typeOfTestId', async (req, res) => {
+      const { typeOfTestId } = req.params;
+      try {
+        // Fetch tests from the database based on typeOfTestId
+        const [testRows] = await db.query('SELECT * FROM test_creation_table WHERE courseTypeOfTestId = ?', [typeOfTestId]);
+        res.json(testRows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+    app.get('/fetchinstructions/:testCreationTableId', async (req, res) => {
+      const { testCreationTableId } = req.params;
+      try {
+        // Fetch instructions from the database based on testCreationTableId
+        const [instructionsRows] = await db.query(
+          'SELECT instruction.instructionId, instructionHeading, points, id FROM instructions_points ' +
+          'JOIN instruction ON instructions_points.instructionId = instruction.instructionId ' +
+          'JOIN test_creation_table ON instruction.instructionId = test_creation_table.instructionId ' +
+          'WHERE test_creation_table.testCreationTableId = ?',
+          [testCreationTableId]
+        );
+        res.json(instructionsRows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+
+    app.get('/fetchSections/:testCreationTableId', async (req, res) => {
+      const { testCreationTableId } = req.params;
+      try {
+        const [rows] = await db.query('SELECT * FROM sections WHERE testCreationTableId = ?', [testCreationTableId]);
+        res.json(rows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+
+
+ 
+
+
+
+
+
+//__________________________________________________REPLACE AND UPDATE _______________________________________________________________________________________________________
+
+app.get('/examRAU', async (req, res) => {
+  // FetchData
+  try {
+      const [rows] = await db.query('SELECT examId,examName	 FROM exams');
+      res.json(rows);
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  app.get('/CourseRAU/:examId', async (req, res) => {
+    const { examId } = req.params;
+   
+    try {
+      const [Course] = await db.query(`SELECT courseCreationId,courseName,examId FROM course_creation_table WHERE examId = ? `, [examId]);
+   
+      res.json(Course);
+    } catch (error) {
+      console.error('Error fetching Course:', error);
+      res.status(500).send('Error fetching Course.');
+    }
+  });
+
+
+  app.get('/testRAU/:courseCreationId', async (req,res) =>{
+    const { courseCreationId } = req.params;
+    try{
+const[test] = await db.query(`SELECT testCreationTableId,TestName,courseCreationId FROM test_creation_table WHERE courseCreationId=? `,[courseCreationId])
+
+res.json(test);
+    }catch (error) {
+      console.error('Error fetching Course:', error);
+      res.status(500).send('Error fetching Course.');
+    }
+  })
+  app.get('/subjectRAU/:testCreationTableId', async (req, res) => {
+    const { testCreationTableId } = req.params;
+   
+    try {
+      const [subjects] = await db.query(`
+        SELECT s.subjectName,s.subjectId
+        FROM test_creation_table tt
+        INNER JOIN course_subjects AS cs ON tt.courseCreationId = cs.courseCreationId
+        INNER JOIN subjects AS s ON cs.subjectId = s.subjectId
+        WHERE tt.testCreationTableId = ?
+      `, [testCreationTableId]);
+   
+      res.json(subjects);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+      res.status(500).send('Error fetching subjects.');
+    }
+  });
+
+  app.get('/sectionRAU/:subjectId/:testCreationTableId', async (req, res) => {
+    const { subjectId, testCreationTableId } = req.params;
+    try {
+      const [rows] = await db.query(
+        'SELECT s.sectionName, s.sectionId, s.testCreationTableId, s.subjectId FROM sections s JOIN test_creation_table tt ON s.testCreationTableId = tt.testCreationTableId WHERE s.subjectId = ? AND s.testCreationTableId = ?',
+        [subjectId, testCreationTableId]
+      );
+      res.json(rows);
+    } catch (error) {
+      console.error('Error fetching sections data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }); 
+
+  app.get('/sortidRAU/:testCreationTableId/:subjectId/:sectionId' ,async(req,res) =>{
+    const { testCreationTableId,subjectId,sectionId} = req.params;
+    try{
+const [rows] =await db.query( `SELECT s.question_id ,q.testCreationTableId,q.sectionId,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.testCreationTableId=? AND q.subjectId=? AND q.sectionId=? `,[ testCreationTableId,subjectId,sectionId] );
+res.json(rows);
+    }catch (error) {
+      console.error('Error fetching sections data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  })
+app.get('/quizRAU/:question_id', async (req, res) => {
+  const { question_id } = req.params;
+  try {
+    const [rows] = await db.query(`
+    SELECT 
+        q.question_id, q.questionImgName, 
+        o.option_id, o.optionImgName,o.option_index,
+        s.solution_id, s.solutionImgName, 
+        qt.qtypeId,qt.qtype_text,
+        ans.answer_id,ans.answer_text,
+        m.markesId ,m.marks_text,
+        si.sort_id ,si.sortid_text,
+        doc.documen_name, doc.sectionId, 
+        doc.subjectId, doc.testCreationTableId 
+      FROM 
+        questions q 
+        LEFT OUTER JOIN options o ON q.question_id = o.question_id
+        LEFT OUTER JOIN qtype qt ON q.question_id = qt.question_id 
+        LEFT OUTER JOIN answer ans ON q.question_id = ans.question_id 
+        LEFT OUTER JOIN marks m ON q.question_id = m.question_id 
+        LEFT OUTER JOIN sortid si ON q.question_id = si.question_id 
+      LEFT OUTER JOIN solution s ON q.question_id = s.question_id
+      LEFT OUTER JOIN ots_document doc ON q.testCreationTableId = doc.testCreationTableId
+      WHERE
+        q.question_id =?;
+    `, [question_id]);
+
+    const questionData = {
+      question: {
+        question_id: rows[0].question_id,
+        questionImgName: rows[0].questionImgName,
+        documen_name: rows[0].documen_name,
+        // Include other question details...
+      },
+      options: rows.map(option => ({
+        option_id: option.option_id,
+        option_index:option.option_index,
+        optionImgName: option.optionImgName,
+        // Include other option details...
+      })),
+      solution: {
+        solution_id: rows[0].solution_id,
+        solutionImgName: rows[0].solutionImgName,
+        // Include other solution details...
+      },
+      qtype:{
+        qtypeId:rows[0].qtypeId,
+        qtype_text:rows[0].qtype_text,
+      },
+      answer:{
+        answer_id :rows[0].answer_id ,
+        answer_text:rows[0].answer_text,
+      },
+      marks:{
+        markesId:rows[0].markesId,
+        marks_text:rows[0].marks_text,
+      },
+      sortid:{
+        sort_id:rows[0].sort_id,
+        sortid_text:rows[0].sortid_text
+      },
+    };
+
+    res.json(questionData);
+  } catch (error) {
+    console.error('Error fetching question data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
+  const questionId = req.params.questionId;
+  const updatedData = req.body;
+  const imageFiles = req.files;
+  
+  try {
+    // Convert image files to base64
+    const imageBase64 = await Promise.all(imageFiles.map(async file => {
+      const imageData = await fs.readFile(file.path, { encoding: 'base64' });
+      return `data:${file.mimetype};base64,${imageData}`;
+    }));
+
+    // Update question_img in the questions table
+    if (imageBase64[0]) {
+      await db.query("UPDATE questions SET question_img = ? WHERE question_id = ?", [
+        imageBase64[0],
+        questionId,
+      ]);
+    }
+
+    // Update option_img in the options table
+    if (imageBase64[1]) {
+      await db.query("UPDATE options SET option_img = ? WHERE question_id = ?", [
+        imageBase64[1],
+        questionId,
+      ]);
+    }
+
+    // ... (omitting other updates for brevity)
+  
+    res.json({ message: "Question and related data updated successfully" });
+  } catch (error) {
+    console.error("Error updating question:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Ex
+// const fileUpload = require("express-fileupload");
+// app.use(fileUpload());
+// const xlsx = require("xlsx");
+// app.post('/uploadExcel', (req, res) => {
+//   try {
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).json({ error: 'No files were uploaded.' });
+//     }
+
+//     const excelFile = req.files.file;
+//     const workbook = xlsx.read(excelFile.data, { type: 'buffer' });
+//     const sheetName = workbook.SheetNames[0];
+//     const sheet = workbook.Sheets[sheetName];
+//     const data = xlsx.utils.sheet_to_json(sheet);
+
+//     console.log('Received file:', excelFile);
+//     console.log('Data from file:', data);
+
+//     const columns = Object.keys(data[0]);
+//     const insertStatement = `INSERT INTO your_table (${columns.join(', ')}) VALUES ?`;
+
+//     db.query(insertStatement, [data.map(item => columns.map(col => item[col]))], (err, result) => {
+//       if (err) {
+//         console.error('Database query error:', err);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//       } else {
+//         console.log('Result:', result);
+//         res.status(200).json({ message: 'Data inserted successfully.' });
+//       }
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+// app.post("/uploadexcel", async (req, res) => {
+//   try {
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).json({ error: "No files were uploaded." });
+//     }
+
+//     const { file, examId, instructionHeading } = req.files;
+//     console.log(
+//       `examId : ${examId}, instructionHeading : ${instructionHeading}`
+//     );
+
+//     const workbook = xlsx.read(file.data, { type: "buffer" });
+//     const sheetName = workbook.SheetNames[0];
+//     const sheet = workbook.Sheets[sheetName];
+//     const data = xlsx.utils.sheet_to_json(sheet);
+
+//     console.log("Received file:", file);
+//     console.log("Data from file:", data);
+
+//     // Assuming you have a column named 'examId' and 'instructionHeading' in your excel file
+//     // Modify the columns array accordingly based on your file structure
+//     const columns = Object.keys(data[0]);
+
+//     // Add 'examId' and 'instructionHeading' to the insert statement
+//     const insertStatement = `INSERT INTO your_table (examId, instructionHeading, ${columns.join(
+//       ", "
+//     )}) VALUES ?`;
+
+//     console.log("examId:", examId);
+//     console.log("instructionHeading:", instructionHeading);
+//     console.log("columns:", columns);
+
+//     // Use async/await to wait for the query result
+//     const result = await new Promise((resolve, reject) => {
+//       db.query(
+//         insertStatement,
+//         [
+//           data.map((item) => [
+//             examId,
+//             instructionHeading,
+//             ...columns.map((col) => item[col]),
+//           ]),
+//         ],
+//         (err, result) => {
+//           if (err) {
+//             console.error("Database query error:", err);
+//             reject(err);
+//           } else {
+//             console.log("Result:", result, examId);
+//             resolve(result);
+//           }
+//         }
+//       );
+//     });
+
+//     res.status(200).json({ message: "Data inserted successfully.", result });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+// doc upload code -----------------
+// app.post("/upload", upload.single("document"), async (req, res) => {
+//   const docxFilePath = `uploads/${req.file.filename}`;
+//   const outputDir = `uploads/${req.file.originalname}_images`;
+
+//   const docName = `${req.file.originalname}`;
+//   try {
+//     await fs.mkdir(outputDir, { recursive: true });
+//     const result = await mammoth.convertToHtml({ path: docxFilePath });
+//     const htmlContent = result.value;
+//     const $ = cheerio.load(htmlContent);
+//     const textResult = await mammoth.extractRawText({ path: docxFilePath });
+//     const textContent = textResult.value;
+//     const textSections = textContent.split("\n\n");
+
+//     // Insert documentName and get documentId
+//     const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+//       documen_name: docName,
+//       testCreationTableId: req.body.testCreationTableId,
+//       subjectId: req.body.subjectId,
+//     });
+//     const document_Id = documentResult.insertId;
+
+//     // Get all images in the order they appear in the HTML
+//     const images = [];
+//     $("img").each(function (i, element) {
+//       const base64Data = $(this)
+//         .attr("src")
+//         .replace(/^data:image\/\w+;base64,/, "");
+//       const imageBuffer = Buffer.from(base64Data, "base64");
+//       images.push(imageBuffer);
+//     });
+
+//     let j = 0;
+//     let Question_id;
+//     for (let i = 0; i < images.length; i++) {
+//       if (j == 0) {
+//         const questionRecord = {
+//           question_img: images[i],
+//           testCreationTableId: req.body.testCreationTableId,
+//           sectionId: req.body.sectionId,
+//           document_Id: document_Id,
+//           subjectId: req.body.subjectId,
+//         };
+//         console.log(j);
+//         Question_id = await insertRecord("questions", questionRecord);
+//         j++;
+//       } else if (j > 0 && j < 5) {
+//         const optionRecord = {
+//           option_img: images[i],
+//           question_id: Question_id,
+//         };
+//         console.log(j);
+//         await insertRecord("options", optionRecord);
+//         j++;
+//       } else if (j == 5) {
+//         const solutionRecord = {
+//           solution_img: images[i],
+//           question_id: Question_id,
+//         };
+//         console.log(j);
+//         await insertRecord("solution", solutionRecord);
+//         j = 0;
+//       }
+//     }
+//     res.send(
+//       "Text content and images extracted and saved to the database with the selected topic ID successfully."
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .send("Error extracting content and saving it to the database.");
+//   }
+// });
 
 // app.post("/upload", upload.single("document"), async (req, res) => {
 //   const docxFilePath = `uploads/${req.file.filename}`;
@@ -2102,38 +2753,7 @@ app.post("/upload", upload.single("document"), async (req, res) => {
 //           .send("Error extracting content and saving it to the database.");
 //       }
 //     });
-
-
-
-async function insertRecord(table, record) {
-  try {
-    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
-    console.log(`${table} id: ${result.insertId}`);
-    return result.insertId;
-  } catch (err) {
-    console.error(`Error inserting data into ${table}: ${err}`);
-    throw err;
-  }
-}
-// end -------------------
-
-
-// doc name getting 
-app.get("/documentName", async (req, res) => {
-  try {
-    const query =
-      "SELECT o.document_Id,o.documen_name,o.testCreationTableId,o.subjectId,o.sectionId ,tt.TestName,s.subjectName FROM ots_document AS o INNER JOIN test_creation_table AS tt ON o.testCreationTableId=tt.testCreationTableId INNER JOIN subjects AS s ON s.subjectId=o.subjectId ";
-    const [rows] = await db.query(query);
-    res.json(rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// end ----------
-
-// get doc upload iamges ---------------
+   // get doc upload iamges ---------------
 // app.get("/getSubjectData/:subjectId/:testCreationTableId", async (req, res) => {
 //   try {
 //     const subjectId = req.params.subjectId;
@@ -2351,466 +2971,316 @@ app.get("/documentName", async (req, res) => {
 //   return combinedImages;
 // }
 
-app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req, res) => {
-  try {
-    const subjectId = req.params.subjectId;
-    const testCreationTableId = req.params.testCreationTableId;
-    const sectionId = req.params.sectionId;
+// app.get("/getSubjectData/:subjectId/:testCreationTableId/:sectionId", async (req, res) => {
+//   try {
+//     const subjectId = req.params.subjectId;
+//     const testCreationTableId = req.params.testCreationTableId;
+//     const sectionId = req.params.sectionId;
 
-    // Fetch document data based on subjectId, testCreationTableId, and sectionId
-    const documentData = await dbHelper.getDocumentBySubjectAndTestCreationIdSectionId(
-      subjectId,
-      testCreationTableId,
-      sectionId
-    );
+//     // Fetch document data based on subjectId, testCreationTableId, and sectionId
+//     const documentData = await dbHelper.getDocumentBySubjectAndTestCreationIdSectionId(
+//       subjectId,
+//       testCreationTableId,
+//       sectionId
+//     );
 
-    if (!documentData) {
-      return res.status(404).send("Document not found");
-    }
+//     if (!documentData) {
+//       return res.status(404).send("Document not found");
+//     }
 
-    const document_Id = documentData.document_Id;
+//     const document_Id = documentData.document_Id;
 
-    // Fetch question data based on subjectId, document_Id, and sectionId
-    const questions = await dbHelper.getQuestionsBySubjectAndDocumentId(
-      subjectId,
-      document_Id,
-      sectionId
-    );
+//     // Fetch question data based on subjectId, document_Id, and sectionId
+//     const questions = await dbHelper.getQuestionsBySubjectAndDocumentId(
+//       subjectId,
+//       document_Id,
+//       sectionId
+//     );
 
-    // Fetch option data based on questions and document_Id
-    const options = await dbHelper.getOptionsByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
+//     // Fetch option data based on questions and document_Id
+//     const options = await dbHelper.getOptionsByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
 
-    // Fetch solution data based on questions and document_Id
-    const solutions = await dbHelper.getSolutionsByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
+//     // Fetch solution data based on questions and document_Id
+//     const solutions = await dbHelper.getSolutionsByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
 
-    // Fetch answers data based on questions and document_Id
-    const answers = await dbHelper.getAnswersByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
+//     // Fetch answers data based on questions and document_Id
+//     const answers = await dbHelper.getAnswersByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
 
-    // Fetch marks data based on questions and document_Id
-    const marks = await dbHelper.getMarksByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
+//     // Fetch marks data based on questions and document_Id
+//     const marks = await dbHelper.getMarksByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
 
-    // Fetch qtypes data based on questions and document_Id
-    const qtypes = await dbHelper.getQTypesByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
-    const sortid = await dbHelper.getsortidByQuestionsAndDocumentId(
-      questions,
-      document_Id
-    );
+//     // Fetch qtypes data based on questions and document_Id
+//     const qtypes = await dbHelper.getQTypesByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
+//     const sortid = await dbHelper.getsortidByQuestionsAndDocumentId(
+//       questions,
+//       document_Id
+//     );
 
-    // Combine images
-    const combinedImages = dbHelper.combineImage(questions, options, solutions);
+//     // Combine images
+//     const combinedImages = dbHelper.combineImage(questions, options, solutions);
 
-    // Respond with the fetched data
-    res.json({
-      document: documentData,
-      questions,
-      options,
-      solutions,
-      answers,
-      marks,
-      qtypes,
-      sortid,
-      combinedImages,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error fetching data from the database.");
-  }
-});
+//     // Respond with the fetched data
+//     res.json({
+//       document: documentData,
+//       questions,
+//       options,
+//       solutions,
+//       answers,
+//       marks,
+//       qtypes,
+//       sortid,
+//       combinedImages,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Error fetching data from the database.");
+//   }
+// });
 
-class DatabaseHelper {
-  constructor(db) {
-    this.db = db;
-  }
+// class DatabaseHelper {
+//   constructor(db) {
+//     this.db = db;
+//   }
 
-async getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
-  try {
-    const query = `
-      SELECT document_Id, testCreationTableId, documen_name
-      FROM ots_document
-      WHERE subjectId = ? AND testCreationTableId = ? AND sectionId = ?
-    `;
-    const [result] = await this.db.query(query, [subjectId, testCreationTableId, sectionId]);
-    return result[0];
-  } catch (err) {
-    console.error(`Error fetching document details: ${err}`);
-    throw err;
-  }
-}
+// async getDocumentBySubjectAndTestCreationIdSectionId(subjectId, testCreationTableId, sectionId) {
+//   try {
+//     const query = `
+//       SELECT document_Id, testCreationTableId, documen_name
+//       FROM ots_document
+//       WHERE subjectId = ? AND testCreationTableId = ? AND sectionId = ?
+//     `;
+//     const [result] = await this.db.query(query, [subjectId, testCreationTableId, sectionId]);
+//     return result[0];
+//   } catch (err) {
+//     console.error(`Error fetching document details: ${err}`);
+//     throw err;
+//   }
+// }
 
-// Reusable function to get questions data based on subjectId and document_Id
-async getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
-  try {
-    const query = `
-      SELECT question_id, question_img
-      FROM questions
-      WHERE subjectId = ? AND document_Id = ?  
-    `;
-    const [results] = await this.db.query(query, [subjectId, document_Id]);
-    const questionsWithBase64 = results.map((question) => ({
-      question_id: question.question_id,
-      question_img: question.question_img.toString("base64"),
-    }));
-    return questionsWithBase64;
-  } catch (err) {
-    console.error(`Error fetching questions: ${err}`);
-    throw err;
-  }
-}
+// // Reusable function to get questions data based on subjectId and document_Id
+// async getQuestionsBySubjectAndDocumentId(subjectId, document_Id) {
+//   try {
+//     const query = `
+//       SELECT question_id, question_img
+//       FROM questions
+//       WHERE subjectId = ? AND document_Id = ?  
+//     `;
+//     const [results] = await this.db.query(query, [subjectId, document_Id]);
+//     const questionsWithBase64 = results.map((question) => ({
+//       question_id: question.question_id,
+//       question_img: question.question_img.toString("base64"),
+//     }));
+//     return questionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching questions: ${err}`);
+//     throw err;
+//   }
+// }
 
-// Reusable function to get options data based on questions and document_Id
-async getOptionsByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT question_id, option_img
-      FROM options
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await this.db.query(query, [questionIds, document_Id]);
+// // Reusable function to get options data based on questions and document_Id
+// async getOptionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT question_id, option_img
+//       FROM options
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await this.db.query(query, [questionIds, document_Id]);
 
-    const optionsWithBase64 = results.map((option) => ({
-      question_id: option.question_id,
-      option_img: option.option_img.toString("base64"),
-    }));
+//     const optionsWithBase64 = results.map((option) => ({
+//       question_id: option.question_id,
+//       option_img: option.option_img.toString("base64"),
+//     }));
 
-    return optionsWithBase64;
-  } catch (err) {
-    console.error(`Error fetching options: ${err.message}`);
-    throw err;
-  }
-}
+//     return optionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching options: ${err.message}`);
+//     throw err;
+//   }
+// }
 
-// Reusable function to get solutions data based on questions and document_Id
-async  getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT question_id, solution_img
-      FROM solution
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+// // Reusable function to get solutions data based on questions and document_Id
+// async  getSolutionsByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT question_id, solution_img
+//       FROM solution
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    // Convert BLOB data to base64 for sending in the response
-    const solutionsWithBase64 = results.map((solution) => ({
-      question_id: solution.question_id,
-      solution_img: solution.solution_img.toString("base64"),
-    }));
+//     // Convert BLOB data to base64 for sending in the response
+//     const solutionsWithBase64 = results.map((solution) => ({
+//       question_id: solution.question_id,
+//       solution_img: solution.solution_img.toString("base64"),
+//     }));
 
-    return solutionsWithBase64;
-  } catch (err) {
-    console.error(`Error fetching solutions: ${err}`);
-    throw err;
-  }
-}
+//     return solutionsWithBase64;
+//   } catch (err) {
+//     console.error(`Error fetching solutions: ${err}`);
+//     throw err;
+//   }
+// }
 
-async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT answer_id, question_id, answer_text
-      FROM answer
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
-    const answers = results.map((answer) => ({
-      answer_id: answer.answer_id,
-      question_id: answer.question_id,
-      answer_text: answer.answer_text,
-    }));
+// async  getAnswersByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT answer_id, question_id, answer_text
+//       FROM answer
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
+//     const answers = results.map((answer) => ({
+//       answer_id: answer.answer_id,
+//       question_id: answer.question_id,
+//       answer_text: answer.answer_text,
+//     }));
 
-    return answers;
-  } catch (err) {
-    console.error(`Error fetching answers: ${err.message}`);
-    throw err;
-  }
-}
-async  getMarksByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT 	markesId, marks_text, question_id
-      FROM marks
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+//     return answers;
+//   } catch (err) {
+//     console.error(`Error fetching answers: ${err.message}`);
+//     throw err;
+//   }
+// }
+// async  getMarksByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT 	markesId, marks_text, question_id
+//       FROM marks
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    const marks = results.map((mark) => ({
-      markesId: mark.markesId,
-      marks_text: mark.marks_text,
-      question_id: mark.question_id,
-    }));
+//     const marks = results.map((mark) => ({
+//       markesId: mark.markesId,
+//       marks_text: mark.marks_text,
+//       question_id: mark.question_id,
+//     }));
 
-    return marks;
-  } catch (err) {
-    console.error(`Error fetching marks: ${err.message}`);
-    throw err;
-  }
-}
-async  getQTypesByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT qtypeId, qtype_text, question_id
-      FROM qtype
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+//     return marks;
+//   } catch (err) {
+//     console.error(`Error fetching marks: ${err.message}`);
+//     throw err;
+//   }
+// }
+// async  getQTypesByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT qtypeId, qtype_text, question_id
+//       FROM qtype
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    const qtypes = results.map((qtype) => ({
-      qtypeId: qtype.qtypeId,
-      qtype_text: qtype.qtype_text,
-      question_id: qtype.question_id,
-    }));
+//     const qtypes = results.map((qtype) => ({
+//       qtypeId: qtype.qtypeId,
+//       qtype_text: qtype.qtype_text,
+//       question_id: qtype.question_id,
+//     }));
 
-    return qtypes;
-  } catch (err) {
-    console.error(`Error fetching qtypes: ${err.message}`);
-    throw err;
-  }
-}
-async  getsortidByQuestionsAndDocumentId(questions, document_Id) {
-  try {
-    const questionIds = questions.map((question) => question.question_id);
-    const query = `
-      SELECT sort_id,sortid_text, question_id
-      FROM sortid
-      WHERE question_id IN (?) 
-    `;
-    const [results] = await db.query(query, [questionIds, document_Id]);
+//     return qtypes;
+//   } catch (err) {
+//     console.error(`Error fetching qtypes: ${err.message}`);
+//     throw err;
+//   }
+// }
+// async  getsortidByQuestionsAndDocumentId(questions, document_Id) {
+//   try {
+//     const questionIds = questions.map((question) => question.question_id);
+//     const query = `
+//       SELECT sort_id,sortid_text, question_id
+//       FROM sortid
+//       WHERE question_id IN (?) 
+//     `;
+//     const [results] = await db.query(query, [questionIds, document_Id]);
 
-    const sortid = results.map((sortid) => ({
-      sort_id: sortid.sort_id,
-      sortid_text: sortid.sortid_text,
-      question_id: sortid.question_id,
-    }));
+//     const sortid = results.map((sortid) => ({
+//       sort_id: sortid.sort_id,
+//       sortid_text: sortid.sortid_text,
+//       question_id: sortid.question_id,
+//     }));
 
-    return sortid;
-  } catch (err) {
-    console.error(`Error fetching sortid: ${err.message}`);
-    throw err;
-  }
-}
-
-
-combineImage(questions, options, solutions) {
-  const combinedImages = [];
-
-  for (let i = 0; i < questions.length; i++) {
-    const questionImage = questions[i].question_img;
-    const optionImages = options
-      .filter((opt) => opt.question_id === questions[i].question_id)
-      .map((opt) => opt.option_img);
-    const solutionImage = solutions.find(
-      (sol) => sol.question_id === questions[i].question_id
-    )?.solution_img;
-    combinedImages.push({
-      questionImage,
-      optionImages,
-      solutionImage,
-    });
-  }
-
-  return combinedImages;
-}
-}
-
-const dbHelper = new DatabaseHelper(db);
-// end--------
-//doc delete 
-app.delete('/DocumentDelete/:document_Id', async (req, res) => {
-  const document_Id = req.params.document_Id;
- 
-  try {
-    await db.query('DELETE questions, ots_document, options , solution,answer,marks,qtype,sortid  FROM ots_document LEFT JOIN questions ON questions.document_Id = ots_document.document_Id LEFT JOIN options ON options.question_id = questions.question_id LEFT JOIN solution ON solution.question_id = questions.question_id LEFT JOIN answer ON answer.question_id = questions.question_id LEFT JOIN marks ON marks.question_id = questions.question_id  LEFT JOIN qtype ON qtype.question_id = questions.question_id LEFT JOIN sortid ON sortid.question_id = questions.question_id  WHERE ots_document.document_Id = ? ', [document_Id]);
-    res.json({ message: `course with ID ${document_Id} deleted from the database` });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-//  end for document section code ------------------------------------------/
+//     return sortid;
+//   } catch (err) {
+//     console.error(`Error fetching sortid: ${err.message}`);
+//     throw err;
+//   }
+// }
 
 
+// combineImage(questions, options, solutions) {
+//   const combinedImages = [];
 
-// ================================ end
-//_________________________________________________Dashboard_____________________________________
+//   for (let i = 0; i < questions.length; i++) {
+//     const questionImage = questions[i].question_img;
+//     const optionImages = options
+//       .filter((opt) => opt.question_id === questions[i].question_id)
+//       .map((opt) => opt.option_img);
+//     const solutionImage = solutions.find(
+//       (sol) => sol.question_id === questions[i].question_id
+//     )?.solution_img;
+//     combinedImages.push({
+//       questionImage,
+//       optionImages,
+//       solutionImage,
+//     });
+//   }
 
-app.get('/courses/count', async (req, res) => {
-  try {
-    const [results, fields] = await db.execute(
-      'SELECT COUNT(courseCreationId) AS count FROM course_creation_table'
-    );
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching course count:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+//   return combinedImages;
+// }
+// }
 
-app.get('/exam/count', async (req, res) => {
-  try {
-    const [results, fields] = await db.execute(
-      'SELECT COUNT(examId) AS count FROM exams'
-    );
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching course count:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-app.get('/test/count', async (req, res) => {
-  try {
-    const [results, fields] = await db.execute(
-      'SELECT COUNT(testCreationTableId) AS count FROM test_creation_table'
-    );
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching course count:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-app.get('/question/count', async (req, res) => {
-  try {
-    const [results, fields] = await db.execute(
-      'SELECT COUNT(question_id) AS count FROM questions'
-    );
-    res.json(results);
-  } catch (error) {
-    console.error('Error fetching course count:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+// const dbHelper = new DatabaseHelper(db);
+    //  function queryDatabase(sql) {
+    // //   return new Promise((resolve, reject) => {
+    // //      db.query(sql, (err, results) => {
+    // //       if (err) {
+    // //         reject(err);
+    // //       } else {
+    // //         resolve(results);
+    // //       }
+    // //  });
+    // //    });
+    // //  }
 
-//_____________________________________________________END________________________________
-
-//_________________________________________________FRONT END_______________________________________
-
-app.get('/examData', async (req, res) => {
-  // FetchData
-  try {
-      const [rows] = await db.query('SELECT * FROM exams');
-      res.json(rows);
-
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-
-  app.get('/feachingcourse/:examId', async (req, res) => {
-      const { examId } = req.params;
-      try {
-        // Fetch exams from the database
-        const [rows] = await db.query('SELECT * FROM course_creation_table WHERE examId = ?', [examId]);
-    
-        res.json(rows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-
-    app.get('/feachingtest/:courseCreationId', async (req, res) => {
-      const { 	courseCreationId  } = req.params;
-      try {
-        // Fetch exams from the database
-        const [rows] = await db.query('SELECT * FROM test_creation_table WHERE 	courseCreationId  = ?', [	courseCreationId ]);
-    
-        res.json(rows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-
-    app.get('/feachingtypeoftest', async (req, res) => {
-      try {
-        // Fetch type_of_test data from the database
-        const [typeOfTestRows] = await db.query('SELECT * FROM type_of_test');
-        res.json(typeOfTestRows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-    
-    app.get('/feachingtestbytype/:typeOfTestId', async (req, res) => {
-      const { typeOfTestId } = req.params;
-      try {
-        // Fetch tests from the database based on typeOfTestId
-        const [testRows] = await db.query('SELECT * FROM test_creation_table WHERE courseTypeOfTestId = ?', [typeOfTestId]);
-        res.json(testRows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-
-    app.get('/fetchinstructions/:testCreationTableId', async (req, res) => {
-      const { testCreationTableId } = req.params;
-      try {
-        // Fetch instructions from the database based on testCreationTableId
-        const [instructionsRows] = await db.query(
-          'SELECT instruction.instructionId, instructionHeading, points, id FROM instructions_points ' +
-          'JOIN instruction ON instructions_points.instructionId = instruction.instructionId ' +
-          'JOIN test_creation_table ON instruction.instructionId = test_creation_table.instructionId ' +
-          'WHERE test_creation_table.testCreationTableId = ?',
-          [testCreationTableId]
-        );
-        res.json(instructionsRows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-
-
-    app.get('/fetchSections/:testCreationTableId', async (req, res) => {
-      const { testCreationTableId } = req.params;
-      try {
-        const [rows] = await db.query('SELECT * FROM sections WHERE testCreationTableId = ?', [testCreationTableId]);
-        res.json(rows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-    });
-
-    app.get("/singleQuetionRAU/:question_id", async (req, res) => {
-      try {
-        const sql="SELECT q.question_id,q.question_img,o.option_id,o.option_img,s.solution_id,s.solution_img,a.answer_id,a.answer_text,qt.qtypeId,qt.qtype_text,m.markesId,m.marks_text FROM questions q, options o,solution s,answer a , qtype qt , marks m WHERE q.question_id=o.question_id and q.question_id=s.question_id and a.question_id=q.question_id and qt.question_id=q.question_id and m.question_id=q.question_id"
-        const results = await queryDatabase(sql);
-        const data={};
-             results.forEach((row) => {
-        const { question_id,question_img,option_id,option_img,solution_id,solution_img,answer_id,answer_text,qtypeId,qtype_text,markesId,marks_text} = row;
+    // app.get("/singleQuetionRAU/:question_id", async (req, res) => {
+    //   try {
+    //     const sql="SELECT q.question_id,q.question_img,o.option_id,o.option_img,s.solution_id,s.solution_img,a.answer_id,a.answer_text,qt.qtypeId,qt.qtype_text,m.markesId,m.marks_text FROM questions q, options o,solution s,answer a , qtype qt , marks m WHERE q.question_id=o.question_id and q.question_id=s.question_id and a.question_id=q.question_id and qt.question_id=q.question_id and m.question_id=q.question_id"
+    //     const results = await queryDatabase(sql);
+    //     const data={};
+    //          results.forEach((row) => {
+    //     const { question_id,question_img,option_id,option_img,solution_id,solution_img,answer_id,answer_text,qtypeId,qtype_text,markesId,marks_text} = row;
       
 
 
 
-      });
+    //   });
 
-      } catch (error) {
-        console.error(error);
-        res.status(500).send("Error fetching data from the database.");
-      }
-    });
+    //   } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send("Error fetching data from the database.");
+    //   }
+    // });
 
     // app.get("quiz_all/:testCreationTableId", async (req, res) => {
     //   const testCreationTableId = req.params.testCreationTableId;
@@ -2863,23 +3333,6 @@ app.get('/examData', async (req, res) => {
     //     res.status(500).json({ error: 'Error fetching testCreationTableId' });
     //   }
     // });
-    
-     function queryDatabase(sql) {
-      return new Promise((resolve, reject) => {
-         db.query(sql, (err, results) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(results);
-          }
-     });
-       });
-     }
-
-
-
-
-
     // app.get("/getPaperData/:testCreationTableId", async (req, res) => {
     //   try {
       
@@ -3051,93 +3504,6 @@ app.get('/examData', async (req, res) => {
     //   return combinedImages;
     // }
 
-//__________________________________________________REPLACE AND UPDATE _______________________________________________________________________________________________________
-
-app.get('/examRAU', async (req, res) => {
-  // FetchData
-  try {
-      const [rows] = await db.query('SELECT examId,examName	 FROM exams');
-      res.json(rows);
-
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-  app.get('/CourseRAU/:examId', async (req, res) => {
-    const { examId } = req.params;
-   
-    try {
-      const [Course] = await db.query(`SELECT courseCreationId,courseName,examId FROM course_creation_table WHERE examId = ? `, [examId]);
-   
-      res.json(Course);
-    } catch (error) {
-      console.error('Error fetching Course:', error);
-      res.status(500).send('Error fetching Course.');
-    }
-  });
-
-
-  app.get('/testRAU/:courseCreationId', async (req,res) =>{
-    const { courseCreationId } = req.params;
-    try{
-const[test] = await db.query(`SELECT testCreationTableId,TestName,courseCreationId FROM test_creation_table WHERE courseCreationId=? `,[courseCreationId])
-
-res.json(test);
-    }catch (error) {
-      console.error('Error fetching Course:', error);
-      res.status(500).send('Error fetching Course.');
-    }
-  })
-  app.get('/subjectRAU/:testCreationTableId', async (req, res) => {
-    const { testCreationTableId } = req.params;
-   
-    try {
-      const [subjects] = await db.query(`
-        SELECT s.subjectName,s.subjectId
-        FROM test_creation_table tt
-        INNER JOIN course_subjects AS cs ON tt.courseCreationId = cs.courseCreationId
-        INNER JOIN subjects AS s ON cs.subjectId = s.subjectId
-        WHERE tt.testCreationTableId = ?
-      `, [testCreationTableId]);
-   
-      res.json(subjects);
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
-      res.status(500).send('Error fetching subjects.');
-    }
-  });
-
-  app.get('/sectionRAU/:subjectId/:testCreationTableId', async (req, res) => {
-    const { subjectId, testCreationTableId } = req.params;
-    try {
-      const [rows] = await db.query(
-        'SELECT s.sectionName, s.sectionId, s.testCreationTableId, s.subjectId FROM sections s JOIN test_creation_table tt ON s.testCreationTableId = tt.testCreationTableId WHERE s.subjectId = ? AND s.testCreationTableId = ?',
-        [subjectId, testCreationTableId]
-      );
-      res.json(rows);
-    } catch (error) {
-      console.error('Error fetching sections data:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }); 
-
-  app.get('/sortidRAU/:testCreationTableId/:subjectId/:sectionId' ,async(req,res) =>{
-    const { testCreationTableId,subjectId,sectionId} = req.params;
-    try{
-const [rows] =await db.query( `SELECT s.question_id ,q.testCreationTableId,q.sectionId,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.testCreationTableId=? AND q.subjectId=? AND q.sectionId=? `,[ testCreationTableId,subjectId,sectionId] );
-res.json(rows);
-    }catch (error) {
-      console.error('Error fetching sections data:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  })
-
-
-
-  
-   
 
       // Fetch document data based on subjectId, testCreationTableId, and sectionId
       // const documentData = await getDocumentBySubjectAndTestCreationIdSectionId(
@@ -3188,155 +3554,155 @@ res.json(rows);
   //   }
   // }
    
-  async function getQuestionsBySubjectAndDocumentId(question_id) {
-    try {
-      const query = `
-      SELECT q.question_id,q.question_img ,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.question_id=?; 
-      `;
-      const [results] = await db.query(query, [question_id]);
-      const questionsWithBase64 = results.map((question) => ({
-        question_id: question.question_id,
-        question_img: question.question_img.toString("base64"),
-      }));
-      return questionsWithBase64;
-    } catch (err) {
-      console.error(`Error fetching questions: ${err}`);
-      throw err;
-    }
-  }
+  // async function getQuestionsBySubjectAndDocumentId(question_id) {
+  //   try {
+  //     const query = `
+  //     SELECT q.question_id,q.question_img ,s.sort_id,s.sortid_text FROM sortid s INNER JOIN questions AS q ON s.question_id=q.question_id WHERE q.question_id=?; 
+  //     `;
+  //     const [results] = await db.query(query, [question_id]);
+  //     const questionsWithBase64 = results.map((question) => ({
+  //       question_id: question.question_id,
+  //       question_img: question.question_img.toString("base64"),
+  //     }));
+  //     return questionsWithBase64;
+  //   } catch (err) {
+  //     console.error(`Error fetching questions: ${err}`);
+  //     throw err;
+  //   }
+  // }
    
-  async function getOptionsByQuestionsAndDocumentId(questions) {
-    try {
-      const questionIds = questions.map((question) => question.question_id);
-      const query = `
-        SELECT question_id, option_img
-        FROM options
-        WHERE question_id IN (?)
-      `;
-      const [results] = await db.query(query, [questionIds]);
+  // async function getOptionsByQuestionsAndDocumentId(questions) {
+  //   try {
+  //     const questionIds = questions.map((question) => question.question_id);
+  //     const query = `
+  //       SELECT question_id, option_img
+  //       FROM options
+  //       WHERE question_id IN (?)
+  //     `;
+  //     const [results] = await db.query(query, [questionIds]);
    
-      const optionsWithBase64 = results.map((option) => ({
-        question_id: option.question_id,
-        option_img: option.option_img.toString("base64"),
-      }));
+  //     const optionsWithBase64 = results.map((option) => ({
+  //       question_id: option.question_id,
+  //       option_img: option.option_img.toString("base64"),
+  //     }));
    
-      return optionsWithBase64;
-    } catch (err) {
-      console.error(`Error fetching options: ${err.message}`);
-      throw err;
-    }
-  }
+  //     return optionsWithBase64;
+  //   } catch (err) {
+  //     console.error(`Error fetching options: ${err.message}`);
+  //     throw err;
+  //   }
+  // }
    
-  async function getSolutionsByQuestionsAndDocumentId(questions) {
-    try {
-      const questionIds = questions.map((question) => question.question_id);
-      const query = `
-        SELECT question_id, solution_img
-        FROM solution
-        WHERE question_id IN (?)
-      `;
-      const [results] = await db.query(query, [questionIds]);
+  // async function getSolutionsByQuestionsAndDocumentId(questions) {
+  //   try {
+  //     const questionIds = questions.map((question) => question.question_id);
+  //     const query = `
+  //       SELECT question_id, solution_img
+  //       FROM solution
+  //       WHERE question_id IN (?)
+  //     `;
+  //     const [results] = await db.query(query, [questionIds]);
    
-      // Convert BLOB data to base64 for sending in the response
-      const solutionsWithBase64 = results.map((solution) => ({
-        question_id: solution.question_id,
-        solution_img: solution.solution_img.toString("base64"),
-      }));
+  //     // Convert BLOB data to base64 for sending in the response
+  //     const solutionsWithBase64 = results.map((solution) => ({
+  //       question_id: solution.question_id,
+  //       solution_img: solution.solution_img.toString("base64"),
+  //     }));
    
-      return solutionsWithBase64;
-    } catch (err) {
-      console.error(`Error fetching solutions: ${err}`);
-      throw err;
-    }
-  }
+  //     return solutionsWithBase64;
+  //   } catch (err) {
+  //     console.error(`Error fetching solutions: ${err}`);
+  //     throw err;
+  //   }
+  // }
    
-  async function getAnswersByQuestionsAndDocumentId(questions) {
-    try {
-      const questionIds = questions.map((question) => question.question_id);
-      const query = `
-        SELECT answer_id, question_id, answer_text
-        FROM answer
-        WHERE question_id IN (?)
-      `;
-      const [results] = await db.query(query, [questionIds]);
-      const answers = results.map((answer) => ({
-        answer_id: answer.answer_id,
-        question_id: answer.question_id,
-        answer_text: answer.answer_text,
-      }));
+  // async function getAnswersByQuestionsAndDocumentId(questions) {
+  //   try {
+  //     const questionIds = questions.map((question) => question.question_id);
+  //     const query = `
+  //       SELECT answer_id, question_id, answer_text
+  //       FROM answer
+  //       WHERE question_id IN (?)
+  //     `;
+  //     const [results] = await db.query(query, [questionIds]);
+  //     const answers = results.map((answer) => ({
+  //       answer_id: answer.answer_id,
+  //       question_id: answer.question_id,
+  //       answer_text: answer.answer_text,
+  //     }));
    
-      return answers;
-    } catch (err) {
-      console.error(`Error fetching answers: ${err.message}`);
-      throw err;
-    }
-  }
+  //     return answers;
+  //   } catch (err) {
+  //     console.error(`Error fetching answers: ${err.message}`);
+  //     throw err;
+  //   }
+  // }
    
-  async function getMarksByQuestionsAndDocumentId(questions) {
-    try {
-      const questionIds = questions.map((question) => question.question_id);
-      const query = `
-        SELECT markesId, marks_text, question_id
-        FROM marks
-        WHERE question_id IN (?)
-      `;
-      const [results] = await db.query(query, [questionIds]);
+  // async function getMarksByQuestionsAndDocumentId(questions) {
+  //   try {
+  //     const questionIds = questions.map((question) => question.question_id);
+  //     const query = `
+  //       SELECT markesId, marks_text, question_id
+  //       FROM marks
+  //       WHERE question_id IN (?)
+  //     `;
+  //     const [results] = await db.query(query, [questionIds]);
    
-      const marks = results.map((mark) => ({
-        markesId: mark.markesId,
-        marks_text: mark.marks_text,
-        question_id: mark.question_id,
-      }));
+  //     const marks = results.map((mark) => ({
+  //       markesId: mark.markesId,
+  //       marks_text: mark.marks_text,
+  //       question_id: mark.question_id,
+  //     }));
    
-      return marks;
-    } catch (err) {
-      console.error(`Error fetching marks: ${err.message}`);
-      throw err;
-    }
-  }
+  //     return marks;
+  //   } catch (err) {
+  //     console.error(`Error fetching marks: ${err.message}`);
+  //     throw err;
+  //   }
+  // }
    
-  async function getQTypesByQuestionsAndDocumentId(questions) {
-    try {
-      const questionIds = questions.map((question) => question.question_id);
-      const query = `
-        SELECT qtypeId, qtype_text, question_id
-        FROM qtype
-        WHERE question_id IN (?)
-      `;
-      const [results] = await db.query(query, [questionIds]);
+  // async function getQTypesByQuestionsAndDocumentId(questions) {
+  //   try {
+  //     const questionIds = questions.map((question) => question.question_id);
+  //     const query = `
+  //       SELECT qtypeId, qtype_text, question_id
+  //       FROM qtype
+  //       WHERE question_id IN (?)
+  //     `;
+  //     const [results] = await db.query(query, [questionIds]);
    
-      const qtypes = results.map((qtype) => ({
-        qtypeId: qtype.qtypeId,
-        qtype_text: qtype.qtype_text,
-        question_id: qtype.question_id,
-      }));
+  //     const qtypes = results.map((qtype) => ({
+  //       qtypeId: qtype.qtypeId,
+  //       qtype_text: qtype.qtype_text,
+  //       question_id: qtype.question_id,
+  //     }));
    
-      return qtypes;
-    } catch (err) {
-      console.error(`Error fetching qtypes: ${err.message}`);
-      throw err;
-    }
-  }
+  //     return qtypes;
+  //   } catch (err) {
+  //     console.error(`Error fetching qtypes: ${err.message}`);
+  //     throw err;
+  //   }
+  // }
    
-  function combineImage(questions, options, solutions) {
-    const combinedImages = [];
+  // function combineImage(questions, options, solutions) {
+  //   const combinedImages = [];
    
-    for (let i = 0; i < questions.length; i++) {
-      const questionImage = questions[i].question_img;
-      const optionImages = options
-        .filter((opt) => opt.question_id === questions[i].question_id)
-        .map((opt) => opt.option_img);
-      const solutionImage = solutions.find(
-        (sol) => sol.question_id === questions[i].question_id
-      )?.solution_img;
-      combinedImages.push({
-        questionImage,
-        optionImages,
-        solutionImage,
-      });
-    }
-    return combinedImages;
-  }
+  //   for (let i = 0; i < questions.length; i++) {
+  //     const questionImage = questions[i].question_img;
+  //     const optionImages = options
+  //       .filter((opt) => opt.question_id === questions[i].question_id)
+  //       .map((opt) => opt.option_img);
+  //     const solutionImage = solutions.find(
+  //       (sol) => sol.question_id === questions[i].question_id
+  //     )?.solution_img;
+  //     combinedImages.push({
+  //       questionImage,
+  //       optionImages,
+  //       solutionImage,
+  //     });
+  //   }
+  //   return combinedImages;
+  // }
 
 //   app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
 //     const questionId = req.params.questionId;
@@ -3396,158 +3762,118 @@ res.json(rows);
 //     }
 // });
 
-
-
-app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) => {
-  const questionId = req.params.questionId;
-  const updatedData = req.body;
-  const imageFiles = req.files;
+//  app.get("/quiz_all/:sort_id", async (req, res) => {
+//   const sort_id = req.params.sort_id;
+//   console.log('Received request for sort_id:', sort_id);
+//   const sql = `
+//     SELECT
+//       q.question_id, q.question_img,
+//       o.option_id, o.option_img,
+//       s.solution_id, s.solution_img,
+//       a.answer_id, a.answer_text,
+//       qt.qtypeId, qt.qtype_text,
+//       m.markesId, m.marks_text,
+//       si.sort_id, si.question_id
+//     FROM
+//       questions q
+//       JOIN options o ON q.question_id = o.question_id
+//       JOIN solution s ON q.question_id = s.question_id
+//       JOIN answer a ON q.question_id = a.question_id
+//       JOIN qtype qt ON q.question_id = qt.question_id
+//       JOIN marks m ON q.question_id = m.question_id
+//       JOIN sortid si ON q.question_id = si.question_id WHERE si.sort_id=? `;
   
-  try {
-    // Convert image files to base64
-    const imageBase64 = await Promise.all(imageFiles.map(async file => {
-      const imageData = await fs.readFile(file.path, { encoding: 'base64' });
-      return `data:${file.mimetype};base64,${imageData}`;
-    }));
-
-    // Update question_img in the questions table
-    if (imageBase64[0]) {
-      await db.query("UPDATE questions SET question_img = ? WHERE question_id = ?", [
-        imageBase64[0],
-        questionId,
-      ]);
-    }
-
-    // Update option_img in the options table
-    if (imageBase64[1]) {
-      await db.query("UPDATE options SET option_img = ? WHERE question_id = ?", [
-        imageBase64[1],
-        questionId,
-      ]);
-    }
-
-    // ... (omitting other updates for brevity)
-  
-    res.json({ message: "Question and related data updated successfully" });
-  } catch (error) {
-    console.error("Error updating question:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
- app.get("/quiz_all/:sort_id", async (req, res) => {
-  const sort_id = req.params.sort_id;
-  console.log('Received request for sort_id:', sort_id);
-  const sql = `
-    SELECT
-      q.question_id, q.question_img,
-      o.option_id, o.option_img,
-      s.solution_id, s.solution_img,
-      a.answer_id, a.answer_text,
-      qt.qtypeId, qt.qtype_text,
-      m.markesId, m.marks_text,
-      si.sort_id, si.question_id
-    FROM
-      questions q
-      JOIN options o ON q.question_id = o.question_id
-      JOIN solution s ON q.question_id = s.question_id
-      JOIN answer a ON q.question_id = a.question_id
-      JOIN qtype qt ON q.question_id = qt.question_id
-      JOIN marks m ON q.question_id = m.question_id
-      JOIN sortid si ON q.question_id = si.question_id WHERE si.sort_id=? `;
-  
-  try {
-    const results = await queryDatabase(sql, [sort_id]);
-    console.log('Query results:', results);
+//   try {
+//     const results = await queryDatabase(sql, [sort_id]);
+//     console.log('Query results:', results);
  
-    const response = {};
+//     const response = {};
 
-    results.forEach((row) => {
-      const {
-        sort_id,
-        question_id,
-        question_img,
-        option_id,
-        option_img,
-        solution_id,
-        solution_img,
-        answer_id,
-        answer_text,
-        qtypeId,
-        qtype_text,
-        markesId,
-        marks_text,
-      } = row;
+//     results.forEach((row) => {
+//       const {
+//         sort_id,
+//         question_id,
+//         question_img,
+//         option_id,
+//         option_img,
+//         solution_id,
+//         solution_img,
+//         answer_id,
+//         answer_text,
+//         qtypeId,
+//         qtype_text,
+//         markesId,
+//         marks_text,
+//       } = row;
 
-      if (!response[sort_id]) {
-        response[sort_id] = {
-          sort_id,
-          questions: [],
-        };
-      }
+//       if (!response[sort_id]) {
+//         response[sort_id] = {
+//           sort_id,
+//           questions: [],
+//         };
+//       }
 
-      const question = response[sort_id].questions.find(q => q.question_id === question_id);
+//       const question = response[sort_id].questions.find(q => q.question_id === question_id);
 
-      if (!question) {
-        response[sort_id].questions.push({
-          question_id,
-          userAnswers: "",
-          isvisited: 0,
-          question_img: question_img.toString('base64'),
-          option_img: [],
-          solution_img: [],
-          answer: {
-            answer_id,
-            answer_text,
-          },
-          qtype: {
-            qtypeId,
-            qtype_text,
-          },
-          marks: {
-            markesId,
-            marks_text,
-          },
-        });
-      }
+//       if (!question) {
+//         response[sort_id].questions.push({
+//           question_id,
+//           userAnswers: "",
+//           isvisited: 0,
+//           question_img: question_img.toString('base64'),
+//           option_img: [],
+//           solution_img: [],
+//           answer: {
+//             answer_id,
+//             answer_text,
+//           },
+//           qtype: {
+//             qtypeId,
+//             qtype_text,
+//           },
+//           marks: {
+//             markesId,
+//             marks_text,
+//           },
+//         });
+//       }
 
-      const option = {
-        option_id,
-        option_img: option_img.toString('base64'),
-      };
+//       const option = {
+//         option_id,
+//         option_img: option_img.toString('base64'),
+//       };
 
-      response[sort_id].questions.find(q => q.question_id === question_id).option_img.push(option);
+//       response[sort_id].questions.find(q => q.question_id === question_id).option_img.push(option);
 
-      const solution = {
-        solution_id,
-        solution_img: solution_img.toString('base64'),
-      };
+//       const solution = {
+//         solution_id,
+//         solution_img: solution_img.toString('base64'),
+//       };
 
-      response[sort_id].questions.find(q => q.question_id === question_id).solution_img.push(solution);
-    });
+//       response[sort_id].questions.find(q => q.question_id === question_id).solution_img.push(solution);
+//     });
 
-    res.json(response);
-  } catch (err) {
-    console.error('Error querying the database: ' + err.message);
-    res.status(500).json({ error: 'Error fetching testCreationTableId' });
-  }
-});
+//     res.json(response);
+//   } catch (err) {
+//     console.error('Error querying the database: ' + err.message);
+//     res.status(500).json({ error: 'Error fetching testCreationTableId' });
+//   }
+// });
 
   
-  function queryDatabase(sql, params) {
-    console.log('Executing SQL query:', sql, 'with params:', params);
-    return new Promise((resolve, reject) => {
-      db.query(sql, params, (err, results) => {
-        if (err) {
-          console.error('Database error:', err);
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
-  }
+//   function queryDatabase(sql, params) {
+//     console.log('Executing SQL query:', sql, 'with params:', params);
+//     return new Promise((resolve, reject) => {
+//       db.query(sql, params, (err, results) => {
+//         if (err) {
+//           console.error('Database error:', err);
+//           reject(err);
+//         } else {
+//           resolve(results);
+//         }
+//       });
+//     });
+//   }
   
 
 
@@ -3601,76 +3927,76 @@ app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) 
   
   
 
-    app.get("quiz_all/:testCreationTableId", async (req, res) => {
-      const testCreationTableId = req.params.testCreationTableId;
+//     app.get("quiz_all/:testCreationTableId", async (req, res) => {
+//       const testCreationTableId = req.params.testCreationTableId;
     
-      const sql = `
-      SELECT
-    tt.testCreationTableId,
-    q.question_id ,
-    q.question_img,
-    o.option_id,
-    o.option_img,
-    o.option_index
-FROM
-    test_creation_table tt,
-    questions q,
-    options o
-WHERE
-    tt.testCreationTableId = q.testCreationTableId AND q.question_id  = o.question_id AND tt.testCreationTableId = ?
-      `;
-      console.log('SQL Query:', sql);
-      try {
-        const results = await queryDatabase(sql, [testCreationTableId]);
-        if (results.length === 0) {
-          res.status(404).json({ error: 'No data found for the specified testCreationTableId' });
-          return;
-        }
-        console.log('Query Results:', results);
-        const questionsMap = new Map();
+//       const sql = `
+//       SELECT
+//     tt.testCreationTableId,
+//     q.question_id ,
+//     q.question_img,
+//     o.option_id,
+//     o.option_img,
+//     o.option_index
+// FROM
+//     test_creation_table tt,
+//     questions q,
+//     options o
+// WHERE
+//     tt.testCreationTableId = q.testCreationTableId AND q.question_id  = o.question_id AND tt.testCreationTableId = ?
+//       `;
+//       console.log('SQL Query:', sql);
+//       try {
+//         const results = await queryDatabase(sql, [testCreationTableId]);
+//         if (results.length === 0) {
+//           res.status(404).json({ error: 'No data found for the specified testCreationTableId' });
+//           return;
+//         }
+//         console.log('Query Results:', results);
+//         const questionsMap = new Map();
 
-        results.forEach((row) => {
-          const {question_id, question_img, Option_Index, option_img } = row;
+//         results.forEach((row) => {
+//           const {question_id, question_img, Option_Index, option_img } = row;
     
-          if (!questionsMap.has(question_id)) {
-            questionsMap.set(question_id, {
-              question_id,
-              userAnswers: "",
-              isvisited: 0,
-              question_img: question_img.toString('base64'),
-              options: [],
-            });
-          }
+//           if (!questionsMap.has(question_id)) {
+//             questionsMap.set(question_id, {
+//               question_id,
+//               userAnswers: "",
+//               isvisited: 0,
+//               question_img: question_img.toString('base64'),
+//               options: [],
+//             });
+//           }
     
-          const option = {
-            Option_Index,
-            option_img: option_img.toString('base64'),
-          };
+//           const option = {
+//             Option_Index,
+//             option_img: option_img.toString('base64'),
+//           };
     
-          questionsMap.get(question_id).options.push(option);
-        });
+//           questionsMap.get(question_id).options.push(option);
+//         });
     
-        const questionsArray = Array.from(questionsMap.values());
-        const jsonResult = { questions: questionsArray };
+//         const questionsArray = Array.from(questionsMap.values());
+//         const jsonResult = { questions: questionsArray };
     
-        res.json(jsonResult);
-      } catch (err) {
-        console.error('Error querying the database: ' + err.message);
-        res.status(500).json({ error: 'Error fetching testCreationTableId' });
-      }
-    });
+//         res.json(jsonResult);
+//       } catch (err) {
+//         console.error('Error querying the database: ' + err.message);
+//         res.status(500).json({ error: 'Error fetching testCreationTableId' });
+//       }
+//     });
     
-    function queryDatabase(sql, params) {
-      return new Promise((resolve, reject) => {
-        db.query(sql, params, (err, results) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(results);
-          }
-        });
-      });
-    }
+//     function queryDatabase(sql, params) {
+//       return new Promise((resolve, reject) => {
+//         db.query(sql, params, (err, results) => {
+//           if (err) {
+//             reject(err);
+//           } else {
+//             resolve(results);
+//           }
+//         });
+//       });
+//     }
 
 ///////////////////////Document images upload in upload folder//////////////////////////////////////
 

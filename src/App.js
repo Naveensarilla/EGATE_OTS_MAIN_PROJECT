@@ -83,7 +83,7 @@ function App() {
  
           {/* document list */}
           <Route
-              path="/getSubjectData/:subjectId/:testCreationTableId/:sectionId"
+              path="/getSubjectData/:testCreationTableId/:subjectId/:sectionId"
               element={<Document_ImageInfo />}
             />
             <Route path='/ReplaceAndUpdate' element={<ReplaceAndUpdate />}/>
