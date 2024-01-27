@@ -8,10 +8,10 @@ const path = require('path');
 const fs = require('fs').promises;
 const app = express();
 const port = 3081;
-
+const bodyParser = require('body-parser');
 app.use(express.json());
 app.use(cors());
-
+app.use(bodyParser.json());
 
 const db = mysql.createPool({
   host: 'localhost',
@@ -1760,192 +1760,192 @@ app.get('/sections/:subjectId/:testCreationTableId', async (req, res) => {
 
 //documemt upload in uploads folder and imeage path in data base table 
 
-app.post('/upload', upload.single('document'), async (req, res) => {
-  const docxFilePath = `uploads/${req.file.filename}`;
-  const outputDir = `uploads/${req.file.originalname}`;
-  const docName = `${req.file.originalname}`;
-  try {
-    await fs.mkdir(outputDir, { recursive: true });
-    const result = await mammoth.convertToHtml({ path: docxFilePath });
-    const htmlContent = result.value;
-    const $ = cheerio.load(htmlContent);
-    const textResult = await mammoth.extractRawText({ path: docxFilePath });
-    const textContent = textResult.value;
-    const textSections = textContent.split('\n\n');
+// app.post('/upload', upload.single('document'), async (req, res) => {
+//   const docxFilePath = `uploads/${req.file.filename}`;
+//   const outputDir = `uploads/${req.file.originalname}`;
+//   const docName = `${req.file.originalname}`;
+//   try {
+//     await fs.mkdir(outputDir, { recursive: true });
+//     const result = await mammoth.convertToHtml({ path: docxFilePath });
+//     const htmlContent = result.value;
+//     const $ = cheerio.load(htmlContent);
+//     const textResult = await mammoth.extractRawText({ path: docxFilePath });
+//     const textContent = textResult.value;
+//     const textSections = textContent.split('\n\n');
  
-    const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
-      documen_name: docName,
-            testCreationTableId: req.body.testCreationTableId,
-            subjectId: req.body.subjectId,
-            sectionId:req.body.sectionId,
-          });
-          const document_Id = documentResult.insertId;
- 
- 
-    // Get all images in the order they appear in the HTML
-    const images = [];
-    $('img').each(function (i, element) {
-      const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
-      const imageBuffer = Buffer.from(base64Data, 'base64');
-      images.push(imageBuffer);
-    });
+//     const [documentResult] = await db.query("INSERT INTO ots_document SET ?", {
+//       documen_name: docName,
+//             testCreationTableId: req.body.testCreationTableId,
+//             subjectId: req.body.subjectId,
+//             sectionId:req.body.sectionId,
+//           });
+//           const document_Id = documentResult.insertId;
  
  
-    let j=0;let image_index=0;
-    let que_id=0;let k=1;
-    console.log(textSections);
-    for (let i = 0; i < textSections.length; i++) {
-      if (textSections[i].includes('[qtype]')) {
-        // que_id=question_id[j];
-        // j++;
-        // Save in the qtype table
-        const qtypeRecord = {
-          qtype_text: textSections[i].replace('[qtype]', ''),
-          question_id: que_id
-        };
-        console.log()
-        await insertRecord('qtype', qtypeRecord);
-      } else if (textSections[i].includes('[ans]')) {
-        // Save in the answer table
-        const answerRecord = {
-          answer_text: textSections[i].replace('[ans]', ''),
-          question_id: que_id
-        };
-        await insertRecord('answer', answerRecord);
-      } else if (textSections[i].includes('[Marks]')) {
-        // Save in the marks table
-        const marksRecord = {
-          marks_text: textSections[i].replace('[Marks]', ''),
-          question_id: que_id
-        };
-        await insertRecord('marks', marksRecord);
-      }else if (textSections[i].includes('[sortid]')) {
-        const sortidRecord = {
-          sortid_text: textSections[i].replace('[sortid]', ''),
-          question_id: que_id
-        };
-        await insertRecord('sortid', sortidRecord);
-      }
-      else if (textSections[i].includes('[Q]')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_question_${k}.png`;k++;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const questionRecord = {
-          questionImgName: imageName,
-          testCreationTableId: req.body.testCreationTableId,
-          subjectId: req.body.subjectId,
-          document_Id: document_Id,
-          sectionId: req.body.sectionId
-        };
-        que_id = await insertRecord('questions', questionRecord);
-        // question_id.push(Question_id)
+//     // Get all images in the order they appear in the HTML
+//     const images = [];
+//     $('img').each(function (i, element) {
+//       const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
+//       const imageBuffer = Buffer.from(base64Data, 'base64');
+//       images.push(imageBuffer);
+//     });
+ 
+ 
+//     let j=0;let image_index=0;
+//     let que_id=0;let k=1;
+//     console.log(textSections);
+//     for (let i = 0; i < textSections.length; i++) {
+//       if (textSections[i].includes('[qtype]')) {
+//         // que_id=question_id[j];
+//         // j++;
+//         // Save in the qtype table
+//         const qtypeRecord = {
+//           qtype_text: textSections[i].replace('[qtype]', ''),
+//           question_id: que_id
+//         };
+//         console.log()
+//         await insertRecord('qtype', qtypeRecord);
+//       } else if (textSections[i].includes('[ans]')) {
+//         // Save in the answer table
+//         const answerRecord = {
+//           answer_text: textSections[i].replace('[ans]', ''),
+//           question_id: que_id
+//         };
+//         await insertRecord('answer', answerRecord);
+//       } else if (textSections[i].includes('[Marks]')) {
+//         // Save in the marks table
+//         const marksRecord = {
+//           marks_text: textSections[i].replace('[Marks]', ''),
+//           question_id: que_id
+//         };
+//         await insertRecord('marks', marksRecord);
+//       }else if (textSections[i].includes('[sortid]')) {
+//         const sortidRecord = {
+//           sortid_text: textSections[i].replace('[sortid]', ''),
+//           question_id: que_id
+//         };
+//         await insertRecord('sortid', sortidRecord);
+//       }
+//       else if (textSections[i].includes('[Q]')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_question_${k}.png`;k++;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const questionRecord = {
+//           questionImgName: imageName,
+//           testCreationTableId: req.body.testCreationTableId,
+//           subjectId: req.body.subjectId,
+//           document_Id: document_Id,
+//           sectionId: req.body.sectionId
+//         };
+//         que_id = await insertRecord('questions', questionRecord);
+//         // question_id.push(Question_id)
 
-      }
-      else if (textSections[i].includes('(a)')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_a_${k}.png`;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const optionRecord = {
-          optionImgName: imageName,
-          option_index:'a',
-          question_id: que_id
-        };
-        await insertRecord('options', optionRecord);
+//       }
+//       else if (textSections[i].includes('(a)')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_a_${k}.png`;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const optionRecord = {
+//           optionImgName: imageName,
+//           option_index:'a',
+//           question_id: que_id
+//         };
+//         await insertRecord('options', optionRecord);
         
-      }else if (textSections[i].includes('(b)')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_b_${k}.png`;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const optionRecord = {
-          optionImgName: imageName,
-          option_index:'b',
-          question_id: que_id
-        };
-        await insertRecord('options', optionRecord);
+//       }else if (textSections[i].includes('(b)')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_b_${k}.png`;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const optionRecord = {
+//           optionImgName: imageName,
+//           option_index:'b',
+//           question_id: que_id
+//         };
+//         await insertRecord('options', optionRecord);
         
-      }else if (textSections[i].includes('(c)')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_c_${k}.png`;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const optionRecord = {
-          optionImgName: imageName,
-          option_index:'c',
-          question_id: que_id
-        };
-        await insertRecord('options', optionRecord);
+//       }else if (textSections[i].includes('(c)')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_c_${k}.png`;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const optionRecord = {
+//           optionImgName: imageName,
+//           option_index:'c',
+//           question_id: que_id
+//         };
+//         await insertRecord('options', optionRecord);
         
-      }else if (textSections[i].includes('(d)')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_d_${k}.png`;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const optionRecord = {
-          optionImgName: imageName,
-          option_index:'d',
-          question_id: que_id
-        };
-        await insertRecord('options', optionRecord);
+//       }else if (textSections[i].includes('(d)')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_option_d_${k}.png`;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const optionRecord = {
+//           optionImgName: imageName,
+//           option_index:'d',
+//           question_id: que_id
+//         };
+//         await insertRecord('options', optionRecord);
         
-      }else if (textSections[i].includes('[soln]')) {
-        const imageName = `snapshot_${document_Id}_${req.body.subjectId}_solution_${k}.png`;
-        const imagePath = `${outputDir}/${imageName}`;
-        await fs.writeFile(imagePath, images[image_index]);image_index++;
-        const solutionRecord = {
-          solutionImgName: imageName,
-          question_id: que_id
-        };
-        await insertRecord('solution', solutionRecord);
+//       }else if (textSections[i].includes('[soln]')) {
+//         const imageName = `snapshot_${document_Id}_${req.body.subjectId}_solution_${k}.png`;
+//         const imagePath = `${outputDir}/${imageName}`;
+//         await fs.writeFile(imagePath, images[image_index]);image_index++;
+//         const solutionRecord = {
+//           solutionImgName: imageName,
+//           question_id: que_id
+//         };
+//         await insertRecord('solution', solutionRecord);
         
-      }
-    }
+//       }
+//     }
  
-    res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error extracting content and saving it to the database.');
-  }
-});
-async function insertRecord(table, record) {
-  try {
-    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
-    console.log(`${table} id: ${result.insertId}`);
-    return result.insertId;
-  } catch (err) {
-    console.error(`Error inserting data into ${table}: ${err}`);
-    throw err;
-  }
-}
+//     res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error extracting content and saving it to the database.');
+//   }
+// });
+// async function insertRecord(table, record) {
+//   try {
+//     const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+//     console.log(`${table} id: ${result.insertId}`);
+//     return result.insertId;
+//   } catch (err) {
+//     console.error(`Error inserting data into ${table}: ${err}`);
+//     throw err;
+//   }
+// }
  
-const imagesDirectory = path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(imagesDirectory));
+// const imagesDirectory = path.join(__dirname, 'uploads');
+// app.use('/uploads', express.static(imagesDirectory));
  
-app.use(express.json());
-app.use('/images', express.static(imagesDirectory));
+// app.use(express.json());
+// app.use('/images', express.static(imagesDirectory));
  
-app.get('/image-list', async (req, res) => {
-  try {
-    const files = await fs.readdir(imagesDirectory);
-    console.log('Files in uploads directory:', files);
-    const imageNames = files.filter(file => file.endsWith('.png'));
-    res.json(imageNames);
-  } catch (error) {
-    console.error('Error fetching image list:', error);
-    res.status(500).send('Error fetching image list.');
-  }
-});
-
-
+// app.get('/image-list', async (req, res) => {
+//   try {
+//     const files = await fs.readdir(imagesDirectory);
+//     console.log('Files in uploads directory:', files);
+//     const imageNames = files.filter(file => file.endsWith('.png'));
+//     res.json(imageNames);
+//   } catch (error) {
+//     console.error('Error fetching image list:', error);
+//     res.status(500).send('Error fetching image list.');
+//   }
+// });
 
 
-async function insertRecord(table, record) {
-  try {
-    const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
-    console.log(`${table} id: ${result.insertId}`);
-    return result.insertId;
-  } catch (err) {
-    console.error(`Error inserting data into ${table}: ${err}`);
-    throw err;
-  }
-}
+
+
+// async function insertRecord(table, record) {
+//   try {
+//     const [result] = await db.query(`INSERT INTO ${table} SET ?`, record);
+//     console.log(`${table} id: ${result.insertId}`);
+//     return result.insertId;
+//   } catch (err) {
+//     console.error(`Error inserting data into ${table}: ${err}`);
+//     throw err;
+//   }
+// }
 // end -------------------
 
 
@@ -2417,6 +2417,67 @@ app.put("/updateQuestion/:questionId", upload.array("images"), async (req, res) 
   }
 });
 
+
+//new end points for pg 
+app.get('/courses', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM courses');
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/sub/:course_id', async (req, res) => {
+  const { course_id } = req.params;
+
+  try {
+    // Assuming your departments are stored in a table named 'pg_departments'
+    const query = 'SELECT * FROM subjects WHERE course_id = ?';
+
+    const [rows] = await db.query(query, [course_id]);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/departments/:course_id', async (req, res) => {
+  const { course_id } = req.params;
+
+  try {
+    // Assuming your departments are stored in a table named 'pg_departments'
+    const query = 'SELECT * FROM pg_departments WHERE course_id = ?';
+
+    const [rows] = await db.query(query, [course_id]);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/addnewdepartments', async (req, res) => {
+  const { departmentName	 } = req.body;
+
+  if (!departmentName	) {
+    return res.status(400).json({ error: 'Subject name is required' });
+  }
+
+  try {
+    // Insert the new subject into the database
+    await db.query('INSERT INTO pg_departments (departmentName) VALUES (?)', [departmentName]);
+
+    // Fetch all subjects after adding the new one
+    const [rows] = await db.query('SELECT * FROM pg_departments');
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Ex
 // const fileUpload = require("express-fileupload");

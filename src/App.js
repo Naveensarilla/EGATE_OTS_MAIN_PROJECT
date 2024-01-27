@@ -48,6 +48,7 @@ import TestResultsPage from './Frontend/Pages/MainQuizFunctionality/TestResultsP
 import ReplaceAndUpdate from "./components/ReplaceAndUpdate.jsx";
 import UploadFile from './components/UploadFile.jsx';
 import Quiz from './components/Quiz.jsx'
+import Exampg from './components/Exampg.js'
 function App() {
   return (
     <Router>
@@ -58,6 +59,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashbaord />} />
           <Route path="/exams" element={<ExamCreation />} />
+          <Route path="/Exampg" element={<Exampg />} />
           <Route path="/update/:examId" element={<NewExamUpdataion />} />
           <Route path="Coursecreation" element={<Coursecreation />} />
           <Route
